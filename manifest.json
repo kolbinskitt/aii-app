@@ -1,0 +1,15 @@
+{
+  "name": "Aii",
+  "short_name": "Aii",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "CICHOŚĆ – Aii App v0.1",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
