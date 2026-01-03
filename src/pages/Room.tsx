@@ -1,0 +1,27 @@
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getRoomBySlug, type Room as RoomType } from '../db/rooms';
+
+export default function Room() {
+  const { slug } = useParams<{ slug: string }>();
+  const [room, setRoom] = useState<RoomType | null>(null);
+
+  useEffect(() => {
+    if (slug) {
+      getRoomBySlug(slug).then(setRoom);
+    }
+  }, [slug]);
+
+  if (!room) {
+    return <div className="p-6">Nie znaleziono pokoju.</div>;
+  }
+
+  return (
+    <div className="p-6">
+      <h2 className="text-xl font-light">
+        {room.name || '🌀 Bezimienny pokój'}
+      </h2>
+      <p className="opacity-60 mt-2">To jest cichy pokój.</p>
+    </div>
+  );
+}
