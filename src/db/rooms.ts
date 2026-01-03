@@ -65,7 +65,7 @@ export async function createRoom({
   });
 }
 
-export async function getRoomBySlug(slug: string): Promise<Room | null> {
+export async function getRoomById(id: string): Promise<Room | null> {
   const db = await openDB();
   const tx = db.transaction(STORE, 'readonly');
   const store = tx.objectStore(STORE);
@@ -86,7 +86,7 @@ export async function getRoomBySlug(slug: string): Promise<Room | null> {
 
       const room = cursor.value as Room;
 
-      if (room.slug === slug) {
+      if (room.id === id) {
         resolve(room);
       } else {
         cursor.continue();

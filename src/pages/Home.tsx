@@ -31,19 +31,31 @@ export default function Home() {
         </button>
       </div>
 
-      {rooms.length > 0 && (
-        <div className="mt-8 space-y-2 text-sm opacity-80">
-          {rooms.map(room => (
-            <Link
-              key={room.id}
-              to={`/room/${room.slug}`}
-              className="block hover:underline"
-            >
-              {room.name || '🌀 Bezimienny pokój'}
-            </Link>
-          ))}
-        </div>
-      )}
+      <div className="p-4 space-y-4">
+        {rooms.length === 0 ? (
+          <p className="text-muted-foreground">
+            🌱 Jeszcze żaden pokój nie zakwitł.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {rooms.map(room => (
+              <li key={room.id}>
+                <Link
+                  to={`/room/${room.id}`}
+                  className="block p-3 border border-muted rounded-2xl hover:bg-muted transition"
+                >
+                  <div className="text-lg font-medium">
+                    {room.name || '🌀 Bezimienny pokój'}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(room.createdAt).toLocaleString()}
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       {open && <CreateRoomModal onClose={() => setOpen(false)} />}
     </main>

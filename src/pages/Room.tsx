@@ -1,16 +1,16 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getRoomBySlug, type Room as RoomType } from '../db/rooms';
+import { getRoomById, type Room as RoomType } from '../db/rooms';
 
 export default function Room() {
-  const { slug } = useParams<{ slug: string }>();
+  const { id } = useParams<{ id: string }>();
   const [room, setRoom] = useState<RoomType | null>(null);
 
   useEffect(() => {
-    if (slug) {
-      getRoomBySlug(slug).then(setRoom);
+    if (id) {
+      getRoomById(id).then(setRoom);
     }
-  }, [slug]);
+  }, [id]);
 
   if (!room) {
     return <div className="p-6">Nie znaleziono pokoju.</div>;

@@ -23,7 +23,7 @@ export default function CreateRoomModal({ onClose }: Props) {
     const id = crypto.randomUUID();
 
     await createRoom({ id, name, slug });
-    navigate(`/room/${slug}`);
+    navigate(`/room/${id}`);
   }
 
   return (
