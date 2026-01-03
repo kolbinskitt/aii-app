@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { createRoom } from '../db/rooms';
+import { getUserAiiki } from '../db/aiiki';
+import { Aiik } from '../types';
 
 type Props = {
   onClose: () => void;
@@ -8,40 +11,87 @@ type Props = {
 
 export default function CreateRoomModal({ onClose }: Props) {
   const [name, setName] = useState('');
+  const [aiiki, setAiiki] = useState<Aiik[]>([]);
+  const [selectedAiiki, setSelectedAiiki] = useState<Set<string>>(new Set());
+
   const navigate = useNavigate();
 
-  function slugify(text: string) {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, '-')
-      .replace(/[^\w-]/g, '');
-  }
+  useEffect(() => {
+    getUserAiiki().then(setAiiki);
+  }, []);
+
+  const toggleAiik = (id: string) => {
+    setSelectedAiiki(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
 
   async function handleCreate() {
-    const slug = slugify(name);
     const id = crypto.randomUUID();
+    const aiikiIds = Array.from(selectedAiiki);
 
-    await createRoom({ id, name, slug });
+    await createRoom(id, name, aiikiIds);
     navigate(`/room/${id}`);
   }
 
-  return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
-      <div className="bg-neutral-900 p-6 space-y-4 w-80">
+  return ReactDOM.createPortal(
+    <div
+      className="fixed top-0 right-0 bottom-0 left-0 bg-white z-[9999] flex items-center justify-center bg-white"
+      style={{
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'white',
+      }}
+    >
+      <div className="text-black p-6 shadow-2xl rounded-lg overflow-y-auto">
+        <h2 className="text-xl font-bold mb-4">Nowy pokój</h2>
+
         <input
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="Nazwa pokoju"
-          className="w-full bg-neutral-800 p-2 outline-none"
+          className="w-full bg-gray-100 p-2 outline-none mb-4"
         />
-        <div className="flex justify-between">
+
+        <div>
+          <h3 className="text-sm text-gray-600 mb-2">Wybierz aiiki:</h3>
+          <div className="space-y-1">
+            {aiiki.map(aiik => (
+              <label
+                key={aiik.id}
+                className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 px-2 py-1 rounded"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedAiiki.has(aiik.id)}
+                  onChange={() => toggleAiik(aiik.id)}
+                />
+                <div>
+                  <div className="font-semibold">{aiik.name}</div>
+                  <div className="text-xs text-gray-500">
+                    {aiik.description}
+                  </div>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-between pt-4">
           <button onClick={onClose}>Anuluj</button>
-          <button onClick={handleCreate} disabled={!name}>
+          <button
+            onClick={handleCreate}
+            disabled={!name || selectedAiiki.size === 0}
+          >
             Utwórz
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -1,13 +1,23 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from './components/Layout';
-import Home from './pages/Home';
+import Rooms from './pages/Rooms';
 import Room from './pages/Room';
+import Login from './pages/Login';
+import AuthGuard from './components/AuthGuard';
 
 export const router = createBrowserRouter([
   {
-    element: <Layout />,
+    path: '/login',
+    element: <Login />,
+  },
+  {
+    element: (
+      <AuthGuard>
+        <Layout />
+      </AuthGuard>
+    ),
     children: [
-      { path: '/', element: <Home /> },
+      { path: '/', element: <Rooms /> },
       { path: '/room/:id', element: <Room /> },
     ],
   },

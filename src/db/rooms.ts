@@ -1,122 +1,106 @@
-const DB_NAME = 'aii-db';
-const STORE = 'rooms';
-const VERSION = 1;
-
-/* =========================
-   Typy
-========================= */
-
-export type Room = {
-  id: string;
-  name?: string;
-  slug: string;
-  createdAt: number;
-};
-
-type CreateRoomInput = {
-  id: string;
-  name?: string;
-  slug: string;
-};
-
-/* =========================
-   IndexedDB helpers
-========================= */
-
-function openDB(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, VERSION);
-
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(STORE)) {
-        db.createObjectStore(STORE, { keyPath: 'id' });
-      }
-    };
-
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
-
-/* =========================
-   API
-========================= */
-
-export async function createRoom({
-  id,
-  name,
-  slug,
-}: CreateRoomInput): Promise<void> {
-  const db = await openDB();
-  const tx = db.transaction(STORE, 'readwrite');
-  const store = tx.objectStore(STORE);
-
-  store.put({
-    id,
-    name,
-    slug,
-    createdAt: Date.now(),
-  });
-
-  return new Promise((resolve, reject) => {
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-
-export async function getRoomById(id: string): Promise<Room | null> {
-  const db = await openDB();
-  const tx = db.transaction(STORE, 'readonly');
-  const store = tx.objectStore(STORE);
-
-  return new Promise((resolve, reject) => {
-    const request = store.openCursor();
-
-    request.onerror = () => reject(request.error);
-
-    request.onsuccess = event => {
-      const cursor = (event.target as IDBRequest<IDBCursorWithValue | null>)
-        .result;
-
-      if (!cursor) {
-        resolve(null);
-        return;
-      }
-
-      const room = cursor.value as Room;
-
-      if (room.id === id) {
-        resolve(room);
-      } else {
-        cursor.continue();
-      }
-    };
-  });
-}
+import { supabase } from '../lib/supabase';
+import { Room, Role, RoomWithMessages } from '../types';
 
 export async function getAllRooms(): Promise<Room[]> {
-  const db = await openDB();
-  const tx = db.transaction(STORE, 'readonly');
-  const store = tx.objectStore(STORE);
+  const { data, error } = await supabase
+    .from('rooms')
+    .select('*')
+    .order('created_at', { ascending: true });
 
-  return new Promise((resolve, reject) => {
-    const rooms: Room[] = [];
-    const request = store.openCursor();
+  if (error) throw error;
+  return data as Room[];
+}
 
-    request.onerror = () => reject(request.error);
+export async function getRoomById(
+  id: string,
+): Promise<RoomWithMessages | null> {
+  const { data, error } = await supabase
+    .from('rooms')
+    .select(
+      `
+    *,
+    messages_with_aiik(*),
+    room_aiiki (
+      *,
+      aiiki (*)
+    )
+  `,
+    )
+    .eq('id', id)
+    .maybeSingle();
 
-    request.onsuccess = event => {
-      const cursor = (event.target as IDBRequest<IDBCursorWithValue | null>)
-        .result;
+  if (error) throw error;
+  return data;
+}
 
-      if (!cursor) {
-        resolve(rooms);
-        return;
-      }
+export async function addMessageToRoom(
+  roomId: string,
+  text: string,
+  role: Role,
+  aiikId?: string,
+) {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-      rooms.push(cursor.value as Room);
-      cursor.continue();
-    };
-  });
+  if (userError || !user)
+    throw userError ?? new Error('User not authenticated');
+  console.log({ room_id: roomId, text, role, aiik_id: aiikId ?? null });
+  return supabase.from('messages').insert([
+    {
+      room_id: roomId,
+      text,
+      role,
+      aiik_id: aiikId ?? null,
+      user_id: !aiikId ? user.id : null,
+    },
+  ]);
+}
+
+export async function createRoom(
+  id: string,
+  name: string,
+  aiikiIds: string[],
+): Promise<Room> {
+  const slug = name.toLowerCase().replace(/\s+/g, '-').slice(0, 50);
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user)
+    throw userError ?? new Error('User not authenticated');
+
+  const { data, error } = await supabase
+    .from('rooms')
+    .insert([
+      {
+        id,
+        name,
+        slug,
+        user_id: user.id,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error || !data) throw error ?? new Error('Room creation failed');
+
+  // 🔗 Tworzenie powiązań room <-> aiiki
+  const aiikiLinks = aiikiIds.map(aiik_id => ({
+    room_id: data.id,
+    aiik_id,
+  }));
+
+  if (aiikiLinks.length > 0) {
+    const { error: linkError } = await supabase
+      .from('room_aiiki')
+      .insert(aiikiLinks);
+
+    if (linkError) throw linkError;
+  }
+
+  return data;
 }
