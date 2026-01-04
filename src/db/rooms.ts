@@ -112,7 +112,7 @@ export async function addMessageToRoom(
   // 4️⃣ Dodaj nowe streszczenie (max 10 wpisów)
   const newContext = [
     ...context,
-    `${role === 'user' ? 'User' : 'Aiik'}: ${summary}`,
+    `${role === 'user' ? 'User' : `Aiik ${aiikName}`}: ${summary}`,
   ].slice(-10);
 
   // 5️⃣ Zapisz nową wersję meta.context[]
