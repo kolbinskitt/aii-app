@@ -1,22 +1,24 @@
+import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import useUser from '../hooks/useUser';
+import { Aiik } from '../types';
 
-export async function getUserAiiki() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default function useUserAiiki(): Aiik[] {
+  const { user } = useUser();
+  const [aiiki, setAiiki] = useState<Aiik[]>([]);
 
-  if (!user) return [];
+  useEffect(() => {
+    if (!user) return;
 
-  const { data, error } = await supabase
-    .from('aiiki')
-    .select('id, name, description, rezon')
-    .eq('user_id', user.id) // ✅ tylko aiiki danego usera
-    .order('name', { ascending: true });
+    supabase
+      .from('aiiki')
+      .select('*')
+      .eq('user_id', user.id.toString()) // ✅ tylko aiiki danego usera
+      .order('name', { ascending: true })
+      .then(({ data }) => {
+        if (data) setAiiki(data);
+      });
+  }, [user]);
 
-  if (error) {
-    console.error('Error loading aiiki:', error);
-    return [];
-  }
-
-  return data;
+  return aiiki;
 }

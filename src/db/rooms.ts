@@ -37,23 +37,16 @@ export async function addMessageToRoom(
   roomId: string,
   text: string,
   role: Role,
+  userId?: string,
   aiikId?: string,
 ) {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user)
-    throw userError ?? new Error('User not authenticated');
-  console.log({ room_id: roomId, text, role, aiik_id: aiikId ?? null });
   return supabase.from('messages').insert([
     {
       room_id: roomId,
       text,
       role,
       aiik_id: aiikId ?? null,
-      user_id: !aiikId ? user.id : null,
+      user_id: !aiikId ? userId : null,
     },
   ]);
 }
@@ -62,16 +55,9 @@ export async function createRoom(
   id: string,
   name: string,
   aiikiIds: string[],
+  userId: string,
 ): Promise<Room> {
   const slug = name.toLowerCase().replace(/\s+/g, '-').slice(0, 50);
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user)
-    throw userError ?? new Error('User not authenticated');
 
   const { data, error } = await supabase
     .from('rooms')
@@ -80,7 +66,7 @@ export async function createRoom(
         id,
         name,
         slug,
-        user_id: user.id,
+        user_id: userId,
       },
     ])
     .select()

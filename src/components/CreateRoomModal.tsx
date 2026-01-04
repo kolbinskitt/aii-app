@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { createRoom } from '../db/rooms';
-import { getUserAiiki } from '../db/aiiki';
+import useUserAiiki from '../db/aiiki';
 import { Aiik } from '../types';
+import useUser from '../hooks/useUser';
 
 type Props = {
   onClose: () => void;
@@ -13,12 +14,13 @@ export default function CreateRoomModal({ onClose }: Props) {
   const [name, setName] = useState('');
   const [aiiki, setAiiki] = useState<Aiik[]>([]);
   const [selectedAiiki, setSelectedAiiki] = useState<Set<string>>(new Set());
-
+  const userAiiki = useUserAiiki();
   const navigate = useNavigate();
+  const user = useUser();
 
   useEffect(() => {
-    getUserAiiki().then(setAiiki);
-  }, []);
+    setAiiki(userAiiki);
+  }, [userAiiki]);
 
   const toggleAiik = (id: string) => {
     setSelectedAiiki(prev => {
@@ -29,11 +31,12 @@ export default function CreateRoomModal({ onClose }: Props) {
   };
 
   async function handleCreate() {
-    const id = crypto.randomUUID();
-    const aiikiIds = Array.from(selectedAiiki);
-
-    await createRoom(id, name, aiikiIds);
-    navigate(`/room/${id}`);
+    if (user.user) {
+      const id = crypto.randomUUID();
+      const aiikiIds = Array.from(selectedAiiki);
+      await createRoom(id, name, aiikiIds, user.user.id);
+      navigate(`/room/${id}`);
+    }
   }
 
   return ReactDOM.createPortal(

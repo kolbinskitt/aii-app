@@ -1,19 +1,21 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getRoomById, addMessageToRoom } from '../db/rooms';
-import type { RoomWithMessages, Aiik } from '../types'; // dopasuj ścieżkę jeśli trzeba
+import type { RoomWithMessages, Aiik } from '../types';
+import useUser from '../hooks/useUser';
 
 export default function Room() {
   const { id } = useParams<{ id: string }>();
   const [room, setRoom] = useState<RoomWithMessages | null>(null);
   const [message, setMessage] = useState('');
   const [aiikThinking, setAiikThinking] = useState(false);
+  const [thinkingAiiki, setThinkingAiiki] = useState<Record<string, Aiik>>({});
+  const user = useUser();
 
   async function fetchAiikResponse(
     prompt: string,
     aiik: Aiik,
   ): Promise<string | null> {
-    console.log(aiik);
     try {
       const res = await fetch('http://localhost:1234/generate', {
         method: 'POST',
@@ -40,7 +42,7 @@ export default function Room() {
     const userMsg = message.trim();
 
     // 1️⃣ Zapisz wiadomość usera
-    await addMessageToRoom(id, userMsg, 'user');
+    await addMessageToRoom(id, userMsg, 'user', user.user?.id);
 
     // 2️⃣ Odśwież pokój (żeby UI był responsywny)
     const updatedRoom = await getRoomById(id);
@@ -54,16 +56,33 @@ export default function Room() {
       const chosenAiik =
         room.room_aiiki[Math.floor(Math.random() * room.room_aiiki.length)];
 
+      setThinkingAiiki(prev => ({
+        ...prev,
+        [chosenAiik.aiiki.id]: chosenAiik.aiiki,
+      }));
+
       // 3️⃣ Pobierz odpowiedź AI
       const aiikResponse = await fetchAiikResponse(userMsg, chosenAiik.aiiki);
 
       if (aiikResponse) {
         // 5️⃣ Zapisz odpowiedź aiika z aiik_id
-        await addMessageToRoom(id, aiikResponse, 'aiik', chosenAiik.aiiki.id);
+        await addMessageToRoom(
+          id,
+          aiikResponse,
+          'aiik',
+          user.user?.id,
+          chosenAiik.aiiki.id,
+        );
 
         // 6️⃣ Odśwież pokój po odpowiedzi aiika
         const refreshedRoom = await getRoomById(id);
         setRoom(refreshedRoom as RoomWithMessages);
+
+        setThinkingAiiki(prev => {
+          const updated = { ...prev };
+          delete updated[chosenAiik.aiiki.id];
+          return updated;
+        });
       }
     }
 
@@ -81,8 +100,6 @@ export default function Room() {
   if (!room) {
     return <div className="p-6">Nie znaleziono pokoju.</div>;
   }
-
-  console.log({ room });
 
   return (
     <div className="p-6 space-y-6" style={{ width: 800 }}>
@@ -103,12 +120,23 @@ export default function Room() {
           room.messages_with_aiik.map(msg => (
             <div
               key={msg.id}
-              className={`text-sm border border-neutral-800 pb-1 ${
+              className={`text-sm ${
                 msg.role === 'aiik'
                   ? 'text-rose-500'
                   : 'text-sky-400 text-right'
               }`}
-              style={{ margin: 4, padding: 8 }}
+              style={
+                msg.role === 'aiik'
+                  ? {
+                      margin: 4,
+                      padding: 8,
+                      backgroundColor: '#DDD',
+                      borderRadius: 8,
+                    }
+                  : {
+                      margin: 4,
+                    }
+              }
             >
               {msg.aiik_name ? `${msg.aiik_name}:` : ''} {msg.text}
             </div>
@@ -116,11 +144,13 @@ export default function Room() {
         ) : (
           <div className="text-sm text-muted-foreground">Brak wiadomości.</div>
         )}
-        {aiikThinking && (
-          <div className="text-sm text-neutral-500">Aiik pisze...</div>
-        )}
+        {aiikThinking &&
+          Object.values(thinkingAiiki).map(aiik => (
+            <div key={aiik.id} className="text-sm text-neutral-500">
+              {aiik.name} pisze...
+            </div>
+          ))}
       </div>
-
       <div className="flex gap-2">
         <input
           type="text"

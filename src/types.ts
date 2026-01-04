@@ -30,3 +30,15 @@ export type RoomWithMessages = Room & {
   }[];
   messages_with_aiik: Message[];
 };
+
+export type User = {
+  id: string;
+  auth_id: string;
+  email: string | null;
+  display_name: string | null;
+  profile_pic_url: string | null;
+  created_at: string;
+  bio?: string | null;
+  seed_phrase?: string | null;
+  uuic?: string | null;
+};
