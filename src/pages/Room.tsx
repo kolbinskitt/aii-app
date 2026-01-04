@@ -73,6 +73,7 @@ export default function Room() {
           'aiik',
           user.user?.id,
           chosenAiik.aiiki.id,
+          chosenAiik.aiiki.name,
         );
 
         // 6️⃣ Odśwież pokój po odpowiedzi aiika
@@ -89,14 +90,6 @@ export default function Room() {
 
     setAiikThinking(false);
   }
-
-  // useEffect(() => {
-  //   if (id) {
-  //     getRoomById(id).then(data => {
-  //       setRoom(data as RoomWithMessages);
-  //     });
-  //   }
-  // }, [id]);
 
   useEffect(() => {
     if (!id) return;

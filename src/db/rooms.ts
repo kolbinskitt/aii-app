@@ -18,29 +18,42 @@ export async function getRoomById(
     .from('rooms')
     .select(
       `
-    *,
-    messages_with_aiik(*),
-    room_aiiki (
       *,
-      aiiki (*)
-    )
-  `,
+      messages_with_aiik(
+        *
+      ),
+      room_aiiki (
+        *,
+        aiiki (*)
+      )
+    `,
     )
     .eq('id', id)
     .maybeSingle();
 
   if (error) throw error;
+
+  // 🧼 Ręczne sortowanie messages (jeśli Supabase nie wspiera zagnieżdżonego order)
+  if (data?.messages_with_aiik) {
+    data.messages_with_aiik.sort(
+      (a: any, b: any) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+    );
+  }
+
   return data;
 }
 
 export async function addMessageToRoom(
   roomId: string,
   text: string,
-  role: Role,
+  role: 'user' | 'aiik',
   userId?: string,
   aiikId?: string,
+  aiikName?: string,
 ) {
-  return supabase.from('messages').insert([
+  // 1️⃣ Zapisz wiadomość
+  const { error } = await supabase.from('messages').insert([
     {
       room_id: roomId,
       text,
@@ -49,6 +62,70 @@ export async function addMessageToRoom(
       user_id: !aiikId ? userId : null,
     },
   ]);
+
+  if (error) {
+    console.error('❌ Error adding message to room:', error);
+    return;
+  }
+
+  // 2️⃣ Przygotuj prompt do GPT
+  const systemPrompt =
+    role === 'user'
+      ? 'Stwórz bardzo krótkie streszczenie tego, co powiedział użytkownik. Nie cytuj. Nie oceniaj.'
+      : 'Stwórz bardzo krótkie streszczenie tego, co powiedział aiik. Nie cytuj. Nie oceniaj.';
+
+  const response = await fetch('http://localhost:1234/gpt-proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'gpt-4',
+      temperature: 0.5,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: text },
+      ],
+    }),
+  });
+
+  const { content: summary } = await response.json();
+
+  if (!summary) {
+    console.warn('⚠️ GPT summary failed or was empty.');
+    return;
+  }
+
+  // 3️⃣ Pobierz meta.context[] pokoju
+  const { data: roomData, error: metaError } = await supabase
+    .from('rooms')
+    .select('meta')
+    .eq('id', roomId)
+    .single();
+
+  if (metaError || !roomData) {
+    console.error('❌ Error fetching room meta:', metaError);
+    return;
+  }
+
+  const oldMeta = roomData.meta || {};
+  const context: string[] = oldMeta.context || [];
+
+  // 4️⃣ Dodaj nowe streszczenie (max 10 wpisów)
+  const newContext = [
+    ...context,
+    `${role === 'user' ? 'User' : 'Aiik'}: ${summary}`,
+  ].slice(-10);
+
+  // 5️⃣ Zapisz nową wersję meta.context[]
+  const { error: updateError } = await supabase
+    .from('rooms')
+    .update({ meta: { ...oldMeta, context: newContext } })
+    .eq('id', roomId);
+
+  if (updateError) {
+    console.error('❌ Error updating room meta.context:', updateError);
+  } else {
+    console.log('🧠 Updated room.context[]:', summary);
+  }
 }
 
 export async function createRoom(
