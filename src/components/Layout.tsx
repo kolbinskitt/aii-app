@@ -1,10 +1,38 @@
+import { useQuery } from '@tanstack/react-query';
 import { Outlet } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 import { useUser } from '../context/UserContext';
 import { UserMenu } from './UserMenu';
 import App from './App';
+import { Humzon } from '../types';
+import WelcomeModal from '../components/WelcomeModal';
+import { useEffect, useState } from 'react';
+import useUserUser from '../hooks/useUser';
 
 export default function Layout() {
   const user = useUser();
+  const userUser = useUserUser();
+  const [welcomeModalOpened, setWelcomeModalOpened] = useState(false);
+
+  const { data } = useQuery<Humzon[], Error>({
+    queryKey: ['humzon', userUser.user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('user_humzon')
+        .select('*')
+        .eq('user_id', userUser.user?.id);
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!userUser.user?.id, // uruchamiaj tylko jeśli user.id istnieje
+  });
+
+  useEffect(() => {
+    if (data?.length === 0) {
+      setWelcomeModalOpened(true);
+    }
+  }, [data]);
 
   return (
     <App>
@@ -13,6 +41,12 @@ export default function Layout() {
       </header>
       <main className="p-4">
         <Outlet />
+
+        <WelcomeModal
+          isOpen={welcomeModalOpened}
+          onClose={() => setWelcomeModalOpened(false)}
+          onComplete={() => setWelcomeModalOpened(false)}
+        />
       </main>
     </App>
   );

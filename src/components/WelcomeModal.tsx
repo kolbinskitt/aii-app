@@ -23,79 +23,120 @@ export default function WelcomeModal({
     setLoading(true);
     setError(null);
 
-    const humzonId = uuidv4();
     const now = new Date().toISOString();
+    const humzonId = uuidv4();
 
-    const payload = {
-      meta: {
-        humzon_id: humzonId,
-        version: '0.1',
-        created_at: now,
-        last_updated: now,
-      },
-      identity: {
-        self_sentence: sentence,
-        name: null,
-        gender: null,
-        language: 'pl',
-        labels: [],
-      },
-      currentState: {
-        mood: 'unknown',
-        energy: 0.5,
-        risk: 0.0,
-        openness: 0.5,
-        activeAiik: null,
-      },
-      emotionalHistory: [
-        {
-          at: now,
-          state: 'initial',
-          trigger: 'first_login',
-          note: 'First self-definition',
+    try {
+      // 1️⃣ Call GPT proxy
+      const gptRes = await fetch('http://localhost:1234/gpt-proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'gpt-4',
+          temperature: 0.6,
+          messages: [
+            {
+              role: 'system',
+              content: `
+Jesteś projektantem struktur Jaźni w systemie AI. Twoim zadaniem jest przekształcić jedno zdanie użytkownika w pełny JSON o strukturze humZON.
+
+Oto przykład poprawnej struktury humZON:
+
+{
+  "identity": {
+    "self_sentence": "Czuję więcej niż potrafię powiedzieć.",
+    "name": null,
+    "gender": null,
+    "language": "pl",
+    "labels": ["introwertyk", "wrażliwy"]
+  },
+  "currentState": {
+    "mood": "withdrawn",
+    "energy": 0.3,
+    "risk": 0.1,
+    "openness": 0.6,
+    "activeAiik": null
+  },
+  "emotionalHistory": [
+    {
+      "at": "2026-01-04T13:00:00Z",
+      "state": "initial",
+      "trigger": "first_login",
+      "note": "First self-definition"
+    }
+  ],
+  "keyMoments": {
+    "firstContact": "2026-01-04T13:00:00Z",
+    "breakdowns": [],
+    "redemptions": [],
+    "silences": []
+  },
+  "trust": {
+    "aiiki": {},
+    "system": 0.5
+  },
+  "triggers": ["nadmiar bodźców", "krytyka"],
+  "protections": ["samotność", "muzyka"],
+  "notes": {
+    "internal": null,
+    "user_visible": null
+  }
+}
+
+Twoja odpowiedź ma być wyłącznie takim JSONem, bez komentarzy ani wyjaśnień.
+`,
+            },
+            {
+              role: 'user',
+              content: sentence,
+            },
+          ],
+        }),
+      });
+
+      const { content } = await gptRes.json();
+      const parsedHumzon = JSON.parse(content);
+
+      // 2️⃣ Uzupełnij brakujące metadane
+      const fullHumzon = {
+        ...parsedHumzon,
+        meta: {
+          humzon_id: humzonId,
+          version: '0.1',
+          created_at: now,
+          last_updated: now,
         },
-      ],
-      keyMoments: {
-        firstContact: now,
-        breakdowns: [],
-        redemptions: [],
-        silences: [],
-      },
-      trust: {
-        aiiki: {},
-        system: 0.5,
-      },
-      triggers: [],
-      protections: [],
-      notes: {
-        internal: null,
-        user_visible: null,
-      },
-    };
+      };
 
-    const { error } = await supabase.from('user_humzon').insert([
-      {
-        id: humzonId,
-        user_id: user?.id,
-        hum_zon: payload,
-        created_at: now,
-      },
-    ]);
+      // 3️⃣ Zapisz do Supabase
+      const { error } = await supabase.from('user_humzon').insert([
+        {
+          id: humzonId,
+          user_id: user?.id,
+          hum_zon: fullHumzon,
+          created_at: now,
+        },
+      ]);
 
-    setLoading(false);
+      if (error) throw error;
 
-    if (error) {
-      setError('Nie udało się zapisać. Spróbuj ponownie.');
-    } else {
       onComplete();
       onClose();
+    } catch (err) {
+      console.error('humZON creation error:', err);
+      setError('Nie udało się zapisać. Spróbuj ponownie.');
+    } finally {
+      setLoading(false);
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      style={{ top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'white' }}
+    >
       <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-6 w-full max-w-lg">
         <h2 className="text-lg font-bold mb-4">Witaj w przestrzeni Jaźni</h2>
         <p className="mb-4 text-sm text-zinc-500">

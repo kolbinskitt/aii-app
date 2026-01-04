@@ -42,3 +42,10 @@ export type User = {
   seed_phrase?: string | null;
   uuic?: string | null;
 };
+
+export type Humzon = {
+  id: string;
+  user_id: string;
+  hum_zon: any;
+  created_at: string;
+};
