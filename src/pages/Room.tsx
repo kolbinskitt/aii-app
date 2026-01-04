@@ -26,6 +26,7 @@ export default function Room() {
           name: aiik.name,
           description: aiik.description,
           persona: aiik.rezon,
+          user_id: user.user?.id,
         }),
       });
       const data = await res.json();
@@ -89,12 +90,24 @@ export default function Room() {
     setAiikThinking(false);
   }
 
+  // useEffect(() => {
+  //   if (id) {
+  //     getRoomById(id).then(data => {
+  //       setRoom(data as RoomWithMessages);
+  //     });
+  //   }
+  // }, [id]);
+
   useEffect(() => {
-    if (id) {
+    if (!id) return;
+
+    const interval = setInterval(() => {
       getRoomById(id).then(data => {
         setRoom(data as RoomWithMessages);
       });
-    }
+    }, 3000); // co 3 sekundy (można zwiększyć)
+
+    return () => clearInterval(interval);
   }, [id]);
 
   if (!room) {
