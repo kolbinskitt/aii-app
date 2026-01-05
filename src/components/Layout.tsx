@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 import { useUser } from '../context/UserContext';
 import { UserMenu } from './UserMenu';
 import App from './App';
-import { Humzon } from '../types';
+import { UserHumzon } from '../types';
 import WelcomeModal from '../components/WelcomeModal';
 import { useEffect, useState } from 'react';
 import useUserUser from '../hooks/useUser';
@@ -14,7 +14,7 @@ export default function Layout() {
   const userUser = useUserUser();
   const [welcomeModalOpened, setWelcomeModalOpened] = useState(false);
 
-  const { data } = useQuery<Humzon[], Error>({
+  const { data } = useQuery<UserHumzon[], Error>({
     queryKey: ['humzon', userUser.user?.id],
     queryFn: async () => {
       const { data, error } = await supabase

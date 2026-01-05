@@ -116,7 +116,7 @@ Twoja odpowiedź ma być wyłącznie takim JSONem, bez komentarzy ani wyjaśnie�
         {
           id: humzonId,
           user_id: user?.id,
-          hum_zon: fullHumzon,
+          humzon: fullHumzon,
           created_at: now,
         },
       ]);

@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
-import { Room, Role, RoomWithMessages } from '../types';
+import { Room, RoomWithMessages, HumZON } from '../types';
+import { generateRelatizon } from '../utils/generateRelatizon';
 
 export async function getAllRooms(): Promise<Room[]> {
   const { data, error } = await supabase
@@ -153,11 +154,41 @@ export async function createRoom(
 
   if (error || !data) throw error ?? new Error('Room creation failed');
 
-  // 🔗 Tworzenie powiązań room <-> aiiki
-  const aiikiLinks = aiikiIds.map(aiik_id => ({
-    room_id: data.id,
-    aiik_id,
-  }));
+  // 🧠 Pobierz ostatni humZON usera
+  const { data: humzonData } = await supabase
+    .from('user_humzon')
+    .select('humzon')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  const humZON: HumZON = humzonData?.humzon || {};
+
+  // 🔁 Przetwórz każde aiikiId do linku z relatizon
+  const aiikiLinks = [];
+
+  for (const aiik_id of aiikiIds) {
+    const { data: aiikData, error: aiikError } = await supabase
+      .from('aiiki')
+      .select('id, name, rezon, description')
+      .eq('id', aiik_id)
+      .single();
+
+    if (aiikError || !aiikData) {
+      console.warn(`⚠️ Failed to fetch aiik ${aiik_id}, skipping.`);
+      continue;
+    }
+
+    // Nie mamy jeszcze żadnego past context – to pierwszy pokój
+    const relatizon = generateRelatizon(aiikData, humZON, []);
+
+    aiikiLinks.push({
+      room_id: data.id,
+      aiik_id,
+      relatizon,
+    });
+  }
 
   if (aiikiLinks.length > 0) {
     const { error: linkError } = await supabase
