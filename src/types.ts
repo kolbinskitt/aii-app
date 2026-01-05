@@ -47,7 +47,9 @@ export type Aiik = {
 export type RoomAiikiRelatizon = {
   id: string;
   room_aiiki_id: string;
+  aiik_id: string;
   relatizon: RelatiZON;
+  created_at: number;
 };
 
 export type RoomWithMessages = Room & {

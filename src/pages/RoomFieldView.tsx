@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getRoomById } from '../db/rooms';
 import { RoomWithMessages } from '../types';
+import RelatizonChart from '../components/RelatizonChart';
 
 export default function RoomFieldView() {
   const { id } = useParams<{ id: string }>();
@@ -14,10 +15,21 @@ export default function RoomFieldView() {
 
   if (!room) return <div className="p-6">Wczytywanie pola pokoju...</div>;
 
+  const allRelatizons = room.room_aiiki.flatMap(rai =>
+    rai.room_aiiki_relatizon.map(rel => ({
+      ...rel,
+      aiik_id: rai.aiiki.id,
+    })),
+  );
+
+  const aiikiMap = Object.fromEntries(
+    room.room_aiiki.map(rai => [rai.aiiki.id, rai.aiiki.name]),
+  );
+
   return (
     <div className="p-8 space-y-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-light">🌐 Pole pokoju: {room.name}</h1>
-
+      <RelatizonChart data={allRelatizons} aiikiMap={aiikiMap} />
       <div className="grid grid-cols-1 gap-4">
         {room.room_aiiki.map((rai, i) => {
           const relatizon = rai?.room_aiiki_relatizon?.[0]?.relatizon;
