@@ -140,7 +140,7 @@ export async function addMessageToRoom(
     }),
   });
   const { relatizon: baseRelatizon } = await res.json();
-
+  console.log(1, { baseRelatizon });
   // 6️⃣ Aktualizacja per-aiik
   for (const aiik of aiiki) {
     const { data: link } = await supabase
@@ -242,6 +242,7 @@ export async function createRoom(
     }),
   });
   const { relatizon: baseRelatizon } = await res.json();
+  console.log(2, { baseRelatizon });
 
   for (const aiik of aiiki || []) {
     const { data: link } = await supabase
@@ -250,7 +251,7 @@ export async function createRoom(
       .select()
       .single();
 
-    const { data: relatizonRow } = await supabase
+    await supabase
       .from('room_aiiki_relatizon')
       .insert([
         {
@@ -267,11 +268,6 @@ export async function createRoom(
       ])
       .select()
       .single();
-
-    await supabase
-      .from('room_aiiki')
-      .update({ latest_relatizon_id: relatizonRow.id })
-      .eq('id', link.id);
   }
 
   return roomData;
