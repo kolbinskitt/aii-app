@@ -4,6 +4,7 @@ import { getRoomById, addMessageToRoom } from '../db/rooms';
 import type { RoomWithMessages, Aiik } from '../types';
 import useUser from '../hooks/useUser';
 import { useAccessToken } from '../hooks/useAccessToken';
+import { supabase } from '../lib/supabase';
 
 export default function Room() {
   const { id } = useParams<{ id: string }>();
@@ -128,13 +129,35 @@ Osobowość Aiika: ${aiik.rezon}
   useEffect(() => {
     if (!id) return;
 
-    const interval = setInterval(() => {
-      getRoomById(id).then(data => {
-        setRoom(data as RoomWithMessages);
-      });
-    }, 3000); // co 3 sekundy (można zwiększyć)
+    // 1️⃣ Fetch initial room
+    getRoomById(id).then(data => {
+      setRoom(data as RoomWithMessages);
+    });
 
-    return () => clearInterval(interval);
+    // 2️⃣ Subskrybuj wiadomości
+    const channel = supabase
+      .channel(`room-${id}-messages`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `room_id=eq.${id}`,
+        },
+        async payload => {
+          console.log('📡 Realtime message update:', payload);
+
+          // Fetch nowy room (zaktualizowany stan)
+          const updated = await getRoomById(id);
+          setRoom(updated as RoomWithMessages);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [id]);
 
   if (!room) {
