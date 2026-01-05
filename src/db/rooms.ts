@@ -95,6 +95,7 @@ export async function addMessageToRoom(
   });
 
   const { content: summary } = await response.json();
+
   if (!summary || !userId) return;
 
   // 3️⃣ Pobierz wszystkie aiiki w pokoju
@@ -139,36 +140,6 @@ export async function addMessageToRoom(
     }),
   });
   const { relatizon: baseRelatizon } = await res.json();
-
-  // 6️⃣ Aktualizacja per-aiik
-  for (const aiik of aiiki) {
-    const { data: link } = await supabase
-      .from('room_aiiki')
-      .select('id')
-      .eq('room_id', roomId)
-      .eq('aiik_id', aiik.id)
-      .single();
-
-    if (!link) continue;
-
-    const { data: relatizonRow } = await supabase
-      .from('room_aiiki_relatizon')
-      .insert([
-        {
-          room_aiiki_id: link.id,
-          relatizon: baseRelatizon,
-        },
-      ])
-      .select()
-      .single();
-
-    if (relatizonRow) {
-      await supabase
-        .from('room_aiiki')
-        .update({ latest_relatizon_id: relatizonRow.id })
-        .eq('id', link.id);
-    }
-  }
 
   // 7️⃣ meta.context
   const { data: roomData } = await supabase
