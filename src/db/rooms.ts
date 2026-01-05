@@ -122,6 +122,15 @@ export async function addMessageToRoom(
 
   const humZON: HumZON = humzonData?.humzon || {};
 
+  // pobierz kontekst z pokoju
+  const { data: roomMetaData } = await supabase
+    .from('rooms')
+    .select('meta')
+    .eq('id', roomId)
+    .single();
+
+  const pastContexts: string[] = roomMetaData?.meta?.context ?? [];
+
   const res = await fetch('http://localhost:1234/generate-relatizon', {
     method: 'POST',
     headers: {
@@ -131,7 +140,7 @@ export async function addMessageToRoom(
     body: JSON.stringify({
       aiiki,
       humzon: humZON,
-      pastContexts: [],
+      pastContexts,
       message_event: {
         from: role,
         summary,
@@ -140,7 +149,7 @@ export async function addMessageToRoom(
     }),
   });
   const { relatizon: baseRelatizon } = await res.json();
-  console.log(1, { baseRelatizon });
+
   // 6️⃣ Aktualizacja per-aiik
   for (const aiik of aiiki) {
     const { data: link } = await supabase
@@ -233,7 +242,7 @@ export async function createRoom(
     body: JSON.stringify({
       aiiki: aiiki || [],
       humzon: humZON,
-      pastContexts: [],
+      pastContexts: [`Utworzono pokój: ${roomData.name}`],
       message_event: {
         from: 'user',
         summary: 'Room created',
@@ -242,7 +251,6 @@ export async function createRoom(
     }),
   });
   const { relatizon: baseRelatizon } = await res.json();
-  console.log(2, { baseRelatizon });
 
   for (const aiik of aiiki || []) {
     const { data: link } = await supabase
