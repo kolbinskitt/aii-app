@@ -37,8 +37,6 @@ export default function WelcomeModal({
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          model: 'gpt-4',
-          temperature: 0.6,
           messages: [
             {
               role: 'system',

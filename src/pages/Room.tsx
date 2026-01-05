@@ -47,8 +47,6 @@ Osobowość Aiika: ${aiik.rezon}
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          model: 'gpt-4', // możesz też dać dynamicznie
-          temperature: 0.7,
           messages: [systemMessage, userMessage],
           log: true, // można potem wykorzystać
           user_id: user?.user?.id, // jeśli potrzebne do logowania
