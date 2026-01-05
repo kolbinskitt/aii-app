@@ -26,7 +26,8 @@ export async function getRoomById(
       messages_with_aiik(*),
       room_aiiki(
         *,
-        aiiki(*)
+        aiiki(*),
+        room_aiiki_relatizon(*)
       )
     `,
     )

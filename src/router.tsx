@@ -4,6 +4,7 @@ import Rooms from './pages/Rooms';
 import Room from './pages/Room';
 import Login from './pages/Login';
 import AuthGuard from './components/AuthGuard';
+import RoomFieldView from './pages/RoomFieldView';
 
 export const router = createBrowserRouter([
   {
@@ -17,8 +18,9 @@ export const router = createBrowserRouter([
       </AuthGuard>
     ),
     children: [
-      { path: '/', element: <Rooms /> },
+      { path: '/room/:id/field', element: <RoomFieldView /> },
       { path: '/room/:id', element: <Room /> },
+      { path: '/', element: <Rooms /> },
     ],
   },
 ]);
