@@ -50,7 +50,7 @@ export default function RelatizonChart({ data, aiikiMap, userId }: Props) {
   const [activeAiikId, setActiveAiikId] = useState<string>(aiikMeta[0]?.id);
 
   const filteredData = data
-    .filter(r => r.aiik_id === activeAiikId)
+    .filter(r => (r.user_id || r.aiik_id) === activeAiikId)
     .map(r => ({
       name: new Date(r.created_at).toLocaleTimeString(),
       bond_depth: r.relatizon.bond_depth,
@@ -58,12 +58,16 @@ export default function RelatizonChart({ data, aiikiMap, userId }: Props) {
       silence_tension: r.relatizon.silence_tension.level,
       silence_tension_state: r.relatizon.silence_tension.state,
       aiik_id: r.aiik_id,
+      user_id: r.user_id,
     }));
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
     const point = payload[0].payload;
-    const aiikiName = aiikiMap[point.aiik_id] ?? 'Nieznany';
+    const aiikiName = point.user_id
+      ? 'Ty'
+      : aiikiMap[point.aiik_id] ?? 'Nieznany';
+
     const tensionDesc = {
       soft: 'łagodna cisza',
       neutral: 'neutralna cisza',
