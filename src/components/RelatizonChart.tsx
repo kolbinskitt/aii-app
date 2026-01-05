@@ -7,8 +7,9 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts';
-import { useState } from 'react';
 import { RoomAiikiRelatizon } from '../types';
+import { useState } from 'react';
+import clsx from 'clsx';
 
 type Props = {
   data: RoomAiikiRelatizon[];
@@ -16,17 +17,16 @@ type Props = {
 };
 
 export default function RelatizonChart({ data, aiikiMap }: Props) {
-  const [selectedAiikId, setSelectedAiikId] = useState<string | null>(null);
+  const uniqueAiikiIds = Array.from(new Set(data.map(r => r.aiik_id)));
+  const [activeAiikId, setActiveAiikId] = useState<string>(uniqueAiikiIds[0]);
 
-  const uniqueAiikIds = [...new Set(data.map(d => d.aiik_id))];
+  const tabs = uniqueAiikiIds.map(aiikId => ({
+    id: aiikId,
+    label: aiikiMap[aiikId] === 'Ty' ? 'Ty' : aiikiMap[aiikId] || 'Nieznany',
+  }));
 
-  // Ustaw domyślnie pierwszego aiika
-  if (!selectedAiikId && uniqueAiikIds.length > 0) {
-    setSelectedAiikId(uniqueAiikIds[0]);
-  }
-
-  const chartData = data
-    .filter(r => r.aiik_id === selectedAiikId)
+  const filteredData = data
+    .filter(r => r.aiik_id === activeAiikId)
     .map(r => ({
       name: new Date(r.created_at).toLocaleTimeString(),
       bond_depth: r.relatizon.bond_depth,
@@ -38,7 +38,6 @@ export default function RelatizonChart({ data, aiikiMap }: Props) {
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
-
     const point = payload[0].payload;
     const aiikiName = aiikiMap[point.aiik_id] ?? 'Nieznany AIik';
     const tensionDesc = {
@@ -76,30 +75,29 @@ export default function RelatizonChart({ data, aiikiMap }: Props) {
 
   return (
     <div className="w-full mt-6 space-y-4">
-      {/* Zakładki */}
-      <div className="flex space-x-2 justify-center">
-        {uniqueAiikIds.map(aiikId => (
+      <div className="flex space-x-2 border-b border-neutral-700 pb-2">
+        {tabs.map(tab => (
           <button
-            key={aiikId}
-            className={`px-3 py-1 rounded-full text-sm transition-colors ${
-              aiikId === selectedAiikId
-                ? 'bg-white text-black'
-                : 'bg-gray-700 text-white'
-            }`}
-            onClick={() => setSelectedAiikId(aiikId)}
+            key={tab.id}
+            onClick={() => setActiveAiikId(tab.id)}
+            className={clsx(
+              'px-3 py-1 rounded-full text-sm',
+              activeAiikId === tab.id
+                ? 'bg-white text-black font-bold'
+                : 'text-gray-400 hover:text-white',
+            )}
           >
-            {aiikiMap[aiikId] ?? 'Nieznany AIik'}
+            {tab.label}
           </button>
         ))}
       </div>
 
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={chartData}>
+        <LineChart data={filteredData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis domain={[0, 1]} />
           <Tooltip content={<CustomTooltip />} />
-
           <Line
             type="monotone"
             dataKey="bond_depth"

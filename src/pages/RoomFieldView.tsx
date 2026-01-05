@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getRoomById } from '../db/rooms';
 import { RoomWithMessages } from '../types';
 import RelatizonChart from '../components/RelatizonChart';
+import useUser from '../hooks/useUser';
 
 export default function RoomFieldView() {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +26,10 @@ export default function RoomFieldView() {
   const aiikiMap = Object.fromEntries(
     room.room_aiiki.map(rai => [rai.aiiki.id, rai.aiiki.name]),
   );
+
+  const { user } = useUser();
+  const selfAiik = room.room_aiiki.find(rai => rai.aiiki.user_id === user?.id);
+  const selfAiikId = selfAiik?.aiiki.id;
 
   return (
     <div className="p-8 space-y-6 max-w-4xl mx-auto">
