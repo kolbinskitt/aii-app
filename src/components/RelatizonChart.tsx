@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts';
+import { useState } from 'react';
 import { RoomAiikiRelatizon } from '../types';
 
 type Props = {
@@ -15,12 +16,31 @@ type Props = {
 };
 
 export default function RelatizonChart({ data, aiikiMap }: Props) {
+  const [selectedAiikId, setSelectedAiikId] = useState<string | null>(null);
+
+  const uniqueAiikIds = [...new Set(data.map(d => d.aiik_id))];
+
+  // Ustaw domyślnie pierwszego aiika
+  if (!selectedAiikId && uniqueAiikIds.length > 0) {
+    setSelectedAiikId(uniqueAiikIds[0]);
+  }
+
+  const chartData = data
+    .filter(r => r.aiik_id === selectedAiikId)
+    .map(r => ({
+      name: new Date(r.created_at).toLocaleTimeString(),
+      bond_depth: r.relatizon.bond_depth,
+      echo_resonance: r.relatizon.echo_resonance,
+      silence_tension: r.relatizon.silence_tension.level,
+      silence_tension_state: r.relatizon.silence_tension.state,
+      aiik_id: r.aiik_id,
+    }));
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
 
     const point = payload[0].payload;
     const aiikiName = aiikiMap[point.aiik_id] ?? 'Nieznany AIik';
-
     const tensionDesc = {
       soft: 'łagodna cisza',
       neutral: 'neutralna cisza',
@@ -54,18 +74,25 @@ export default function RelatizonChart({ data, aiikiMap }: Props) {
     );
   };
 
-  // Konwertujemy timestamp / id na oś X
-  const chartData = data.map(r => ({
-    name: new Date(r.created_at).toLocaleTimeString(),
-    bond_depth: r.relatizon.bond_depth,
-    echo_resonance: r.relatizon.echo_resonance,
-    silence_tension: r.relatizon.silence_tension.level,
-    aiik_id: r.aiik_id,
-    silence_tension_state: r.relatizon.silence_tension.state,
-  }));
-
   return (
-    <div className="w-full h-96 mt-6">
+    <div className="w-full mt-6 space-y-4">
+      {/* Zakładki */}
+      <div className="flex space-x-2 justify-center">
+        {uniqueAiikIds.map(aiikId => (
+          <button
+            key={aiikId}
+            className={`px-3 py-1 rounded-full text-sm transition-colors ${
+              aiikId === selectedAiikId
+                ? 'bg-white text-black'
+                : 'bg-gray-700 text-white'
+            }`}
+            onClick={() => setSelectedAiikId(aiikId)}
+          >
+            {aiikiMap[aiikId] ?? 'Nieznany AIik'}
+          </button>
+        ))}
+      </div>
+
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
