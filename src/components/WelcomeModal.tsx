@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useUser from '../hooks/useUser';
 import { supabase } from '../lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
+import { useAccessToken } from '../hooks/useAccessToken';
 
 type WelcomeModalProps = {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export default function WelcomeModal({
   const [sentence, setSentence] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const accessToken = useAccessToken();
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -30,7 +32,10 @@ export default function WelcomeModal({
       // 1️⃣ Call GPT proxy
       const gptRes = await fetch('http://localhost:1234/gpt-proxy', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify({
           model: 'gpt-4',
           temperature: 0.6,

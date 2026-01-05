@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getRoomById, addMessageToRoom } from '../db/rooms';
 import type { RoomWithMessages, Aiik } from '../types';
 import useUser from '../hooks/useUser';
+import { useAccessToken } from '../hooks/useAccessToken';
 
 export default function Room() {
   const { id } = useParams<{ id: string }>();
@@ -11,6 +12,7 @@ export default function Room() {
   const [aiikThinking, setAiikThinking] = useState(false);
   const [thinkingAiiki, setThinkingAiiki] = useState<Record<string, Aiik>>({});
   const user = useUser();
+  const accessToken = useAccessToken();
 
   async function fetchAiikResponse(
     prompt: string,
@@ -40,7 +42,10 @@ Osobowość Aiika: ${aiik.rezon}
 
       const res = await fetch('http://localhost:1234/gpt-proxy', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify({
           model: 'gpt-4', // możesz też dać dynamicznie
           temperature: 0.7,
@@ -65,7 +70,7 @@ Osobowość Aiika: ${aiik.rezon}
     const userMsg = message.trim();
 
     // 1️⃣ Zapisz wiadomość usera
-    await addMessageToRoom(id, userMsg, 'user', user.user?.id);
+    await addMessageToRoom(accessToken!, id, userMsg, 'user', user.user?.id);
 
     // 2️⃣ Odśwież pokój (żeby UI był responsywny)
     const updatedRoom = await getRoomById(id);
@@ -90,6 +95,7 @@ Osobowość Aiika: ${aiik.rezon}
       if (aiikResponse) {
         // 5️⃣ Zapisz odpowiedź aiika z aiik_id
         await addMessageToRoom(
+          accessToken!,
           id,
           aiikResponse,
           'aiik',

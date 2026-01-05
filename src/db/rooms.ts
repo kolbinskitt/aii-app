@@ -45,6 +45,7 @@ export async function getRoomById(
 }
 
 export async function addMessageToRoom(
+  accessToken: string,
   roomId: string,
   text: string,
   role: 'user' | 'aiik',
@@ -76,7 +77,10 @@ export async function addMessageToRoom(
 
   const response = await fetch('http://localhost:1234/gpt-proxy', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
     body: JSON.stringify({
       model: 'gpt-4',
       temperature: 0.5,
