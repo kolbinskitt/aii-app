@@ -48,6 +48,7 @@ export type RoomAiikiRelatizon = {
   id: string;
   room_aiiki_id: string;
   aiik_id: string;
+  user_id: string;
   relatizon: RelatiZON;
   created_at: number;
 };

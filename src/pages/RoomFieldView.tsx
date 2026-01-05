@@ -8,6 +8,7 @@ import useUser from '../hooks/useUser';
 export default function RoomFieldView() {
   const { id } = useParams<{ id: string }>();
   const [room, setRoom] = useState<RoomWithMessages | null>(null);
+  const { user } = useUser();
 
   useEffect(() => {
     if (!id) return;
@@ -27,14 +28,14 @@ export default function RoomFieldView() {
     room.room_aiiki.map(rai => [rai.aiiki.id, rai.aiiki.name]),
   );
 
-  const { user } = useUser();
-  const selfAiik = room.room_aiiki.find(rai => rai.aiiki.user_id === user?.id);
-  const selfAiikId = selfAiik?.aiiki.id;
-
   return (
     <div className="p-8 space-y-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-light">🌐 Pole pokoju: {room.name}</h1>
-      <RelatizonChart data={allRelatizons} aiikiMap={aiikiMap} />
+      <RelatizonChart
+        data={allRelatizons}
+        aiikiMap={aiikiMap}
+        userId={user?.id}
+      />
       <div className="grid grid-cols-1 gap-4">
         {room.room_aiiki.map((rai, i) => {
           const relatizon = rai?.room_aiiki_relatizon?.[0]?.relatizon;

@@ -168,6 +168,7 @@ export async function addMessageToRoom(
         {
           room_aiiki_id: link.id,
           relatizon: baseRelatizon,
+          user_id: role === 'user' ? userId : null,
         },
       ])
       .select()
@@ -265,6 +266,7 @@ export async function createRoom(
       .insert([
         {
           room_aiiki_id: link.id,
+          user_id: userId,
           relatizon: {
             ...baseRelatizon,
             message_event: {
