@@ -60,7 +60,7 @@ export async function addMessageToRoom(
       text,
       role,
       aiik_id: aiikId ?? null,
-      user_id: !aiikId ? userId : null,
+      user_id: userId,
     },
   ]);
 
