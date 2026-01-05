@@ -15,24 +15,46 @@ export default function Room() {
   async function fetchAiikResponse(
     prompt: string,
     aiik: Aiik,
+    humZON?: any, // jeśli masz, można później rozwinąć
   ): Promise<string | null> {
     try {
-      const res = await fetch('http://localhost:1234/generate', {
+      // 🧠 buduj systemowy prompt
+      const systemMessage = {
+        role: 'system' as const,
+        content: `
+[Uwaga: Aiik to rezonansowa postać wspierająca użytkownika. Ma unikalną osobowość i styl odpowiadania.]
+
+Aiik: ${aiik.name}
+Opis Aiika: ${aiik.description}
+Osobowość Aiika: ${aiik.rezon}
+
+[Wiadomość od użytkownika]
+      `.trim(),
+      };
+
+      // 🧠 prompt usera jako wiadomość
+      const userMessage = {
+        role: 'user' as const,
+        content: prompt,
+      };
+
+      const res = await fetch('http://localhost:1234/gpt-proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          prompt,
-          stream: false,
-          name: aiik.name,
-          description: aiik.description,
-          persona: aiik.rezon,
-          user_id: user.user?.id,
+          model: 'gpt-4', // możesz też dać dynamicznie
+          temperature: 0.7,
+          messages: [systemMessage, userMessage],
+          log: true, // można potem wykorzystać
+          user_id: user?.user?.id, // jeśli potrzebne do logowania
+          purpose: 'aiikMessage', // można potem rozwinąć w backendzie
         }),
       });
+
       const data = await res.json();
-      return data.response ?? null;
+      return data.content ?? null;
     } catch (err) {
-      console.error('Błąd AI:', err);
+      console.error('❌ Błąd AI:', err);
       return null;
     }
   }
