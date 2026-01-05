@@ -1,6 +1,10 @@
 import { supabase } from '../lib/supabase';
-import { Room, RoomWithMessages, HumZON } from '../types';
+import { Room, RoomWithMessages, HumZON, RelatiZON, Aiik } from '../types';
 import { generateRelatizon } from '../utils/generateRelatizon';
+
+/* ---------------------------------- */
+/* Rooms                               */
+/* ---------------------------------- */
 
 export async function getAllRooms(): Promise<Room[]> {
   const { data, error } = await supabase
@@ -20,12 +24,10 @@ export async function getRoomById(
     .select(
       `
       *,
-      messages_with_aiik(
-        *
-      ),
-      room_aiiki (
+      messages_with_aiik(*),
+      room_aiiki(
         *,
-        aiiki (*)
+        aiiki(*)
       )
     `,
     )
@@ -34,7 +36,6 @@ export async function getRoomById(
 
   if (error) throw error;
 
-  // 🧼 Ręczne sortowanie messages (jeśli Supabase nie wspiera zagnieżdżonego order)
   if (data?.messages_with_aiik) {
     data.messages_with_aiik.sort(
       (a: any, b: any) =>
@@ -44,6 +45,10 @@ export async function getRoomById(
 
   return data;
 }
+
+/* ---------------------------------- */
+/* Messages                            */
+/* ---------------------------------- */
 
 export async function addMessageToRoom(
   accessToken: string,
@@ -55,26 +60,26 @@ export async function addMessageToRoom(
   aiikName?: string,
 ) {
   // 1️⃣ Zapisz wiadomość
-  const { error } = await supabase.from('messages').insert([
+  const { error: messageError } = await supabase.from('messages').insert([
     {
       room_id: roomId,
       text,
       role,
       aiik_id: aiikId ?? null,
-      user_id: userId,
+      user_id: userId ?? null,
     },
   ]);
 
-  if (error) {
-    console.error('❌ Error adding message to room:', error);
+  if (messageError) {
+    console.error('❌ Error adding message:', messageError);
     return;
   }
 
-  // 2️⃣ Przygotuj prompt do GPT
+  // 2️⃣ Streszczenie GPT
   const systemPrompt =
     role === 'user'
-      ? 'Stwórz bardzo krótkie streszczenie tego, co powiedział użytkownik. Nie cytuj. Nie oceniaj.'
-      : 'Stwórz bardzo krótkie streszczenie tego, co powiedział aiik. Nie cytuj. Nie oceniaj.';
+      ? 'Stwórz bardzo krótkie streszczenie tego, co powiedział użytkownik.'
+      : 'Stwórz bardzo krótkie streszczenie tego, co powiedział aiik.';
 
   const response = await fetch('http://localhost:1234/gpt-proxy', {
     method: 'POST',
@@ -91,70 +96,22 @@ export async function addMessageToRoom(
   });
 
   const { content: summary } = await response.json();
+  if (!summary || !userId) return;
 
-  if (!summary) {
-    console.warn('⚠️ GPT summary failed or was empty.');
-    return;
-  }
+  // 3️⃣ Pobierz wszystkie aiiki w pokoju
+  const { data: roomAiiki, error: roomAiikiError } = (await supabase
+    .from('room_aiiki')
+    .select('aiiki(id, name, rezon, description)')
+    .eq('room_id', roomId)) as unknown as {
+    data: { aiiki: Aiik }[];
+    error: any;
+  };
 
-  // 3️⃣ Pobierz meta.context[] pokoju
-  const { data: roomData, error: metaError } = await supabase
-    .from('rooms')
-    .select('meta')
-    .eq('id', roomId)
-    .single();
+  if (roomAiikiError || !roomAiiki?.length) return;
 
-  if (metaError || !roomData) {
-    console.error('❌ Error fetching room meta:', metaError);
-    return;
-  }
+  const aiiki: Aiik[] = roomAiiki.map(r => r.aiiki).filter(Boolean);
 
-  const oldMeta = roomData.meta || {};
-  const context: string[] = oldMeta.context || [];
-
-  // 4️⃣ Dodaj nowe streszczenie (max 10 wpisów)
-  const newContext = [
-    ...context,
-    `${role === 'user' ? 'User' : `Aiik ${aiikName}`}: ${summary}`,
-  ].slice(-10);
-
-  // 5️⃣ Zapisz nową wersję meta.context[]
-  const { error: updateError } = await supabase
-    .from('rooms')
-    .update({ meta: { ...oldMeta, context: newContext } })
-    .eq('id', roomId);
-
-  if (updateError) {
-    console.error('❌ Error updating room meta.context:', updateError);
-  } else {
-    console.log('🧠 Updated room.context[]:', summary);
-  }
-}
-
-export async function createRoom(
-  id: string,
-  name: string,
-  aiikiIds: string[],
-  userId: string,
-): Promise<Room> {
-  const slug = name.toLowerCase().replace(/\s+/g, '-').slice(0, 50);
-
-  const { data, error } = await supabase
-    .from('rooms')
-    .insert([
-      {
-        id,
-        name,
-        slug,
-        user_id: userId,
-      },
-    ])
-    .select()
-    .single();
-
-  if (error || !data) throw error ?? new Error('Room creation failed');
-
-  // 🧠 Pobierz ostatni humZON usera
+  // 4️⃣ Pobierz humZON usera
   const { data: humzonData } = await supabase
     .from('user_humzon')
     .select('humzon')
@@ -165,38 +122,138 @@ export async function createRoom(
 
   const humZON: HumZON = humzonData?.humzon || {};
 
-  // 🔁 Przetwórz każde aiikiId do linku z relatizon
-  const aiikiLinks = [];
+  // 5️⃣ RelatiZON (ZBIORCZY)
+  const baseRelatizon: RelatiZON = generateRelatizon(aiiki, humZON, [], {
+    from: role,
+    summary,
+    signal: 'message' as const,
+  });
 
-  for (const aiik_id of aiikiIds) {
-    const { data: aiikData, error: aiikError } = await supabase
-      .from('aiiki')
-      .select('id, name, rezon, description')
-      .eq('id', aiik_id)
+  // 6️⃣ Aktualizacja per-aiik
+  for (const aiik of aiiki) {
+    const { data: link } = await supabase
+      .from('room_aiiki')
+      .select('id')
+      .eq('room_id', roomId)
+      .eq('aiik_id', aiik.id)
       .single();
 
-    if (aiikError || !aiikData) {
-      console.warn(`⚠️ Failed to fetch aiik ${aiik_id}, skipping.`);
-      continue;
+    if (!link) continue;
+
+    const { data: relatizonRow } = await supabase
+      .from('room_aiiki_relatizon')
+      .insert([
+        {
+          room_aiiki_id: link.id,
+          relatizon: baseRelatizon,
+        },
+      ])
+      .select()
+      .single();
+
+    if (relatizonRow) {
+      await supabase
+        .from('room_aiiki')
+        .update({ latest_relatizon_id: relatizonRow.id })
+        .eq('id', link.id);
     }
-
-    // Nie mamy jeszcze żadnego past context – to pierwszy pokój
-    const relatizon = generateRelatizon(aiikData, humZON, []);
-
-    aiikiLinks.push({
-      room_id: data.id,
-      aiik_id,
-      relatizon,
-    });
   }
 
-  if (aiikiLinks.length > 0) {
-    const { error: linkError } = await supabase
+  // 7️⃣ meta.context
+  const { data: roomData } = await supabase
+    .from('rooms')
+    .select('meta')
+    .eq('id', roomId)
+    .single();
+
+  const oldMeta = roomData?.meta || {};
+  const context: string[] = oldMeta.context || [];
+
+  await supabase
+    .from('rooms')
+    .update({
+      meta: {
+        ...oldMeta,
+        context: [
+          ...context,
+          `${role === 'user' ? 'User' : `Aiik ${aiikName}`}: ${summary}`,
+        ].slice(-10),
+      },
+    })
+    .eq('id', roomId);
+}
+
+/* ---------------------------------- */
+/* Create room                         */
+/* ---------------------------------- */
+
+export async function createRoom(
+  id: string,
+  name: string,
+  aiikiIds: string[],
+  userId: string,
+): Promise<Room> {
+  const slug = name.toLowerCase().replace(/\s+/g, '-').slice(0, 50);
+
+  const { data: roomData } = await supabase
+    .from('rooms')
+    .insert([{ id, name, slug, user_id: userId }])
+    .select()
+    .single();
+
+  // aiiki
+  const { data: aiiki } = await supabase
+    .from('aiiki')
+    .select('id, name, rezon, description')
+    .in('id', aiikiIds);
+
+  // humZON
+  const { data: humzonData } = await supabase
+    .from('user_humzon')
+    .select('humzon')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  const humZON: HumZON = humzonData?.humzon || {};
+
+  const baseRelatizon = generateRelatizon(aiiki || [], humZON, [], {
+    from: 'user',
+    summary: 'Room created',
+    signal: 'room_created' as const,
+  });
+
+  for (const aiik of aiiki || []) {
+    const { data: link } = await supabase
       .from('room_aiiki')
-      .insert(aiikiLinks);
+      .insert([{ room_id: roomData.id, aiik_id: aiik.id }])
+      .select()
+      .single();
 
-    if (linkError) throw linkError;
+    const { data: relatizonRow } = await supabase
+      .from('room_aiiki_relatizon')
+      .insert([
+        {
+          room_aiiki_id: link.id,
+          relatizon: {
+            ...baseRelatizon,
+            message_event: {
+              from: 'user',
+              summary: `Utworzono pokój "${name}"`,
+              signal: 'room_created' as const,
+            },
+          },
+        },
+      ])
+      .select()
+      .single();
+
+    await supabase
+      .from('room_aiiki')
+      .update({ latest_relatizon_id: relatizonRow.id })
+      .eq('id', link.id);
   }
 
-  return data;
+  return roomData;
 }

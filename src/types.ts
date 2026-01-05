@@ -114,6 +114,22 @@ export type UserHumzon = {
   created_at: string;
 };
 
+export type RelatiZONSignal =
+  | 'message' // zwykła wiadomość w pokoju
+  | 'room_created' // początkowe powołanie pokoju
+  | 'aiik_invoked' // aiik został wybrany / wezwany
+  | 'user_mood' // user dodał swój humZON / nastrój
+  | 'loop_awareness' // powtarzający się wzorzec został wykryty
+  | 'breakthrough' // istotna zmiana stanu relacji
+  | 'silence' // wpis wywołany przez ciszę, nie wiadomość
+  | 'system_event'; // dowolne inne systemowe zdarzenie
+
+export type MessageEvent = {
+  from: 'user' | 'aiik';
+  summary: string;
+  signal: RelatiZONSignal;
+};
+
 export type RelatiZON = {
   silence_tension: {
     level: number;
@@ -123,4 +139,5 @@ export type RelatiZON = {
   echo_resonance: number;
   initiation_count: number;
   last_emotion: string | null;
+  message_event: MessageEvent;
 };

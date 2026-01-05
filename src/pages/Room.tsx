@@ -68,7 +68,15 @@ Osobowość Aiika: ${aiik.rezon}
     const userMsg = message.trim();
 
     // 1️⃣ Zapisz wiadomość usera
-    await addMessageToRoom(accessToken!, id, userMsg, 'user', user.user?.id);
+    await addMessageToRoom(
+      accessToken!,
+      id,
+      userMsg,
+      'user',
+      user.user?.id,
+      // tutaj powinniśmy przekazać aiik id
+      // tutaj powinniśmy przekazać aiik name
+    );
 
     // 2️⃣ Odśwież pokój (żeby UI był responsywny)
     const updatedRoom = await getRoomById(id);
