@@ -5,6 +5,7 @@ import { createRoom } from '../db/rooms';
 import useUserAiiki from '../db/aiiki';
 import { Aiik } from '../types';
 import useUser from '../hooks/useUser';
+import { useAccessToken } from '../hooks/useAccessToken';
 
 type Props = {
   onClose: () => void;
@@ -17,6 +18,7 @@ export default function CreateRoomModal({ onClose }: Props) {
   const userAiiki = useUserAiiki();
   const navigate = useNavigate();
   const user = useUser();
+  const accessToken = useAccessToken();
 
   useEffect(() => {
     setAiiki(userAiiki);
@@ -34,7 +36,7 @@ export default function CreateRoomModal({ onClose }: Props) {
     if (user.user) {
       const id = crypto.randomUUID();
       const aiikiIds = Array.from(selectedAiiki);
-      await createRoom(id, name, aiikiIds, user.user.id);
+      await createRoom(accessToken!, id, name, aiikiIds, user.user.id);
       navigate(`/room/${id}`);
     }
   }

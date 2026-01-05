@@ -1,6 +1,5 @@
 import { supabase } from '../lib/supabase';
 import { Room, RoomWithMessages, HumZON, RelatiZON, Aiik } from '../types';
-import { generateRelatizon } from '../utils/generateRelatizon';
 
 /* ---------------------------------- */
 /* Rooms                               */
@@ -122,12 +121,24 @@ export async function addMessageToRoom(
 
   const humZON: HumZON = humzonData?.humzon || {};
 
-  // 5️⃣ RelatiZON (ZBIORCZY)
-  const baseRelatizon: RelatiZON = generateRelatizon(aiiki, humZON, [], {
-    from: role,
-    summary,
-    signal: 'message' as const,
+  const res = await fetch('http://localhost:1234/generate-relatizon', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      aiiki,
+      humzon: humZON,
+      pastContexts: [],
+      message_event: {
+        from: role,
+        summary,
+        signal: 'message' as const,
+      },
+    }),
   });
+  const { relatizon: baseRelatizon } = await res.json();
 
   // 6️⃣ Aktualizacja per-aiik
   for (const aiik of aiiki) {
@@ -188,6 +199,7 @@ export async function addMessageToRoom(
 /* ---------------------------------- */
 
 export async function createRoom(
+  accessToken: string,
   id: string,
   name: string,
   aiikiIds: string[],
@@ -218,11 +230,24 @@ export async function createRoom(
 
   const humZON: HumZON = humzonData?.humzon || {};
 
-  const baseRelatizon = generateRelatizon(aiiki || [], humZON, [], {
-    from: 'user',
-    summary: 'Room created',
-    signal: 'room_created' as const,
+  const res = await fetch('http://localhost:1234/generate-relatizon', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      aiiki: aiiki || [],
+      humzon: humZON,
+      pastContexts: [],
+      message_event: {
+        from: 'user',
+        summary: 'Room created',
+        signal: 'room_created' as const,
+      },
+    }),
   });
+  const { relatizon: baseRelatizon } = await res.json();
 
   for (const aiik of aiiki || []) {
     const { data: link } = await supabase
