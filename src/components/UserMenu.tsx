@@ -23,7 +23,8 @@ export function UserMenu() {
     }
 
     await supabase.auth.signOut();
-    window.location.href = '/';
+    navigate('/');
+    document.location.reload();
   };
 
   return (
