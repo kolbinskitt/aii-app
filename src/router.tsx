@@ -9,50 +9,45 @@ import ErrorPage from './pages/ErrorPage';
 
 console.log('ROUTER');
 
-export const router = createHashRouter(
-  [
-    {
-      path: '/',
-      errorElement: <ErrorPage />,
-      children: [
-        // 🔐 Public route
-        {
-          path: 'login',
-          element: <Login />,
-        },
-
-        // 🔒 Private (guarded) layout and routes
-        {
-          element: (
-            <AuthGuard>
-              <Layout />
-            </AuthGuard>
-          ),
-          children: [
-            {
-              path: 'room/:id/field',
-              element: <RoomFieldView />,
-            },
-            {
-              path: 'room/:id',
-              element: <Room />,
-            },
-            {
-              index: true, // 👈 czyli path === '/'
-              element: <Rooms />,
-            },
-          ],
-        },
-
-        // 🌪 Catch-all
-        {
-          path: '*',
-          element: <Navigate to="/login" replace />,
-        },
-      ],
-    },
-  ],
+export const router = createHashRouter([
   {
-    basename: import.meta.env.BASE_URL,
+    path: '/',
+    errorElement: <ErrorPage />,
+    children: [
+      // 🔐 Public route
+      {
+        path: 'login',
+        element: <Login />,
+      },
+
+      // 🔒 Private (guarded) layout and routes
+      {
+        element: (
+          <AuthGuard>
+            <Layout />
+          </AuthGuard>
+        ),
+        children: [
+          {
+            path: 'room/:id/field',
+            element: <RoomFieldView />,
+          },
+          {
+            path: 'room/:id',
+            element: <Room />,
+          },
+          {
+            index: true, // 👈 czyli path === '/'
+            element: <Rooms />,
+          },
+        ],
+      },
+
+      // 🌪 Catch-all
+      {
+        path: '*',
+        element: <Navigate to="/login" replace />,
+      },
+    ],
   },
-);
+]);

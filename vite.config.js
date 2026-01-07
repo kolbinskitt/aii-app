@@ -5,7 +5,6 @@ import { writeFileSync } from 'fs';
 
 export default defineConfig(({ mode }) => {
   // Dodaj plik 404.html po buildzie
-  console.log({mode})
   return {
     base: mode === 'production' ? '/aii-app/' : '/',
     plugins: [
