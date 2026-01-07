@@ -1,10 +1,10 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/aii-app/' : '/',
-  plugins: [react()],
-  build: {
-    outDir: 'docs'
-  },
-})
+export default defineConfig(({ mode }) => {
+  return {
+    base: mode === "production" ? "/aii-app/" : "/",
+    plugins: [react()],
+  };
+});
+

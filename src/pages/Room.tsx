@@ -5,6 +5,7 @@ import type { RoomWithMessages, Aiik } from '../types';
 import useUser from '../hooks/useUser';
 import { useAccessToken } from '../hooks/useAccessToken';
 import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
 
 export default function Room() {
   const { id } = useParams<{ id: string }>();
@@ -41,7 +42,7 @@ Osobowość Aiika: ${aiik.rezon}
         content: prompt,
       };
 
-      const res = await fetch('http://localhost:1234/gpt-proxy', {
+      const res = await api('gpt-proxy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

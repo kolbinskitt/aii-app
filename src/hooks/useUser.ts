@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { User } from '../types';
 import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
 
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
@@ -15,7 +16,7 @@ export default function useUser() {
 
         if (!session) return;
 
-        const res = await fetch('http://localhost:1234/auth/ensure-user', {
+        const res = await api('auth/ensure-user', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${session.access_token}`,

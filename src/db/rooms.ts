@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { Room, RoomWithMessages, HumZON, RelatiZON, Aiik } from '../types';
+import { api } from '../lib/api';
 
 /* ---------------------------------- */
 /* Rooms                               */
@@ -81,7 +82,7 @@ export async function addMessageToRoom(
       ? 'Stwórz bardzo krótkie streszczenie tego, co powiedział użytkownik.'
       : 'Stwórz bardzo krótkie streszczenie tego, co powiedział aiik.';
 
-  const response = await fetch('http://localhost:1234/gpt-proxy', {
+  const response = await api('gpt-proxy', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -132,7 +133,7 @@ export async function addMessageToRoom(
 
   const pastContexts: string[] = roomMetaData?.meta?.context ?? [];
 
-  const res = await fetch('http://localhost:1234/generate-relatizon', {
+  const res = await api('generate-relatizon', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -235,7 +236,7 @@ export async function createRoom(
 
   const humZON: HumZON = humzonData?.humzon || {};
 
-  const res = await fetch('http://localhost:1234/generate-relatizon', {
+  const res = await api('generate-relatizon', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

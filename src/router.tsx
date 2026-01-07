@@ -5,22 +5,29 @@ import Room from './pages/Room';
 import Login from './pages/Login';
 import AuthGuard from './components/AuthGuard';
 import RoomFieldView from './pages/RoomFieldView';
+import ErrorPage from './pages/ErrorPage';
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      path: '/login',
+      element: <Login />,
+    },
+    {
+      element: (
+        <AuthGuard>
+          <Layout />
+        </AuthGuard>
+      ),
+      errorElement: <ErrorPage />,
+      children: [
+        { path: '/room/:id/field', element: <RoomFieldView /> },
+        { path: '/room/:id', element: <Room /> },
+        { path: '/', element: <Rooms /> },
+      ],
+    },
+  ],
   {
-    path: '/login',
-    element: <Login />,
+    basename: import.meta.env.BASE_URL,
   },
-  {
-    element: (
-      <AuthGuard>
-        <Layout />
-      </AuthGuard>
-    ),
-    children: [
-      { path: '/room/:id/field', element: <RoomFieldView /> },
-      { path: '/room/:id', element: <Room /> },
-      { path: '/', element: <Rooms /> },
-    ],
-  },
-]);
+);
