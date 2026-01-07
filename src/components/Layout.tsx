@@ -13,6 +13,7 @@ export default function Layout() {
   const user = useUser();
   const userUser = useUserUser();
   const [welcomeModalOpened, setWelcomeModalOpened] = useState(false);
+  console.log('Layout');
 
   const { data } = useQuery<UserHumzon[], Error>({
     queryKey: ['humzon', userUser.user?.id],

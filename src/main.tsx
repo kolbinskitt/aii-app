@@ -17,3 +17,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </React.StrictMode>,
 );
+
+console.log('🌍 Start at', window.location.href);

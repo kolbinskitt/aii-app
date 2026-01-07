@@ -6,6 +6,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+  console.log('🛡 AuthGuard mounted');
 
   useEffect(() => {
     const checkAuth = async () => {
