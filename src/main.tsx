@@ -6,6 +6,10 @@ import { UserProvider } from './context/UserContext';
 import { router } from './router';
 import './index.css';
 
+if (window.location.hash === '') {
+  window.location.replace(window.location.href + '#/');
+}
+
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -1,4 +1,4 @@
-import { createHashRouter } from 'react-router-dom';
+import { createHashRouter, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Rooms from './pages/Rooms';
 import Room from './pages/Room';
@@ -21,9 +21,22 @@ export const router = createHashRouter(
       ),
       errorElement: <ErrorPage />,
       children: [
-        { path: '/room/:id/field', element: <RoomFieldView /> },
-        { path: '/room/:id', element: <Room /> },
-        { path: '/', element: <Rooms /> },
+        {
+          path: '/room/:id/field',
+          element: <RoomFieldView />,
+        },
+        {
+          path: '/room/:id',
+          element: <Room />,
+        },
+        {
+          path: '/',
+          element: <Rooms />,
+        },
+        {
+          path: '*',
+          element: <Navigate to="/login" replace />,
+        },
       ],
     },
   ],
