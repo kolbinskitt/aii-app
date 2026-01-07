@@ -9,7 +9,7 @@ export const api: Fetch = async (input, init) => {
   if (res.status === 401) {
     await supabase.auth.signOut();
 
-    // opcjonalnie: custom event zamiast hard redirectu
+    // opcjonalnie: custom event zamiast hard redirectu...
     window.dispatchEvent(new Event('auth:expired'));
 
     throw new Error('Session expired');
