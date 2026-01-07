@@ -10,29 +10,39 @@ import ErrorPage from './pages/ErrorPage';
 export const router = createHashRouter(
   [
     {
-      path: '/login',
-      element: <Login />,
-    },
-    {
-      element: (
-        <AuthGuard>
-          <Layout />
-        </AuthGuard>
-      ),
+      path: '/',
       errorElement: <ErrorPage />,
       children: [
+        // 🔐 Public route
         {
-          path: '/room/:id/field',
-          element: <RoomFieldView />,
+          path: 'login',
+          element: <Login />,
         },
+
+        // 🔒 Private (guarded) layout and routes
         {
-          path: '/room/:id',
-          element: <Room />,
+          element: (
+            <AuthGuard>
+              <Layout />
+            </AuthGuard>
+          ),
+          children: [
+            {
+              path: 'room/:id/field',
+              element: <RoomFieldView />,
+            },
+            {
+              path: 'room/:id',
+              element: <Room />,
+            },
+            {
+              index: true, // 👈 czyli path === '/'
+              element: <Rooms />,
+            },
+          ],
         },
-        {
-          path: '/',
-          element: <Rooms />,
-        },
+
+        // 🌪 Catch-all
         {
           path: '*',
           element: <Navigate to="/login" replace />,
