@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const redirectTo = import.meta.env.PROD
-  ? 'https://kolbinskitt.github.io/aii-app/#/'
+  ? 'https://kolbinskitt.github.io/aii-app/'
   : 'http://localhost:5173';
 
 export default function Login() {
@@ -20,10 +20,12 @@ export default function Login() {
           access_token,
           refresh_token,
         })
-        .then(() => {
+        .then(async () => {
           console.log('✅ Supabase session set!');
-          window.location.hash = ''; // czyszczenie # z tokenem
-          navigate('/'); // przekierowanie
+          const { data, error } = await supabase.auth.getSession();
+          console.log('📦 Current session:', data?.session, error);
+          window.location.hash = ''; // wyczyść
+          navigate('/'); // przekieruj
         });
     }
   }, []);
