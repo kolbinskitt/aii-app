@@ -3,7 +3,7 @@ import { supabase } from './supabase';
 type Fetch = typeof fetch;
 
 export const api: Fetch = async (input, init) => {
-  const API_URL = import.meta.env.VITE_BACKEND_API_URL;
+  const API_URL = import.meta.env.VITE_BACKEND_API_URL.replace(/\/$/, '');
 
   if (!API_URL) {
     throw new Error('VITE_BACKEND_API_URL is missing');
