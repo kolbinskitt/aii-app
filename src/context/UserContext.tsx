@@ -56,7 +56,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return <div>...</div>; // albo <Spinner />
   }
 
-  console.log('2!!!', { user, loading });
+  console.log('2...!!!', { user, loading });
 
   return (
     <UserContext.Provider value={{ user, loading }}>
