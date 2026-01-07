@@ -23,6 +23,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
+    supabase.auth.getSession().then(({ data, error }) => {
+      console.log('📦 getSession data', data);
+      console.log('❌ getSession error', error);
+    });
+
     // 1️⃣ Odczyt sesji lokalnej (z localStorage)
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
@@ -48,7 +53,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   // 🔒 Blokada renderu TYLKO do momentu inicjalizacji
   if (loading) {
-    return null; // albo <Spinner />
+    return <div>...</div>; // albo <Spinner />
   }
 
   console.log('2!!!', { user, loading });
