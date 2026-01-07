@@ -9,7 +9,7 @@ export const api: Fetch = async (input, init) => {
     throw new Error('VITE_BACKEND_API_URL is missing');
   }
 
-  const apiUrl = `${API_URL}${input}`;
+  const apiUrl = `${API_URL}/${input}`;
   const res = await fetch(apiUrl, init);
 
   if (res.status === 401) {
