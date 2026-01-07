@@ -27,7 +27,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data, error }) => {
       console.log('📦 getSession data', data);
       console.log('❌ getSession error', error);
-
+      console.log(1, { mounted });
       if (!mounted) return;
 
       setUser(data.session?.user ?? null);
@@ -38,12 +38,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log(2, { mounted });
       if (!mounted) return;
       setUser(session?.user ?? null);
     });
 
     return () => {
       mounted = false;
+      console.log(3, { mounted });
       subscription.unsubscribe();
     };
   }, []);
@@ -53,7 +55,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return <div>...</div>; // spinner etc
   }
 
-  console.log('5...', { user, loading });
+  console.log('6...', { user, loading });
 
   return (
     <UserContext.Provider value={{ user, loading }}>
