@@ -1,8 +1,17 @@
 import { supabase } from '../lib/supabase';
 
+const redirectTo = import.meta.env.PROD
+  ? 'https://kolbinskitt.github.io/aii-app'
+  : 'http://localhost:5173';
+
 export default function Login() {
   const loginWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({ provider: 'google' });
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo,
+      },
+    });
   };
 
   return (
