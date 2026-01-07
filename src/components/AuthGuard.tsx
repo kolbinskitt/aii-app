@@ -13,11 +13,11 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         data: { session },
       } = await supabase.auth.getSession();
       console.log(333, { session });
-      if (!session) {
-        navigate('#/login');
-      } else {
+
+      if (session) {
         setIsAuthenticated(true);
       }
+
       setLoading(false);
     };
 
@@ -25,7 +25,15 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   }, []);
 
   if (loading) return <div>Ładowanie...</div>;
-  if (!isAuthenticated) return null;
+
+  if (!isAuthenticated) {
+    // Ważne: redirect w osobnym efekcie, nie w renderze
+    useEffect(() => {
+      navigate('/login', { replace: true }); // to wystarczy
+    }, [navigate]);
+
+    return null;
+  }
 
   return <>{children}</>;
 }
