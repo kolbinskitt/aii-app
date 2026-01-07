@@ -46,7 +46,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return <div>Ładowanie</div>; // spinner etc
   }
 
-  console.log('7...', { user, loading });
+  console.log('8...', { user, loading });
 
   return (
     <UserContext.Provider value={{ user, loading }}>
