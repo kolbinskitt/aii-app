@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { supabase } from '../lib/supabase';
 
-type User = any; // możesz później podmienić na typ z Supabase
+type User = any;
 
 type UserContextValue = {
   user: User | null;
@@ -23,43 +23,37 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
+    // ✅ Jeden jedyny getSession
     supabase.auth.getSession().then(({ data, error }) => {
       console.log('📦 getSession data', data);
       console.log('❌ getSession error', error);
-    });
 
-    // 1️⃣ Odczyt sesji lokalnej (z localStorage)
-    supabase.auth.getSession().then(({ data }) => {
-      console.log(11, { mounted });
       if (!mounted) return;
 
       setUser(data.session?.user ?? null);
       setLoading(false);
     });
 
-    // 2️⃣ Listener zmian auth (login / logout / refresh)
+    // 🔁 Listener login/logout
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log(12, { mounted });
       if (!mounted) return;
-
       setUser(session?.user ?? null);
     });
 
     return () => {
       mounted = false;
-      console.log(13, { mounted });
       subscription.unsubscribe();
     };
   }, []);
 
-  // 🔒 Blokada renderu TYLKO do momentu inicjalizacji
+  // 🔒 Blokada renderu
   if (loading) {
-    return <div>...</div>; // albo <Spinner />
+    return <div>...</div>; // spinner etc
   }
 
-  console.log('4...', { user, loading });
+  console.log('5...', { user, loading });
 
   return (
     <UserContext.Provider value={{ user, loading }}>
