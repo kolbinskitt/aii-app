@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import useUser from '../hooks/useUser';
 
 export default function App({ children }: PropsWithChildren) {
+  console.log('API URL: ' + import.meta.env.VITE_BACKEND_API_URL);
   const { user, loading } = useUser();
   const navigate = useNavigate();
 
