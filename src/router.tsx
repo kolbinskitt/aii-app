@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createHashRouter } from 'react-router-dom';
 import Layout from './components/Layout';
 import Rooms from './pages/Rooms';
 import Room from './pages/Room';
@@ -7,7 +7,7 @@ import AuthGuard from './components/AuthGuard';
 import RoomFieldView from './pages/RoomFieldView';
 import ErrorPage from './pages/ErrorPage';
 
-export const router = createBrowserRouter(
+export const router = createHashRouter(
   [
     {
       path: '/login',
