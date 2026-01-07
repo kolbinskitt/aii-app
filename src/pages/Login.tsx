@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const redirectTo = import.meta.env.PROD
@@ -5,11 +7,36 @@ const redirectTo = import.meta.env.PROD
   : 'http://localhost:5173';
 
 export default function Login() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const access_token = hashParams.get('access_token');
+    const refresh_token = hashParams.get('refresh_token');
+
+    if (access_token && refresh_token) {
+      supabase.auth
+        .setSession({
+          access_token,
+          refresh_token,
+        })
+        .then(() => {
+          console.log('✅ Supabase session set!');
+          window.location.hash = ''; // czyszczenie # z tokenem
+          navigate('/'); // przekierowanie
+        });
+    }
+  }, []);
+
   const loginWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     });
   };
