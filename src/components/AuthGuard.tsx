@@ -13,7 +13,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         data: { session },
       } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login');
+        navigate('/');
       } else {
         setIsAuthenticated(true);
       }
