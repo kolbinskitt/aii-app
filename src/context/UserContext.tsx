@@ -30,6 +30,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     // 1️⃣ Odczyt sesji lokalnej (z localStorage)
     supabase.auth.getSession().then(({ data }) => {
+      console.log(11, { mounted });
       if (!mounted) return;
 
       setUser(data.session?.user ?? null);
@@ -40,6 +41,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log(12, { mounted });
       if (!mounted) return;
 
       setUser(session?.user ?? null);
@@ -47,6 +49,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     return () => {
       mounted = false;
+      console.log(13, { mounted });
       subscription.unsubscribe();
     };
   }, []);
@@ -56,7 +59,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return <div>...</div>; // albo <Spinner />
   }
 
-  console.log('3...!!!', { user, loading });
+  console.log('4...', { user, loading });
 
   return (
     <UserContext.Provider value={{ user, loading }}>
