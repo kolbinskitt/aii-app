@@ -8,6 +8,13 @@ import './index.css';
 
 const queryClient = new QueryClient();
 
+const redirect = sessionStorage.redirect;
+delete sessionStorage.redirect;
+
+if (redirect) {
+  window.history.replaceState(null, '', redirect);
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
