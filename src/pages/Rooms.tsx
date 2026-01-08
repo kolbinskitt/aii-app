@@ -25,8 +25,8 @@ export default function Rooms() {
             <Link
               to={`/room/${room.id}`}
               title={room.name || '🌀'}
-              className="truncate whitespace-nowrap"
-              style={{ width: 100 }}
+              className="truncate whitespace-nowrap block"
+              style={{ width: 285 }}
             >
               {room.name || '🌀'}
             </Link>
