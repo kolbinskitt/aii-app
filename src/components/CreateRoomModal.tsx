@@ -6,6 +6,7 @@ import useUserAiiki from '../db/aiiki';
 import { Aiik } from '../types';
 import useUser from '../hooks/useUser';
 import { useAccessToken } from '../hooks/useAccessToken';
+import { Popup } from './ui';
 
 type Props = {
   onClose: () => void;
@@ -42,26 +43,15 @@ export default function CreateRoomModal({ onClose }: Props) {
   }
 
   return ReactDOM.createPortal(
-    <div
-      className="fixed top-0 right-0 bottom-0 left-0 bg-white z-[9999] flex items-center justify-center bg-white"
-      style={{
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'white',
-      }}
-    >
+    <Popup>
       <div className="text-black p-6 shadow-2xl rounded-lg overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">Nowy pokój</h2>
-
         <input
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="Nazwa pokoju"
           className="w-full bg-gray-100 p-2 outline-none mb-4"
         />
-
         <div>
           <h3 className="text-sm text-gray-600 mb-2">Wybierz aiiki:</h3>
           <div className="space-y-1">
@@ -96,7 +86,7 @@ export default function CreateRoomModal({ onClose }: Props) {
           </button>
         </div>
       </div>
-    </div>,
+    </Popup>,
     document.body,
   );
 }

@@ -18,9 +18,9 @@ export default function Rooms() {
 
   const roomsList =
     rooms.length === 0 ? (
-      <Tile>
-        <p className="text-muted-foreground">{t('campfires.no_campfires')}</p>
-      </Tile>
+      <p className="text-center text-muted-foreground">
+        {t('campfires.no_campfires')}
+      </p>
     ) : (
       <ul className="space-y-2">
         {rooms.map(room => (

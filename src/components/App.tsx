@@ -54,7 +54,7 @@ export default function App({ children }: PropsWithChildren) {
   }, []);
 
   // UI guardy
-  if (loading) return <div>Ładowanie...</div>;
+  if (loading) return <div>Ładowanie 1...</div>;
   if (!user) return null;
 
   return <>{children}</>;

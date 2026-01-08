@@ -30,7 +30,7 @@ export default function Popup({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center"
+      className="fixed inset-0 z-10 bg-black bg-opacity-60 flex items-center justify-center"
       onClick={handleBackdropClick}
     >
       <div

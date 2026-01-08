@@ -41,7 +41,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   // 🔒 Blokada renderu
   if (loading) {
-    return <div>Ładowanie</div>; // spinner etc
+    return <div>Ładowanie 2...</div>;
   }
 
   return (
