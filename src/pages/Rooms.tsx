@@ -14,15 +14,7 @@ export default function Home() {
 
   return (
     <div>
-      <main
-        className="min-h-screen flex items-center justify-center bg-cover bg-center"
-        style={{
-          backgroundImage:
-            window.innerWidth < 768
-              ? 'url(/src/assets/background-mobile.png)'
-              : 'url(/src/assets/background-desktop.png)',
-        }}
-      >
+      <main className="min-h-screen flex items-center justify-center bg-cover bg-center">
         <div className="text-center space-y-6">
           <h1 className="text-4xl font-light">aii</h1>
           <button
