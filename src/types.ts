@@ -15,6 +15,7 @@ export type Message = {
   created_at: number;
   aiik_id: string;
   aiik_name: string;
+  aiik_avatar_url: string;
 };
 
 export type ReZON = {
@@ -42,6 +43,7 @@ export type Aiik = {
   name: string;
   description: string;
   rezon: ReZON;
+  avatar_url: string;
 };
 
 export type RoomAiikiRelatizon = {

@@ -47,39 +47,28 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen w-full bg-black">
-      {/* Background desktop */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: "url('images/landing-desktop.png')",
         }}
       />
-
-      {/* Background mobile override */}
       <div
         className="md:hidden absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: "url('images/landing-mobile.jpg')",
         }}
       />
-
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black opacity-50" />
-
-      {/* Header */}
       <Header />
-
       {/* Main layout */}
       <div className="relative z-10 flex flex-col md:items-end items-center justify-center min-h-[80vh] p-6 md:p-20">
         <div className="w-full max-w-xl bg-white bg-opacity-80 backdrop-blur-md p-8 rounded-xl shadow-xl text-center">
           <h2 className="text-2xl md:text-3xl font-semibold mb-4 font-echo">
             {t('landing.headline')}
           </h2>
-
           <p className="text-md md:text-lg text-gray-700 mb-6 font-system">
             {t('landing.description')}
           </p>
-
           <button
             onClick={loginWithGoogle}
             className="bg-black text-white hover:bg-gray-800 px-6 py-3 rounded-full transition flex items-center justify-center space-x-3 mx-auto font-sans"

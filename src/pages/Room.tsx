@@ -9,7 +9,7 @@ import {
   PropsWithChildren,
 } from 'react';
 import { getRoomById, addMessageToRoom } from '../db/rooms';
-import type { RoomWithMessages, Aiik } from '../types';
+import type { RoomWithMessages, Aiik, Role } from '../types';
 import useUser from '../hooks/useUser';
 import { useAccessToken } from '../hooks/useAccessToken';
 import { supabase } from '../lib/supabase';
@@ -20,12 +20,11 @@ import { Button, Tile } from '../components/ui';
 function TopTile({ room }: { room: RoomWithMessages | null }) {
   const { t } = useTranslation();
   return !room ? null : (
-    <Tile className="space-y-2 px-6 py-4">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-light font-echo text-gray-800 leading-snug">
-        {t('campfires.campfire_name')}:{' '}
+    <Tile className="space-y-1 px-6 py-4">
+      <h2 className="text-2xl font-light font-echo text-gray-800 leading-snug">
         <span className="font-semibold text-black">{room.name || '🌀'}</span>
       </h2>
-      <div className="text-sm sm:text-base text-neutral-500 mt-1 tracking-wide">
+      <div className="text-xs text-neutral-500 tracking-wide">
         {t('chat.aiiki_near_campfire')}:{' '}
         <span className="text-neutral-600">
           {room.room_aiiki?.map(a => a.aiiki.name).join(', ')}
@@ -40,34 +39,88 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
   );
 }
 
+function Message({
+  children,
+  role,
+  aiikAvatar,
+}: PropsWithChildren<{ role: Role; aiikAvatar: string }>) {
+  const user = useUser();
+  const marginH = -12;
+  const marginV = -4;
+  const borderRadius = '1.5rem';
+  const width = 40;
+  const maxHeight = 60;
+
+  return (
+    <Tile
+      className={`!p-2 !pl-4 !pr-4 font-system ${
+        role === 'user' ? '!bg-gray-100' : '!bg-amber-200'
+      }`}
+      styles={{
+        display: 'flex',
+        gap: 8,
+        alignSelf: role === 'user' ? 'flex-end' : 'flex-start',
+        alignItems: 'center',
+      }}
+    >
+      {role === 'aiik' && (
+        <img
+          src={`images/aiiki/avatars/${aiikAvatar || ''}`}
+          width={width}
+          className="object-cover"
+          style={{
+            marginTop: marginV,
+            marginLeft: marginH,
+            marginBottom: marginV,
+            borderRadius,
+            maxHeight,
+          }}
+        />
+      )}
+      {children}
+      {role === 'user' && (
+        <img
+          src={user.user?.profile_pic_url || ''}
+          width={width}
+          className="object-cover"
+          style={{
+            marginTop: marginV,
+            marginRight: marginH,
+            marginBottom: marginV,
+            borderRadius,
+            maxHeight,
+          }}
+        />
+      )}
+    </Tile>
+  );
+}
+
 function MessageArea({
   room,
   children,
 }: PropsWithChildren<{ room: RoomWithMessages | null }>) {
   return !room ? null : (
-    <div className="space-y-2">
+    <div
+      style={{
+        overflowY: 'auto',
+        maxHeight: 'calc(100vh - 272px)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+        paddingTop: 8,
+        paddingBottom: 8,
+      }}
+    >
       {room.messages_with_aiik.length > 0 &&
         room.messages_with_aiik.map(msg => (
-          <div
+          <Message
             key={msg.id}
-            className={`text-sm ${
-              msg.role === 'aiik' ? 'text-rose-500' : 'text-sky-400 text-right'
-            }`}
-            style={
-              msg.role === 'aiik'
-                ? {
-                    margin: 4,
-                    padding: 8,
-                    backgroundColor: '#DDD',
-                    borderRadius: 8,
-                  }
-                : {
-                    margin: 4,
-                  }
-            }
+            role={msg.role}
+            aiikAvatar={msg.aiik_avatar_url}
           >
-            {msg.aiik_name ? `${msg.aiik_name}:` : ''} {msg.text}
-          </div>
+            {msg.text}
+          </Message>
         ))}
       {children}
     </div>
@@ -100,7 +153,8 @@ function BottomTile({
           type="text"
           value={value}
           onChange={onChange}
-          className="flex-1 px-4 py-2 border border-neutral-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm"
+          className="flex-1 px-4 py-2 border border-neutral-300 rounded-md bg-white 
+          focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm font-system"
           placeholder={t('chat.write_something')}
           onKeyDown={onKeyDown}
         />
@@ -220,6 +274,7 @@ Osobowość Aiika: ${aiik.rezon}
           user.user?.id,
           chosenAiik.aiiki.id,
           chosenAiik.aiiki.name,
+          chosenAiik.aiiki.avatar_url,
         );
 
         // 6️⃣ Odśwież pokój po odpowiedzi aiika
@@ -279,9 +334,9 @@ Osobowość Aiika: ${aiik.rezon}
         <MessageArea room={room}>
           {aiikThinking &&
             Object.values(thinkingAiiki).map(aiik => (
-              <div key={aiik.id} className="text-sm text-neutral-500">
+              <Message key={aiik.id} aiikAvatar={aiik.avatar_url} role="aiik">
                 {aiik.name} {t('chat.writing')}...
-              </div>
+              </Message>
             ))}
         </MessageArea>
       </div>

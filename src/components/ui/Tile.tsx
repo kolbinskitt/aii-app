@@ -14,9 +14,11 @@ export default function Tile({
 }: PropsWithChildren<Props>) {
   return (
     <div
-      className={`bg-white p-4 rounded-3xl shadow-lg 
-    ${hoverable ? 'hover:scale-[1.01]' : ''} transition
-     ${className}`}
+      className={`
+        bg-white p-4 rounded-3xl shadow-lg 
+        ${hoverable ? 'hover:scale-[1.01]' : ''} transition
+        ${className}
+     `}
       style={styles}
     >
       {children}

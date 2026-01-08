@@ -67,13 +67,17 @@ export default function CreateRoomModal({ onClose }: Props) {
           {aiiki.map(aiik => (
             <label
               key={aiik.id}
-              className="flex items-start gap-2 p-2 rounded-xl hover:bg-gray-100 transition cursor-pointer"
+              className="flex gap-2 p-2 rounded-xl hover:bg-gray-100 transition cursor-pointer"
             >
               <input
                 type="checkbox"
                 checked={selectedAiiki.has(aiik.id)}
                 onChange={() => toggleAiik(aiik.id)}
-                style={{ marginTop: 6 }}
+              />
+              <img
+                src={`images/aiiki/avatars/${aiik.avatar_url}`}
+                width={30}
+                className="rounded-md"
               />
               <div>
                 <div className="font-semibold">{aiik.name}</div>

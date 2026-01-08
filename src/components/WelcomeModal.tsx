@@ -149,7 +149,7 @@ Twoja odpowiedź ma być wyłącznie takim JSONem, bez komentarzy ani wyjaśnie�
         value={sentence}
         onChange={e => setSentence(e.target.value)}
         placeholder={t('welcome.about_you.placeholder')}
-        className="w-full border border-zinc-300 dark:border-zinc-700 rounded p-2 h-24 resize-none"
+        className="w-full border border-zinc-300 dark:border-zinc-700 rounded p-2 h-24 resize-none font-system"
       />
       {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       <div className="mt-4 flex justify-end gap-2">

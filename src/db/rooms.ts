@@ -59,6 +59,7 @@ export async function addMessageToRoom(
   userId?: string,
   aiikId?: string,
   aiikName?: string,
+  aiikAvatarUrl?: string,
 ) {
   // 1️⃣ Zapisz wiadomość
   const { error: messageError } = await supabase.from('messages').insert([
@@ -68,6 +69,7 @@ export async function addMessageToRoom(
       role,
       aiik_id: aiikId ?? null,
       user_id: userId ?? null,
+      avatar_url: aiikAvatarUrl,
     },
   ]);
 
