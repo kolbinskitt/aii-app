@@ -26,10 +26,12 @@ export default function Rooms() {
         {rooms.map(room => (
           <li key={room.id}>
             <Link to={`/room/${room.id}`}>
-              <Tile className="bg-white/70" hoverable>
-                <div className="text-md">
-                  {room.name || '🌀 Bezimienny pokój'}
-                </div>
+              <Tile
+                className="bg-white/70 text-md font-echo text-lg truncate"
+                hoverable
+                title={room.name || '🌀'}
+              >
+                {room.name || '🌀'}
               </Tile>
             </Link>
           </li>

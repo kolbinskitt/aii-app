@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import {
   useEffect,
   useState,
@@ -21,17 +21,30 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
   const { t } = useTranslation();
   return !room ? null : (
     <Tile className="space-y-1 px-6 py-4">
-      <h2 className="text-2xl font-light font-echo text-gray-800 leading-snug">
-        <span className="font-semibold text-black">{room.name || '🌀'}</span>
+      <h2
+        className="text-2xl font-light font-echo text-gray-800 leading-snug font-semibold text-black truncate"
+        style={{
+          maxWidth: 'calc(100vw - 500px)',
+        }}
+      >
+        {room.name || '🌀'}
       </h2>
-      <div className="text-xs text-neutral-500 tracking-wide">
-        {t('chat.aiiki_near_campfire')}:{' '}
-        <span className="text-neutral-600">
-          {room.room_aiiki?.map(a => a.aiiki.name).join(', ')}
-        </span>
+      <div className="flex w-full justify-between items-start text-xs text-neutral-500 tracking-wide">
+        <div>
+          {t('chat.aiiki_near_campfire')}:{' '}
+          <span className="text-neutral-600">
+            {room.room_aiiki?.map(a => a.aiiki.name).join(', ')}
+          </span>
+        </div>
+        <Link
+          to={`/room/${room.id}/field`}
+          className="text-blue-500 whitespace-nowrap"
+        >
+          {t('chat.see_field')}
+        </Link>
       </div>
       {room.messages_with_aiik.length === 0 && (
-        <div className="text-sm text-muted-foreground pt-2">
+        <div className="text-sm text-muted-foreground">
           {t('chat.no_stories')}
         </div>
       )}
@@ -54,7 +67,9 @@ function Message({
   return (
     <Tile
       className={`!p-2 !pl-4 !pr-4 font-system ${
-        role === 'user' ? '!bg-gray-100' : '!bg-amber-200'
+        role === 'user'
+          ? '!bg-gray-100'
+          : 'bg-gradient-to-r from-amber-100 via-amber-200 to-amber-100'
       }`}
       styles={{
         display: 'flex',
@@ -153,7 +168,7 @@ function BottomTile({
           type="text"
           value={value}
           onChange={onChange}
-          className="flex-1 px-4 py-2 border border-neutral-300 rounded-md bg-white 
+          className="flex-1 px-4 py-2 border border-neutral-300 rounded-full bg-white 
           focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm font-system"
           placeholder={t('chat.write_something')}
           onKeyDown={onKeyDown}

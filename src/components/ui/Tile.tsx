@@ -1,25 +1,27 @@
-import { PropsWithChildren, CSSProperties } from 'react';
+import { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 
 type Props = {
-  className?: string;
+  children?: ReactNode;
   hoverable?: boolean;
   styles?: CSSProperties;
-};
+} & HTMLAttributes<HTMLDivElement>;
 
 export default function Tile({
   children,
   className,
   hoverable,
   styles,
-}: PropsWithChildren<Props>) {
+  ...rest
+}: Props) {
   return (
     <div
       className={`
         bg-white p-4 rounded-3xl shadow-lg 
         ${hoverable ? 'hover:scale-[1.01]' : ''} transition
-        ${className}
-     `}
+        ${className ?? ''}
+      `}
       style={styles}
+      {...rest}
     >
       {children}
     </div>

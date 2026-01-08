@@ -42,10 +42,11 @@
     "campfire_name": "Nazwa ogniska"
   },
   "chat": {
-    "no_stories": "Nikt jeszcze nic nie powiedział, słychać tylko echo...",
+    "no_stories": "Nikt jeszcze nic nie powiedział, słychać tylko echo.",
     "writing": "pisze",
     "send": "Wyślij",
     "write_something": "Powiedz coś...",
-    "aiiki_near_campfire": "Aiiki przy ognisku"
+    "aiiki_near_campfire": "Aiiki przy ognisku",
+    "see_field": "Echo ogniska"
   }
 }
