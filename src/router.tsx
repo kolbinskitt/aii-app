@@ -7,8 +7,6 @@ import AuthGuard from './components/AuthGuard';
 import RoomFieldView from './pages/RoomFieldView';
 import ErrorPage from './pages/ErrorPage';
 
-console.log('ROUTER');
-
 export const router = createHashRouter([
   {
     path: '/',

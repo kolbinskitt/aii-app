@@ -23,8 +23,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // ✅ Jeden jedyny getSession
     supabase.auth.getSession().then(({ data, error }) => {
-      console.log('📦 getSession data', data);
-      console.log('❌ getSession error', error);
       setUser(data.session?.user ?? null);
       setLoading(false);
     });
@@ -45,8 +43,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
   if (loading) {
     return <div>Ładowanie</div>; // spinner etc
   }
-
-  console.log('17...', { user, loading });
 
   return (
     <UserContext.Provider value={{ user, loading }}>
