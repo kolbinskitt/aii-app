@@ -3,5 +3,6 @@ import Confirm from './Confirm';
 import Popup from './Popup';
 import Sidebar from './Sidebar';
 import Tile from './Tile';
+import LoaderFullScreen from './LoaderFullScreen';
 
-export { Button, Confirm, Popup, Sidebar, Tile };
+export { Button, Confirm, Popup, Sidebar, Tile, LoaderFullScreen };

@@ -2,6 +2,7 @@ import { PropsWithChildren, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import useUser from '../hooks/useUser';
+import { LoaderFullScreen } from '../components/ui';
 
 export default function App({ children }: PropsWithChildren) {
   const { user, loading } = useUser();
@@ -54,7 +55,7 @@ export default function App({ children }: PropsWithChildren) {
   }, []);
 
   // UI guardy
-  if (loading) return <div>Ładowanie 1...</div>;
+  if (loading) return <LoaderFullScreen />;
   if (!user) return null;
 
   return <>{children}</>;
