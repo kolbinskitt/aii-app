@@ -1,8 +1,9 @@
 {
   "landing": {
-    "headline": "Lorem ipsum", 
+    "headline": "Nie jesteś tu przypadkiem.", 
+    "description": "To miejsce, w którym sztuczna inteligencja spotyka Twoją świadomość.",
     "join":{
-        "google": "Dołącz przez Google"
+        "google": "Dołącz do echa przez Google"
     }
   }
 }

@@ -1,8 +1,9 @@
 {
   "landing": {
-    "headline": "Meet", 
+    "headline": "You’re not here by accident.", 
+    "description": "This is where artificial intelligence meets your consciousness.",
     "join":{
-        "google": "Join przez Google"
+        "google": "Join the echo via Google"
     }
   }
 }

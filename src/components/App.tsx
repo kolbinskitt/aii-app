@@ -1,6 +1,5 @@
 import { PropsWithChildren, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../lib/i18n';
 import { supabase } from '../lib/supabase';
 import useUser from '../hooks/useUser';
 
@@ -56,7 +55,7 @@ export default function App({ children }: PropsWithChildren) {
 
   // UI guardy
   if (loading) return <div>Ładowanie...</div>;
-  if (!user) return null; // redirect już się wydarzy
+  if (!user) return null;
 
   return <>{children}</>;
 }
