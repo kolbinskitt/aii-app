@@ -4,7 +4,6 @@ import { resolve } from 'path';
 import { writeFileSync } from 'fs';
 
 export default defineConfig(({ mode }) => {
-  // Dodaj plik 404.html po buildzie
   return {
     base: mode === 'production' ? '/aii-app/' : '/',
     plugins: [
@@ -19,5 +18,8 @@ export default defineConfig(({ mode }) => {
         },
       },
     ],
+    define: {
+      __PUBLIC__: JSON.stringify(process.env.PUBLIC_URL || ''),
+    },
   };
 });

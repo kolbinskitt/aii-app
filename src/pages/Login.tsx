@@ -52,13 +52,17 @@ export default function Login() {
       {/* Background desktop */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('/images/landing-desktop.png')` }}
+        style={{
+          backgroundImage: `url('${__PUBLIC__}/images/landing-desktop.png')`,
+        }}
       />
 
       {/* Background mobile override */}
       <div
         className="md:hidden absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('/images/landing-mobile.jpg')` }}
+        style={{
+          backgroundImage: `url('${__PUBLIC__}/images/landing-mobile.jpg')`,
+        }}
       />
 
       {/* Dark overlay */}
@@ -83,7 +87,7 @@ export default function Login() {
             className="bg-black text-white hover:bg-gray-800 px-6 py-3 rounded-full transition flex items-center justify-center space-x-3 mx-auto font-sans"
           >
             <img
-              src="/images/logo/google.png"
+              src={`${__PUBLIC__}/images/logo/google.png`}
               alt="Google"
               className="w-5 h-5"
             />
