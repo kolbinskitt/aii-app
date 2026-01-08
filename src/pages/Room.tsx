@@ -93,7 +93,7 @@ function Message({
         />
       )}
       {children}
-      {role === 'user' && (
+      {/* {role === 'user' && (
         <img
           src={user.user?.profile_pic_url || ''}
           width={width}
@@ -106,7 +106,7 @@ function Message({
             maxHeight,
           }}
         />
-      )}
+      )} */}
     </Tile>
   );
 }
