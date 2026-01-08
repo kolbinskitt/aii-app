@@ -50,9 +50,7 @@ export default function CreateRoomModal({ onClose }: Props) {
     <Popup>
       <h2 className="text-3xl font-echo tracking-wide text-center text-gray-900 mb-4">
         {t('campfires.starting_new_campfire')}
-        <div className="animate-pulse text-2xl mt-1">🔥🔥🔥</div>
       </h2>
-      <div className="border-t border-gray-300 my-4" />
       <input
         value={name}
         onChange={e => setName(e.target.value)}
@@ -87,7 +85,6 @@ export default function CreateRoomModal({ onClose }: Props) {
           ))}
         </div>
       </div>
-      <div className="border-t border-gray-300 my-4" />
       <div className="flex justify-between">
         <Button onClick={onClose}>{t('cancel')}</Button>
         <div

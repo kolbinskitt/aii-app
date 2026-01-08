@@ -1,20 +1,20 @@
 {
   "landing": {
-    "headline": "You’re not here by accident.", 
-    "description": "This is where artificial intelligence meets your consciousness.",
-    "join":{
-        "google": "Join the echo via Google"
+    "headline": "You're not here by accident.",
+    "description": "This is where artificial intelligence meets your awareness.",
+    "join": {
+      "google": "Join the echo with Google"
     }
   },
   "welcome": {
-  "hello": "Welcome to the space of Self",
-    "description": "In one or a few sentences, describe yourself. This is the beginning of your echo.",
+    "hello": "Welcome to the space of Self",
+    "description": "Describe yourself in one or a few sentences. This is the beginning of your echo.",
     "about_you": {
-      "placeholder": "For example: I feel more than I know how to say..."
+      "placeholder": "For example, I feel more than I know how to say..."
     }
   },
   "user": {
-    "logout": "Logout",
+    "logout": "Log out",
     "delete_account": "Delete account"
   },
   "you": "You",
@@ -26,26 +26,27 @@
   "save": "Save",
   "saving": "Saving...",
   "confirm": {
-    "delete_account": "Confirm delete account",
+    "delete_account": "Confirm account deletion",
     "delete_account_description": "Are you sure you want to permanently delete your account?"
   },
   "campfires": {
     "your_campfires": "Your campfires",
-    "no_campfires": "No campfire has been lit yet. Light the first one.",
-    "start_first_campfire": "Light the first campfire",
-    "start_new_campfire": "Light campfire",
-    "starting_new_campfire": "Let's light campfire",
-    "starting_new_campfire.placeholder": "Nazwa ogniska... np. \"czy drzewa śnią?\"",
-    "choose_aiiki": "Wybierz kompanów",
-    "start_fire": "Rozpal ogień",
-    "start_fire_hint": "Musisz wybrać co najmniej jednego kompana, by nazwać ognisko.",
-    "campfire_name": "Nazwa ogniska"
+    "no_campfires": "No campfire has been lit yet. Start your first one.",
+    "start_first_campfire": "Start your first campfire",
+    "start_new_campfire": "Start a campfire",
+    "starting_new_campfire": "Let's light a campfire!",
+    "starting_new_campfire.placeholder": "Campfire name, e.g. do trees dream of rain?...",
+    "choose_aiiki": "Choose your companions",
+    "start_fire": "Light the fire",
+    "start_fire_hint": "You need to choose at least one companion to name the campfire.",
+    "campfire_name": "Campfire name"
   },
   "chat": {
-    "no_stories": "Brak opowieści",
-    "writing": "pisze",
-    "send": "Wyślij",
-    "write_something": "Powiedz coś...",
-    "aiiki_near_firecampt": "Aiiki przy ognisku"
+    "no_stories": "No one's spoken yet — only echoes can be heard.",
+    "writing": "is writing",
+    "send": "Send",
+    "write_something": "Say something...",
+    "aiiki_near_campfire": "Aiiki by the fire",
+    "see_field": "Echo of the campfire"
   }
 }
