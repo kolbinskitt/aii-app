@@ -5,3 +5,11 @@
 html {
   @apply font-sans;
 }
+
+.text-glow-white {
+  text-shadow: 0 0 4px rgba(255, 200, 150, 0.6), 0 0 10px rgba(255, 100, 50, 0.4);
+}
+
+.text-glow-black {
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.25),  0 0 10px rgba(0, 0, 0, 0.15);
+}

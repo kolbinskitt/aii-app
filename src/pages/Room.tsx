@@ -68,8 +68,8 @@ function Message({
     <Tile
       className={`!p-2 !pl-4 !pr-4 font-system ${
         role === 'user'
-          ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
-          : '!bg-gray-300'
+          ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white text-glow-white'
+          : '!bg-gray-300  text-glow-black'
       }`}
       styles={{
         display: 'flex',
