@@ -6,14 +6,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
-  console.log('🛡 AuthGuard mounted');
 
   useEffect(() => {
     const checkAuth = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log('333 ➤ session:', session);
 
       if (session) {
         setIsAuthenticated(true);
@@ -27,7 +25,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     checkAuth();
   }, [navigate]);
 
-  if (loading) return <div>Ładowanie...</div>;
+  if (loading) return <div>Loading...</div>;
   if (!isAuthenticated) return null;
 
   return <>{children}</>;
