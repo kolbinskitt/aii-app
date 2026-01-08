@@ -60,7 +60,6 @@ export default function Login() {
         }}
       />
       <Header />
-      {/* Main layout */}
       <div className="relative z-10 flex flex-col md:items-end items-center justify-center min-h-[80vh] p-6 md:p-20">
         <div className="w-full max-w-xl bg-white bg-opacity-80 backdrop-blur-md p-8 rounded-xl shadow-xl text-center">
           <h2 className="text-2xl md:text-3xl font-semibold mb-4 font-echo">

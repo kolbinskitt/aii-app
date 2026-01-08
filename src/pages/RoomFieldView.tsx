@@ -4,6 +4,7 @@ import { getRoomById } from '../db/rooms';
 import { RoomWithMessages } from '../types';
 import RelatizonChart from '../components/RelatizonChart';
 import useUser from '../hooks/useUser';
+import { Tile } from '../components/ui';
 
 export default function RoomFieldView() {
   const { id } = useParams<{ id: string }>();
@@ -29,14 +30,20 @@ export default function RoomFieldView() {
   );
 
   return (
-    <div className="p-8 space-y-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-light">🌐 Pole pokoju: {room.name}</h1>
-      <RelatizonChart
-        data={allRelatizons}
-        aiikiMap={aiikiMap}
-        userId={user?.id}
-      />
-      <div className="grid grid-cols-1 gap-4">
+    <div className="relative w-full space-y-2">
+      <Tile>
+        <h1 className="text-2xl font-light font-echo">
+          Pole ogniska "{room.name}"
+        </h1>
+      </Tile>
+      <Tile>
+        <RelatizonChart
+          data={allRelatizons}
+          aiikiMap={aiikiMap}
+          userId={user?.id}
+        />
+      </Tile>
+      <Tile className="grid grid-cols-1 gap-4">
         {room.room_aiiki.map((rai, i) => {
           const relatizon = rai?.room_aiiki_relatizon?.[0]?.relatizon;
           if (!relatizon) return null;
@@ -49,7 +56,7 @@ export default function RoomFieldView() {
           }[relatizon.silence_tension.state];
 
           return (
-            <div key={i} className="border rounded-xl p-4 bg-neutral-900/40">
+            <div key={i}>
               <h2 className="text-xl text-rose-400 mb-2">{rai.aiiki.name}</h2>
               <div className="text-sm grid grid-cols-2 gap-y-1 gap-x-4">
                 <div>🤝 bond_depth: {relatizon.bond_depth.toFixed(2)}</div>
@@ -68,7 +75,7 @@ export default function RoomFieldView() {
             </div>
           );
         })}
-      </div>
+      </Tile>
     </div>
   );
 }

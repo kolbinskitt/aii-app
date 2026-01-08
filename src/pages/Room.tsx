@@ -20,7 +20,7 @@ import { Button, Tile } from '../components/ui';
 function TopTile({ room }: { room: RoomWithMessages | null }) {
   const { t } = useTranslation();
   return !room ? null : (
-    <Tile className="space-y-1 px-6 py-4">
+    <Tile className="space-y-1 p-2">
       <h2
         className="text-2xl font-light font-echo text-gray-800 leading-snug font-semibold text-black truncate"
         style={{
@@ -60,7 +60,7 @@ function Message({
   const user = useUser();
   const marginH = -12;
   const marginV = -4;
-  const borderRadius = '1.5rem';
+  const borderRadius = '0.5rem';
   const width = 40;
   const maxHeight = 60;
 
@@ -75,7 +75,7 @@ function Message({
         display: 'flex',
         gap: 8,
         alignSelf: role === 'user' ? 'flex-end' : 'flex-start',
-        alignItems: 'center',
+        alignItems: 'flex-start',
       }}
     >
       {role === 'aiik' && (
@@ -119,14 +119,14 @@ function MessageArea({
     <div
       style={{
         overflowY: 'auto',
-        maxHeight: 'calc(100vh - 272px)',
+        maxHeight: 'calc(100vh - 168px)',
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
-        paddingTop: 8,
         paddingBottom: 8,
       }}
     >
+      <TopTile room={room} />
       {room.messages_with_aiik.length > 0 &&
         room.messages_with_aiik.map(msg => (
           <Message
@@ -168,7 +168,7 @@ function BottomTile({
           type="text"
           value={value}
           onChange={onChange}
-          className="flex-1 px-4 py-2 border border-neutral-300 rounded-full bg-white 
+          className="flex-1 px-4 py-2 border border-neutral-300 rounded-md bg-white 
           focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm font-system"
           placeholder={t('chat.write_something')}
           onKeyDown={onKeyDown}
@@ -344,17 +344,14 @@ Osobowość Aiika: ${aiik.rezon}
 
   return (
     <div className="relative w-full">
-      <div>
-        <TopTile room={room} />
-        <MessageArea room={room}>
-          {aiikThinking &&
-            Object.values(thinkingAiiki).map(aiik => (
-              <Message key={aiik.id} aiikAvatar={aiik.avatar_url} role="aiik">
-                {aiik.name} {t('chat.writing')}...
-              </Message>
-            ))}
-        </MessageArea>
-      </div>
+      <MessageArea room={room}>
+        {aiikThinking &&
+          Object.values(thinkingAiiki).map(aiik => (
+            <Message key={aiik.id} aiikAvatar={aiik.avatar_url} role="aiik">
+              {aiik.name} {t('chat.writing')}...
+            </Message>
+          ))}
+      </MessageArea>
       <BottomTile
         value={message}
         onChange={e => setMessage(e.target.value)}

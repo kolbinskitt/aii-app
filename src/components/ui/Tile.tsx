@@ -16,7 +16,7 @@ export default function Tile({
   return (
     <div
       className={`
-        bg-white p-4 rounded-3xl shadow-lg 
+        bg-white p-2 rounded-md shadow-lg 
         ${hoverable ? 'hover:scale-[1.01]' : ''} transition
         ${className ?? ''}
       `}

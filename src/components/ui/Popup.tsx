@@ -34,7 +34,7 @@ export default function Popup({
       onClick={handleBackdropClick}
     >
       <div
-        className="relative bg-white rounded-xl shadow-xl p-6 max-w-lg w-full mx-4 animate-fade-in"
+        className="relative bg-white rounded-xl shadow-md p-6 max-w-lg w-full mx-4 animate-fade-in"
         onClick={e => e.stopPropagation()} // blokuje kliknięcie wewnętrzne
       >
         {/* Przycisk X */}

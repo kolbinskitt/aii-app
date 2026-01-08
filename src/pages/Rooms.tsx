@@ -22,17 +22,16 @@ export default function Rooms() {
         {t('campfires.no_campfires')}
       </p>
     ) : (
-      <ul className="space-y-2">
+      <ul style={{ margin: 0 }}>
         {rooms.map(room => (
           <li key={room.id}>
-            <Link to={`/room/${room.id}`}>
-              <Tile
-                className="bg-white/70 text-md font-echo text-lg truncate"
-                hoverable
-                title={room.name || '🌀'}
-              >
-                {room.name || '🌀'}
-              </Tile>
+            <Link
+              to={`/room/${room.id}`}
+              title={room.name || '🌀'}
+              className="text-lg truncate whitespace-nowrap font-echo"
+              style={{ width: 100 }}
+            >
+              {room.name || '🌀'}
             </Link>
           </li>
         ))}
@@ -40,7 +39,7 @@ export default function Rooms() {
     );
 
   return (
-    <div className="space-y-2">
+    <>
       <Button
         onClick={() => setOpen(true)}
         className="px-6 py-3 border border-neutral-700 
@@ -55,22 +54,13 @@ export default function Rooms() {
         )}
       </Button>
       <h3
-        className="text-center text-xl text-gray-600 uppercase tracking-wider mt-4 mb-2 font-echo"
+        className="text-lg text-gray-500 tracking-wider mt-4 font-echo"
         style={{ marginTop: 16 }}
       >
         {t('campfires.your_campfires')}{' '}
       </h3>
-      <div
-        className="text-center animate-glow-fire"
-        style={{
-          fontSize: 24,
-          marginTop: 0,
-        }}
-      >
-        🔥🔥🔥
-      </div>
       {roomsList}
       {open && <CreateRoomModal onClose={() => setOpen(false)} />}
-    </div>
+    </>
   );
 }

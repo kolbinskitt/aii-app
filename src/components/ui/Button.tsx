@@ -14,7 +14,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseClasses =
-    'px-4 py-2 rounded font-medium border transition-all duration-150';
+    'px-4 py-2 rounded-md font-medium border transition-all duration-150';
 
   const typeClasses = {
     default: 'bg-white text-black border-black hover:bg-gray-100',

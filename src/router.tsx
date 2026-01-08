@@ -27,6 +27,12 @@ function LeftSidebar({ children }: PropsWithChildren<LeftSidebarProps>) {
   );
 }
 
+type GridProps = {};
+
+function Grid({ children }: PropsWithChildren<GridProps>) {
+  return <div className="flex items-start w-full gap-4 pr-10">{children}</div>;
+}
+
 export const router = createHashRouter([
   {
     path: '/',
@@ -48,17 +54,24 @@ export const router = createHashRouter([
         children: [
           {
             path: 'room/:id/field',
-            element: <RoomFieldView />,
+            element: (
+              <Grid>
+                <LeftSidebar>
+                  <Rooms />
+                </LeftSidebar>
+                <RoomFieldView />
+              </Grid>
+            ),
           },
           {
             path: 'room/:id',
             element: (
-              <div className="flex items-start w-full gap-4 pr-10">
+              <Grid>
                 <LeftSidebar>
                   <Rooms />
                 </LeftSidebar>
                 <Room />
-              </div>
+              </Grid>
             ),
           },
           {
