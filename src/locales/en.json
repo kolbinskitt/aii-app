@@ -33,6 +33,11 @@
     "your_campfires": "Your campfires",
     "no_campfires": "No campfire has been lit yet. Light the first one.",
     "start_first_campfire": "Light the first campfire",
-    "start_new_campfire": "Light campfire"
+    "start_new_campfire": "Light campfire",
+    "starting_new_campfire": "Let's light campfire",
+    "starting_new_campfire.placeholder": "Nazwa ogniska... np. \"czy drzewa śnią?\"",
+    "choose_aiiki": "Wybierz kompanów",
+    "start_fire": "Rozpal ogień",
+    "start_fire_hint": "Musisz wybrać co najmniej jednego kompana, by nazwać ognisko."
   }
 }

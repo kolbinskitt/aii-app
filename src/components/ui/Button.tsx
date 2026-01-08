@@ -3,12 +3,14 @@ import clsx from 'clsx';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   kind?: 'default' | 'submit' | 'danger';
+  tooltip?: string;
 }
 
 export default function Button({
   kind = 'default',
   className,
   disabled,
+  tooltip,
   ...props
 }: ButtonProps) {
   const baseClasses =
@@ -23,15 +25,17 @@ export default function Button({
   const disabledClasses = 'opacity-50 cursor-not-allowed pointer-events-none';
 
   return (
-    <button
-      {...props}
-      disabled={disabled}
-      className={clsx(
-        baseClasses,
-        typeClasses[kind],
-        disabled && disabledClasses,
-        className,
-      )}
-    />
+    <div title={tooltip}>
+      <button
+        {...props}
+        disabled={disabled}
+        className={clsx(
+          baseClasses,
+          typeClasses[kind],
+          disabled && disabledClasses,
+          className,
+        )}
+      />
+    </div>
   );
 }
