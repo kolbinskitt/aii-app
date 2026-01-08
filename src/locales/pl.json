@@ -6,9 +6,27 @@
         "google": "Dołącz do echa przez Google"
     }
   },
+  "welcome": {
+    "hello": "Witaj w przestrzeni Jaźni",
+    "description": "W jednym lub kilku zdaniach scharakteryzuj siebie. To początek Twojego echa.",
+    "about_you": {
+        "placeholder": "Na przykład czuję więcej, niż potrafię powiedzieć..."
+    }
+  },
   "user": {
     "logout": "Wyloguj",
     "delete_account": "Usuń konto"
   },
-  "you": "Ty"
+  "you": "Ty",
+  "aria": {
+    "close_popup": "Zamknij popup"
+  },
+  "ok": "OK",
+  "cancel": "Anuluj",
+  "save": "Zapisz",
+  "saving": "Zapisywanie...",
+  "confirm": {
+    "delete_account": "Potwierdź kasowanie konta",
+    "delete_account_description": "Czy na pewno chcesz trwale usunąć swoje konto?"
+  }
 }

@@ -4,6 +4,9 @@ import { supabase } from '../lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import { useAccessToken } from '../hooks/useAccessToken';
 import { api } from '../lib/api';
+import Popup from './ui/Popup';
+import { useTranslation } from 'react-i18next';
+import Button from './ui/Button';
 
 type WelcomeModalProps = {
   isOpen: boolean;
@@ -16,6 +19,7 @@ export default function WelcomeModal({
   onClose,
   onComplete,
 }: WelcomeModalProps) {
+  const { t } = useTranslation();
   const { user } = useUser();
   const [sentence, setSentence] = useState('');
   const [loading, setLoading] = useState(false);
@@ -135,39 +139,29 @@ Twoja odpowiedź ma być wyłącznie takim JSONem, bez komentarzy ani wyjaśnie�
   };
 
   if (!isOpen) return null;
-  return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-6 w-full max-w-lg">
-        <h2 className="text-lg font-bold mb-4">Witaj w przestrzeni Jaźni</h2>
-        <p className="mb-4 text-sm text-zinc-500">
-          W jednym lub kilku zdaniach scharakteryzuj siebie. To początek Twojego
-          humZONu.
-        </p>
-        <textarea
-          value={sentence}
-          onChange={e => setSentence(e.target.value)}
-          placeholder="Np. Czuję więcej, niż potrafię powiedzieć."
-          className="w-full border border-zinc-300 dark:border-zinc-700 rounded p-2 h-24 resize-none"
-        />
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-        <div className="mt-4 flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="text-sm text-zinc-500 hover:underline"
-          >
-            Anuluj
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={loading || !sentence.trim()}
-            className="bg-black text-white px-4 py-2 rounded disabled:opacity-50"
-          >
-            {loading ? 'Zapisuję...' : 'Zapisz'}
-          </button>
-        </div>
+    <Popup closeOnBackdropClick={false}>
+      <h2 className="text-2xl font-bold mb-4 font-echo">
+        {t('welcome.hello')}
+      </h2>
+      <p className="mb-4 text-sm text-zinc-500">{t('welcome.description')}</p>
+      <textarea
+        value={sentence}
+        onChange={e => setSentence(e.target.value)}
+        placeholder={t('welcome.about_you.placeholder')}
+        className="w-full border border-zinc-300 dark:border-zinc-700 rounded p-2 h-24 resize-none"
+      />
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+      <div className="mt-4 flex justify-end gap-2">
+        <Button
+          onClick={handleSubmit}
+          disabled={loading || !sentence.trim()}
+          kind="submit"
+        >
+          {loading ? t('saving') : t('save')}
+        </Button>
       </div>
-    </div>
+    </Popup>
   );
 }

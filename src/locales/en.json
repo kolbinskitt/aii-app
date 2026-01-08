@@ -6,9 +6,27 @@
         "google": "Join the echo via Google"
     }
   },
+  "welcome": {
+  "hello": "Welcome to the space of Self",
+    "description": "In one or a few sentences, describe yourself. This is the beginning of your echo.",
+    "about_you": {
+      "placeholder": "For example: I feel more than I know how to say..."
+    }
+  },
   "user": {
     "logout": "Logout",
     "delete_account": "Delete account"
   },
-  "you": "You"
+  "you": "You",
+  "aria": {
+    "close_popup": "Close popup"
+  },
+  "ok": "OK",
+  "cancel": "Cancel",
+  "save": "Save",
+  "saving": "Saving...",
+  "confirm": {
+    "delete_account": "Confirm delete account",
+    "delete_account_description": "Are you sure you want to permanently delete your account?"
+  }
 }
