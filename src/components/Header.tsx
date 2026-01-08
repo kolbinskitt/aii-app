@@ -6,7 +6,7 @@ import useUser from '../hooks/useUser';
 export default function Header() {
   const { i18n } = useTranslation();
   const user = useUser();
-  console.log('Wersja: ' + 7);
+  console.log('Wersja: ' + 8);
 
   return (
     <header className="relative z-10 flex justify-between items-center w-full px-6 md:px-12 py-6">
