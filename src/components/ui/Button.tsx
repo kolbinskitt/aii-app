@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes } from 'react';
 import clsx from 'clsx';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  kind?: 'default' | 'submit' | 'danger' | 'fire';
+  kind?: 'default' | 'submit' | 'danger' | 'primary';
   tooltip?: string;
 }
 
@@ -18,9 +18,11 @@ export default function Button({
 
   const typeClasses = {
     default: 'bg-white text-black border-black hover:bg-gray-100',
-    submit: 'bg-green-600 text-white border-green-700 hover:bg-green-500',
-    danger: 'bg-red-600 text-white border-red-700 hover:bg-red-700',
-    fire: 'px-4 py-2 bg-gradient-to-r bg-amber-600 hover:bg-amber-700 text-white rounded-md shadow hover:brightness-110 transition border-none',
+    submit:
+      'bg-green-600 text-white border-green-700 hover:bg-green-500 border-none',
+    danger: 'bg-red-600 text-white border-red-700 hover:bg-red-700 border-none',
+    primary:
+      'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow hover:brightness-110 transition border-none',
   };
 
   const disabledClasses = 'opacity-50 cursor-not-allowed pointer-events-none';

@@ -92,7 +92,7 @@ export default function CreateRoomModal({ onClose }: Props) {
           title={disabled ? t('campfires.start_fire_hint') : ''}
         >
           <div>{disabled ? '🔒' : '🔥'}</div>
-          <Button onClick={handleCreate} disabled={disabled} kind="fire">
+          <Button onClick={handleCreate} disabled={disabled} kind="primary">
             {t('campfires.start_fire')}
           </Button>
         </div>

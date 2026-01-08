@@ -173,7 +173,7 @@ function BottomTile({
           placeholder={t('chat.write_something')}
           onKeyDown={onKeyDown}
         />
-        <Button onClick={onClick} kind="fire">
+        <Button onClick={onClick} kind="primary">
           {t('chat.send')}
         </Button>
       </div>
