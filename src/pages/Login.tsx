@@ -12,6 +12,7 @@ const redirectTo = import.meta.env.PROD
 export default function Login() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  console.log({ __PUBLIC__ });
 
   useEffect(() => {
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -87,7 +88,7 @@ export default function Login() {
             className="bg-black text-white hover:bg-gray-800 px-6 py-3 rounded-full transition flex items-center justify-center space-x-3 mx-auto font-sans"
           >
             <img
-              src={`${__PUBLIC__}/images/logo/google.png`}
+              src={`images/logo/google.png`}
               alt="Google"
               className="w-5 h-5"
             />
