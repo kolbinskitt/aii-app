@@ -38,6 +38,14 @@
     "starting_new_campfire.placeholder": "Nazwa ogniska, np. czy drzewa śnią o deszczu?...",
     "choose_aiiki": "Wybierz kompanów",
     "start_fire": "Zapal ogień",
-    "start_fire_hint": "Musisz wybrać co najmniej jednego kompana, by nazwać ognisko."
+    "start_fire_hint": "Musisz wybrać co najmniej jednego kompana, by nazwać ognisko.",
+    "campfire_name": "Nazwa ogniska"
+  },
+  "chat": {
+    "no_stories": "Nikt jeszcze nic nie powiedział, słychać tylko echo...",
+    "writing": "pisze",
+    "send": "Wyślij",
+    "write_something": "Powiedz coś...",
+    "aiiki_near_campfire": "Aiiki przy ognisku"
   }
 }

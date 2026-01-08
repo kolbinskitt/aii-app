@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 import { supabase } from '../lib/supabase';
+import { LoaderFullScreen } from '../components/ui';
 
 type User = any;
 
@@ -41,7 +42,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   // 🔒 Blokada renderu
   if (loading) {
-    return <div>Ładowanie 2...</div>;
+    return <LoaderFullScreen />;
   }
 
   return (

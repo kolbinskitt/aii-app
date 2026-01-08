@@ -1,3 +1,4 @@
+import { PropsWithChildren } from 'react';
 import { createHashRouter, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Rooms from './pages/Rooms';
@@ -7,6 +8,24 @@ import AuthGuard from './components/AuthGuard';
 import RoomFieldView from './pages/RoomFieldView';
 import ErrorPage from './pages/ErrorPage';
 import { Sidebar } from './components/ui';
+
+type LeftSidebarProps = {};
+
+function LeftSidebar({ children }: PropsWithChildren<LeftSidebarProps>) {
+  return (
+    <Sidebar
+      className="bg-gradient-to-t from-white/40 via-white/60 to-white/80"
+      styles={{
+        marginLeft: 60,
+        width: 300,
+        height: 'calc(100vh - 110px)',
+        minWidth: 300,
+      }}
+    >
+      {children}
+    </Sidebar>
+  );
+}
 
 export const router = createHashRouter([
   {
@@ -33,21 +52,21 @@ export const router = createHashRouter([
           },
           {
             path: 'room/:id',
-            element: <Room />,
+            element: (
+              <div className="flex items-start w-full gap-4 pr-10">
+                <LeftSidebar>
+                  <Rooms />
+                </LeftSidebar>
+                <Room />
+              </div>
+            ),
           },
           {
             index: true,
             element: (
-              <Sidebar
-                className="bg-gradient-to-t from-white/40 via-white/60 to-white/80"
-                styles={{
-                  marginLeft: 60,
-                  width: 300,
-                  height: 'calc(100vh - 110px)',
-                }}
-              >
+              <LeftSidebar>
                 <Rooms />
-              </Sidebar>
+              </LeftSidebar>
             ),
           },
         ],
