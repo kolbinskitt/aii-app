@@ -12,7 +12,6 @@ const redirectTo = import.meta.env.PROD
 export default function Login() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  console.log({ __PUBLIC__ });
 
   useEffect(() => {
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -54,7 +53,7 @@ export default function Login() {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('${__PUBLIC__}/images/landing-desktop.png')`,
+          backgroundImage: `url(images/landing-desktop.png')`,
         }}
       />
 
@@ -62,7 +61,7 @@ export default function Login() {
       <div
         className="md:hidden absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('${__PUBLIC__}/images/landing-mobile.jpg')`,
+          backgroundImage: `url('images/landing-mobile.jpg')`,
         }}
       />
 
