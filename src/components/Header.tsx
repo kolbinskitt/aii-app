@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function Header() {
   const { i18n } = useTranslation();
-  console.log('Wersja: ' + 2);
+  console.log('Wersja: ' + 3);
   return (
     <header className="relative z-10 flex justify-between items-center w-full px-6 md:px-12 py-6">
       <div className="text-white text-3xl font-bold tracking-widest">aii</div>

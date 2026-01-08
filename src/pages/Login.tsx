@@ -25,9 +25,7 @@ export default function Login() {
           refresh_token,
         })
         .then(async () => {
-          console.log('✅ Supabase session set!');
           const { data, error } = await supabase.auth.getSession();
-          console.log('📦 Current session:', data?.session, error);
           window.location.hash = ''; // wyczyść
           navigate('/'); // przekieruj
         });
@@ -53,7 +51,7 @@ export default function Login() {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url(images/landing-desktop.png')`,
+          backgroundImage: "url('images/landing-desktop.png')",
         }}
       />
 
@@ -61,7 +59,7 @@ export default function Login() {
       <div
         className="md:hidden absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('images/landing-mobile.jpg')`,
+          backgroundImage: "url('images/landing-mobile.jpg')",
         }}
       />
 
