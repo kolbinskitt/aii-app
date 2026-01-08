@@ -18,8 +18,5 @@ export default defineConfig(({ mode }) => {
         },
       },
     ],
-    define: {
-      __PUBLIC__: JSON.stringify(process.env.PUBLIC_URL || ''),
-    },
   };
 });
