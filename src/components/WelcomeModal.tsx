@@ -135,12 +135,10 @@ Twoja odpowiedź ma być wyłącznie takim JSONem, bez komentarzy ani wyjaśnie�
   };
 
   if (!isOpen) return null;
+  return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-      style={{ top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'white' }}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-6 w-full max-w-lg">
         <h2 className="text-lg font-bold mb-4">Witaj w przestrzeni Jaźni</h2>
         <p className="mb-4 text-sm text-zinc-500">

@@ -1,9 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { UserMenu } from './UserMenu';
+import useUser from '../hooks/useUser';
 
 export default function Header() {
   const { i18n } = useTranslation();
-  console.log('Wersja: ' + 5);
+  const user = useUser();
+  console.log('Wersja: ' + 7);
 
   return (
     <header className="relative z-10 flex justify-between items-center w-full px-6 md:px-12 py-6">
@@ -26,6 +29,7 @@ export default function Header() {
         >
           EN
         </button>
+        {user && <UserMenu />}
       </div>
     </header>
   );

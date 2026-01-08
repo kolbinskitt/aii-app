@@ -5,5 +5,10 @@
     "join":{
         "google": "Join the echo via Google"
     }
-  }
+  },
+  "user": {
+    "logout": "Logout",
+    "delete_account": "Delete account"
+  },
+  "you": "You"
 }

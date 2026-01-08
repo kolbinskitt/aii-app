@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Outlet } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { useUser } from '../context/UserContext';
-import { UserMenu } from './UserMenu';
 import App from './App';
 import { UserHumzon } from '../types';
 import WelcomeModal from '../components/WelcomeModal';
@@ -10,10 +8,8 @@ import { useEffect, useState } from 'react';
 import useUserUser from '../hooks/useUser';
 
 export default function Layout() {
-  const user = useUser();
   const userUser = useUserUser();
   const [welcomeModalOpened, setWelcomeModalOpened] = useState(false);
-  console.log('Layout');
 
   const { data } = useQuery<UserHumzon[], Error>({
     queryKey: ['humzon', userUser.user?.id],
@@ -37,18 +33,12 @@ export default function Layout() {
 
   return (
     <App>
-      <header className="p-4 flex justify-between">
-        {user && <UserMenu />}
-      </header>
-      <main className="p-4">
-        <Outlet />
-
-        <WelcomeModal
-          isOpen={welcomeModalOpened}
-          onClose={() => setWelcomeModalOpened(false)}
-          onComplete={() => setWelcomeModalOpened(false)}
-        />
-      </main>
+      <Outlet />
+      <WelcomeModal
+        isOpen={welcomeModalOpened}
+        onClose={() => setWelcomeModalOpened(false)}
+        onComplete={() => setWelcomeModalOpened(false)}
+      />
     </App>
   );
 }

@@ -5,5 +5,10 @@
     "join":{
         "google": "Dołącz do echa przez Google"
     }
-  }
+  },
+  "user": {
+    "logout": "Wyloguj",
+    "delete_account": "Usuń konto"
+  },
+  "you": "Ty"
 }
