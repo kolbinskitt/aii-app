@@ -3,54 +3,71 @@ import { getAllRooms } from '../db/rooms';
 import { Room } from '../types';
 import { Link } from 'react-router-dom';
 import CreateRoomModal from '../components/CreateRoomModal';
+import { useTranslation } from 'react-i18next';
+import { Button, Tile } from '../components/ui';
 
-export default function Home() {
+export default function Rooms() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+
   const [rooms, setRooms] = useState<Room[]>([]);
 
   useEffect(() => {
     getAllRooms().then(setRooms);
   }, []);
 
-  return (
-    <div>
-      <main className="min-h-screen flex items-center justify-center bg-cover bg-center">
-        <div className="text-center space-y-6">
-          <h1 className="text-4xl font-light">aii</h1>
-          <button
-            onClick={() => setOpen(true)}
-            className="px-6 py-3 border border-neutral-700 hover:bg-neutral-800 transition"
-          >
-            Utwórz nowy pokój
-          </button>
-        </div>
+  const roomsList =
+    rooms.length === 0 ? (
+      <Tile>
+        <p className="text-muted-foreground">{t('campfires.no_campfires')}</p>
+      </Tile>
+    ) : (
+      <ul className="space-y-2">
+        {rooms.map(room => (
+          <li key={room.id}>
+            <Link to={`/room/${room.id}`}>
+              <Tile className="bg-white/70" hoverable>
+                <div className="text-md">
+                  {room.name || '🌀 Bezimienny pokój'}
+                </div>
+              </Tile>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    );
 
-        <div className="p-4 space-y-4">
-          {rooms.length === 0 ? (
-            <p className="text-muted-foreground">
-              🌱 Jeszcze żaden pokój nie zakwitł.
-            </p>
-          ) : (
-            <ul className="space-y-2">
-              {rooms.map(room => (
-                <li key={room.id}>
-                  <Link
-                    to={`/room/${room.id}`}
-                    className="block p-3 border border-muted rounded-2xl hover:bg-muted transition"
-                  >
-                    <div className="text-lg font-medium">
-                      {room.name || '🌀 Bezimienny pokój'}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {new Date(room.created_at).toLocaleString()}
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </main>
+  return (
+    <div className="space-y-2">
+      <Button
+        onClick={() => setOpen(true)}
+        className="px-6 py-3 border border-neutral-700 
+        hover:bg-neutral-800 transition w-full rounded-2xl
+        bg-green-600 hover:bg-green-700 text-white"
+        kind="submit"
+      >
+        {t(
+          rooms.length === 0
+            ? 'campfires.start_first_campfire'
+            : 'campfires.start_new_campfire',
+        )}
+      </Button>
+      <h3
+        className="text-center text-xl text-gray-600 uppercase tracking-wider mt-4 mb-2 font-echo"
+        style={{ marginTop: 16 }}
+      >
+        {t('campfires.your_campfires')}{' '}
+      </h3>
+      <div
+        className="text-center animate-glow-fire"
+        style={{
+          fontSize: 24,
+          marginTop: 0,
+        }}
+      >
+        🔥🔥🔥
+      </div>
+      {roomsList}
       {open && <CreateRoomModal onClose={() => setOpen(false)} />}
     </div>
   );

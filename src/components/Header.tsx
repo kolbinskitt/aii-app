@@ -11,7 +11,11 @@ export default function Header() {
   return (
     <header className="relative z-10 flex justify-between items-center w-full px-6 md:px-12 py-6">
       {/* Logo */}
-      <Link to="/" className="h-10 flex items-center">
+      <Link
+        to="/"
+        className="h-10 flex items-center"
+        style={{ outline: 'none' }}
+      >
         <img src="images/logo/aii.svg" alt="aii logo" className="h-full w-20" />
       </Link>
 

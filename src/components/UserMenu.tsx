@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import useUser from '../hooks/useUser';
 import { useTranslation } from 'react-i18next';
-import Confirm from './ui/Confirm';
+import { Confirm } from './ui';
 
 export function UserMenu() {
   const [open, setOpen] = useState(false);

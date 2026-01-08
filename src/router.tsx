@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import AuthGuard from './components/AuthGuard';
 import RoomFieldView from './pages/RoomFieldView';
 import ErrorPage from './pages/ErrorPage';
+import { Sidebar } from './components/ui';
 
 export const router = createHashRouter([
   {
@@ -35,8 +36,19 @@ export const router = createHashRouter([
             element: <Room />,
           },
           {
-            index: true, // 👈 czyli path === '/'
-            element: <Rooms />,
+            index: true,
+            element: (
+              <Sidebar
+                className="bg-gradient-to-t from-white/40 via-white/60 to-white/80"
+                styles={{
+                  marginLeft: 60,
+                  width: 300,
+                  height: 'calc(100vh - 110px)',
+                }}
+              >
+                <Rooms />
+              </Sidebar>
+            ),
           },
         ],
       },

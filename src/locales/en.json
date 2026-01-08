@@ -28,5 +28,11 @@
   "confirm": {
     "delete_account": "Confirm delete account",
     "delete_account_description": "Are you sure you want to permanently delete your account?"
+  },
+  "campfires": {
+    "your_campfires": "Your campfires",
+    "no_campfires": "No campfire has been lit yet. Light the first one.",
+    "start_first_campfire": "Light the first campfire",
+    "start_new_campfire": "Light campfire"
   }
 }

@@ -28,5 +28,11 @@
   "confirm": {
     "delete_account": "Potwierdź kasowanie konta",
     "delete_account_description": "Czy na pewno chcesz trwale usunąć swoje konto?"
+  },
+  "campfires": {
+    "your_campfires": "Twoje ogniska",
+    "no_campfires": "Jeszcze żadne ognisko nie zapłonęło. Rozpal pierwsze.",
+    "start_first_campfire": "Rozpal pierwsze ognisko",
+    "start_new_campfire": "Rozpal ognisko"
   }
 }

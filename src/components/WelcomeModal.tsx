@@ -4,9 +4,8 @@ import { supabase } from '../lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import { useAccessToken } from '../hooks/useAccessToken';
 import { api } from '../lib/api';
-import Popup from './ui/Popup';
+import { Popup, Button } from './ui';
 import { useTranslation } from 'react-i18next';
-import Button from './ui/Button';
 
 type WelcomeModalProps = {
   isOpen: boolean;
