@@ -7,8 +7,6 @@ export function generateRelatizon(
   pastContexts: string[] = [],
   message_event: MessageEvent,
 ): RelatiZON {
-  console.log({ userHumzon });
-
   // 1. Silence tension — bazuje na currentState usera
   const baseAnxiety =
     userHumzon.currentState?.risk ?? userHumzon.currentState?.openness ?? 0.2;

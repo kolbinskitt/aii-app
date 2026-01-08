@@ -16,9 +16,9 @@ function LeftSidebar({ children }: PropsWithChildren<LeftSidebarProps>) {
     <Sidebar
       className="bg-gradient-to-t from-white/40 via-white/60 to-white/80"
       styles={{
-        marginLeft: 60,
+        marginLeft: 20,
         width: 300,
-        height: 'calc(100vh - 110px)',
+        height: 'calc(100vh - 70px)',
         minWidth: 300,
       }}
     >
@@ -30,7 +30,7 @@ function LeftSidebar({ children }: PropsWithChildren<LeftSidebarProps>) {
 type GridProps = {};
 
 function Grid({ children }: PropsWithChildren<GridProps>) {
-  return <div className="flex items-start w-full gap-4 pr-10">{children}</div>;
+  return <div className="flex items-start w-full gap-2 pr-2">{children}</div>;
 }
 
 export const router = createHashRouter([

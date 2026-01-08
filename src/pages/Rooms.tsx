@@ -9,13 +9,10 @@ import { Button, Tile } from '../components/ui';
 export default function Rooms() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-
   const [rooms, setRooms] = useState<Room[]>([]);
-
   useEffect(() => {
     getAllRooms().then(setRooms);
   }, []);
-
   const roomsList =
     rooms.length === 0 ? (
       <p className="text-center text-muted-foreground">
@@ -28,7 +25,7 @@ export default function Rooms() {
             <Link
               to={`/room/${room.id}`}
               title={room.name || '🌀'}
-              className="text-lg truncate whitespace-nowrap font-echo"
+              className="truncate whitespace-nowrap"
               style={{ width: 100 }}
             >
               {room.name || '🌀'}
@@ -54,7 +51,7 @@ export default function Rooms() {
         )}
       </Button>
       <h3
-        className="text-lg text-gray-500 tracking-wider mt-4 font-echo"
+        className="text-gray-500 tracking-wider mt-4"
         style={{ marginTop: 16 }}
       >
         {t('campfires.your_campfires')}{' '}

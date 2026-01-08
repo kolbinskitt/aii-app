@@ -68,8 +68,8 @@ function Message({
     <Tile
       className={`!p-2 !pl-4 !pr-4 font-system ${
         role === 'user'
-          ? '!bg-gray-100'
-          : 'bg-gradient-to-r from-amber-100 via-amber-200 to-amber-100'
+          ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
+          : '!bg-gray-300'
       }`}
       styles={{
         display: 'flex',
@@ -119,10 +119,10 @@ function MessageArea({
     <div
       style={{
         overflowY: 'auto',
-        maxHeight: 'calc(100vh - 168px)',
+        maxHeight: 'calc(100vh - 128px)',
         display: 'flex',
         flexDirection: 'column',
-        gap: 8,
+        gap: 16,
         paddingBottom: 8,
       }}
     >
@@ -158,9 +158,9 @@ function BottomTile({
     <Tile
       className="fixed z-100"
       styles={{
-        bottom: 22,
-        right: 40,
-        left: 376,
+        bottom: 14,
+        right: 8,
+        left: 328,
       }}
     >
       <div className="flex gap-2">
