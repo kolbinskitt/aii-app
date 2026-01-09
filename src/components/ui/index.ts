@@ -11,6 +11,7 @@ import Section from './Section';
 import Slider from './Slider';
 import Switch from './Switch';
 import Textarea from './Textarea';
+import Label from './Label';
 
 export {
   Button,
@@ -26,4 +27,5 @@ export {
   Slider,
   Switch,
   Textarea,
+  Label,
 };

@@ -2,9 +2,11 @@
 
 import { Select } from 'antd';
 import { cn } from '../../lib/utils';
+import Label from './Label';
 
 type MultiSelectProps = {
   value: string[];
+  label?: string;
   onChange: (value: string[]) => void;
   options: { label: string; value: string }[];
   placeholder?: string;
@@ -17,17 +19,21 @@ function MultiSelect({
   options,
   placeholder,
   className,
+  label,
 }: MultiSelectProps) {
   return (
-    <Select
-      mode="multiple"
-      allowClear
-      placeholder={placeholder || 'Wybierz...'}
-      value={value}
-      onChange={onChange}
-      options={options}
-      className={cn('w-full rounded-md', className)}
-    />
+    <div className="space-y-1">
+      {label && <Label>{label}</Label>}
+      <Select
+        mode="multiple"
+        allowClear
+        placeholder={placeholder || 'Wybierz...'}
+        value={value}
+        onChange={onChange}
+        options={options}
+        className={cn('w-full rounded-md', className)}
+      />
+    </div>
   );
 }
 

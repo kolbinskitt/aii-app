@@ -2,6 +2,7 @@
 
 import { Input } from 'antd';
 import { cn } from '../../lib/utils';
+import Label from './Label';
 
 const { TextArea } = Input;
 
@@ -11,6 +12,7 @@ type TextareaProps = {
   placeholder?: string;
   className?: string;
   rows?: number;
+  label?: string;
 };
 
 function Textarea({
@@ -19,15 +21,19 @@ function Textarea({
   placeholder,
   className,
   rows = 4,
+  label,
 }: TextareaProps) {
   return (
-    <TextArea
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      placeholder={placeholder}
-      rows={rows}
-      className={cn('font-system rounded-md', className)}
-    />
+    <div className="space-y-1">
+      {label && <Label>{label}</Label>}
+      <TextArea
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={rows}
+        className={cn('font-system rounded-md', className)}
+      />
+    </div>
   );
 }
 
