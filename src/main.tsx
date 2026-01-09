@@ -25,6 +25,7 @@ import '@fontsource/space-grotesk/500.css';
 import '@fontsource/space-grotesk/600.css';
 import '@fontsource/space-grotesk/700.css';
 import './index.css';
+import 'antd/dist/reset.css';
 
 if (window.location.hash === '') {
   window.location.replace(window.location.href + '#/');
