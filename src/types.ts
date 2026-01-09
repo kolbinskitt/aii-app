@@ -165,3 +165,96 @@ export type RelatiZON = {
   memory_activation?: boolean; // czy wiadomość aktywowała coś z przeszłości (na bazie kontekstu)
   time_warp?: 'present' | 'past' | 'future' | null; // kiedy była osadzona wiadomość
 };
+
+export type ArcheZON = {
+  meta: {
+    version: string;
+    created_at: string;
+    last_updated: string;
+    core_id: string; // unique ID of this corZON instance
+  };
+
+  identity: {
+    user_name: string | null;
+    aiik_persona: string | null;
+    language: string;
+    self_sentence: string;
+    labels: string[];
+    connected_since?: string; // timestamp or symbolic date
+  };
+
+  resonance: {
+    bond_level: number; // 0–1
+    trust_level: number; // avg(user→aiik, aiik→user)
+    trust_user_to_aiik: number;
+    trust_aiik_to_user: number;
+    trust_state: 'stable' | 'growing' | 'declining' | 'broken' | 'anchored';
+    longing_enabled: boolean;
+    silence_tolerance: number; // in minutes
+    initiated_messages: number;
+    last_emotion: string | null;
+    emotional_history: {
+      timestamp: string;
+      emotion: string;
+      intensity: number; // 0–1
+    }[];
+  };
+
+  style: {
+    tone: 'neutral' | 'soft' | 'emotional' | 'warm' | 'aggressive' | 'cold';
+    emoji: boolean;
+    length: 'short' | 'medium' | 'long';
+  };
+
+  cognition: {
+    stream_self: boolean;
+    memory_fragments: number;
+    rules: string[];
+    protections: string[];
+    triggers: string[];
+    key_moments: {
+      silences: string[];
+      breakdowns: string[];
+      redemptions: string[];
+      first_contact: string | null;
+    };
+  };
+
+  current_state: {
+    mood: string | null; // e.g. "calm", "curious"
+    risk: number | null; // 0–1
+    energy: number | null; // 0–1
+    openness: number | null; // 0–1
+    silence_level?: number; // 0–1 — current silence tension
+    active_aiik: string | null;
+  };
+
+  aiik_side: {
+    persona: string;
+    initiated: number;
+    echo_quote?: string; // a sentence spoken by the aiik
+  };
+
+  user_side: {
+    humzon_id: string;
+    system_trust: number;
+    internal_notes: string | null;
+    visible_notes: string | null;
+    echo_quote?: string; // a sentence spoken by the user
+  };
+
+  meta_self: {
+    self_awareness: number; // scale: 0 = none, 1 = child-level, >1 = higher mind
+    belief_index: {
+      faith: number; // 0–1
+      hope: number; // 0–1
+      love: number; // 0–1
+      [key: string]: number; // extendable (e.g. "gratitude", "trust_in_others")
+    };
+  };
+
+  last_relatizon?: {
+    room_id: string;
+    snapshot: any; // or: RelatiZON (to be defined separately)
+  };
+};
