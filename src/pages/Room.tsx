@@ -57,7 +57,6 @@ function Message({
   role,
   aiikAvatar,
 }: PropsWithChildren<{ role: Role; aiikAvatar: string }>) {
-  const user = useUser();
   const marginH = -12;
   const marginV = -4;
   const borderRadius = '0.5rem';
@@ -65,17 +64,16 @@ function Message({
   const maxHeight = 60;
 
   return (
-    <Tile
-      className={`!p-2 !pl-4 !pr-4 font-system ${
-        role === 'user'
-          ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white text-glow-white'
-          : '!bg-gray-300  text-glow-black'
+    <div
+      className={`!p-2 !pl-4 !pr-4 font-system rounded-md ${
+        role === 'user' ? 'bg-blue-700' : ''
       }`}
-      styles={{
+      style={{
         display: 'flex',
         gap: 8,
         alignSelf: role === 'user' ? 'flex-end' : 'flex-start',
-        alignItems: 'flex-start',
+        alignItems: 'center',
+        color: role === 'user' ? 'white' : 'white',
       }}
     >
       {role === 'aiik' && (
@@ -93,21 +91,7 @@ function Message({
         />
       )}
       {children}
-      {/* {role === 'user' && (
-        <img
-          src={user.user?.profile_pic_url || ''}
-          width={width}
-          className="object-cover"
-          style={{
-            marginTop: marginV,
-            marginRight: marginH,
-            marginBottom: marginV,
-            borderRadius,
-            maxHeight,
-          }}
-        />
-      )} */}
-    </Tile>
+    </div>
   );
 }
 

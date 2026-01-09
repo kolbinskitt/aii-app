@@ -15,9 +15,7 @@ export default function Rooms() {
   }, []);
   const roomsList =
     rooms.length === 0 ? (
-      <p className="text-center text-muted-foreground">
-        {t('campfires.no_campfires')}
-      </p>
+      <p className="text-muted-foreground">{t('campfires.no_campfires')}</p>
     ) : (
       <ul style={{ margin: 0 }}>
         {rooms.map(room => (
