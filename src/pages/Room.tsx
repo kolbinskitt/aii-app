@@ -15,7 +15,7 @@ import { useAccessToken } from '../hooks/useAccessToken';
 import { supabase } from '../lib/supabase';
 import { api } from '../lib/api';
 import { useTranslation } from 'react-i18next';
-import { Button, Tile } from '../components/ui';
+import { Button, Tile, Input } from '../components/ui';
 
 function TopTile({ room }: { room: RoomWithMessages | null }) {
   const { t } = useTranslation();
@@ -148,12 +148,12 @@ function BottomTile({
       }}
     >
       <div className="flex gap-2">
-        <input
+        <Input
           type="text"
           value={value}
           onChange={onChange}
-          className="flex-1 px-4 py-2 border border-neutral-300 rounded-md bg-white 
-          focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm font-system"
+          // className="flex-1 px-4 py-2 border border-neutral-300 rounded-md bg-white
+          // focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm font-system"
           placeholder={t('chat.write_something')}
           onKeyDown={onKeyDown}
         />

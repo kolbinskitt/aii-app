@@ -4,5 +4,26 @@ import Popup from './Popup';
 import Sidebar from './Sidebar';
 import Tile from './Tile';
 import LoaderFullScreen from './LoaderFullScreen';
+import Input from './Input';
+import Checkbox from './Checkbox';
+import MultiSelect from './MultiSelect';
+import Section from './Section';
+import Slider from './Slider';
+import Switch from './Switch';
+import Textarea from './Textarea';
 
-export { Button, Confirm, Popup, Sidebar, Tile, LoaderFullScreen };
+export {
+  Button,
+  Confirm,
+  Popup,
+  Sidebar,
+  Tile,
+  LoaderFullScreen,
+  Input,
+  Checkbox,
+  MultiSelect,
+  Section,
+  Slider,
+  Switch,
+  Textarea,
+};

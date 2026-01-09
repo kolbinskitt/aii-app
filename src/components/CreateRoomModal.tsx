@@ -6,7 +6,7 @@ import useUserAiiki from '../db/aiiki';
 import { Aiik } from '../types';
 import useUser from '../hooks/useUser';
 import { useAccessToken } from '../hooks/useAccessToken';
-import { Popup, Button } from './ui';
+import { Popup, Button, Input, Checkbox } from './ui';
 import { useTranslation } from 'react-i18next';
 
 type Props = {
@@ -51,11 +51,10 @@ export default function CreateRoomModal({ onClose }: Props) {
       <h2 className="text-3xl font-echo tracking-wide text-center text-gray-900 mb-4">
         {t('campfires.starting_new_campfire')}
       </h2>
-      <input
+      <Input
         value={name}
         onChange={e => setName(e.target.value)}
         placeholder={t('campfires.starting_new_campfire.placeholder')}
-        className="w-full bg-gray-100 p-2 outline-none mb-4 font-system"
       />
       <div>
         <h3 className="text-sm text-gray-600 mb-2">
@@ -67,8 +66,7 @@ export default function CreateRoomModal({ onClose }: Props) {
               key={aiik.id}
               className="flex gap-2 p-2 rounded-xl hover:bg-gray-100 transition cursor-pointer"
             >
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={selectedAiiki.has(aiik.id)}
                 onChange={() => toggleAiik(aiik.id)}
               />
