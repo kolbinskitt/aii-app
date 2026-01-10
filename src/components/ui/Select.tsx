@@ -1,13 +1,12 @@
 'use client';
 import { Select as AntdSelect } from 'antd';
-import type { SelectProps as AntdSelectProps } from 'antd';
 import { cn } from '@/lib/utils';
 
 interface SelectProps {
   label?: string;
   value?: string;
   options: string[];
-  onChange?: (value: string) => void;
+  onChange?: (_val: string) => void;
   className?: string;
 }
 

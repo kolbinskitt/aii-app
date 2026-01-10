@@ -133,7 +133,7 @@ function BottomTile({
   onClick,
 }: {
   value: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
+  onChange: (val: string) => void;
   onKeyDown: KeyboardEventHandler<HTMLInputElement>;
   onClick: MouseEventHandler<HTMLButtonElement>;
 }) {
@@ -338,7 +338,7 @@ Osobowość Aiika: ${aiik.rezon}
       </MessageArea>
       <BottomTile
         value={message}
-        onChange={e => setMessage(e.target.value)}
+        onChange={setMessage}
         onKeyDown={e => e.key === 'Enter' && handleSend()}
         onClick={handleSend}
       />

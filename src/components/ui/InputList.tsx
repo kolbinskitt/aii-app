@@ -6,7 +6,7 @@ import Button from './Button';
 type InputListProps = {
   label?: string;
   items: string[];
-  onChange: (items: string[]) => void;
+  onChange: (_items: string[]) => void;
 };
 
 export default function InputList({ label, items, onChange }: InputListProps) {

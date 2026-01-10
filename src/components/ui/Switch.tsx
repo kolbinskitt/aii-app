@@ -6,7 +6,7 @@ import Label from './Label';
 
 type SwitchProps = {
   checked: boolean;
-  onChange: (checked: boolean) => void;
+  onChange: (_checked: boolean) => void;
   className?: string;
   label?: string;
 };

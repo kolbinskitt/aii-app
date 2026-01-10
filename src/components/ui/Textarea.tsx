@@ -8,7 +8,7 @@ const { TextArea } = Input;
 
 type TextareaProps = {
   value?: string;
-  onChange: (val: string) => void;
+  onChange: (_val: string) => void;
   placeholder?: string;
   className?: string;
   rows?: number;

@@ -54,9 +54,13 @@ export default function WelcomeModal({ isOpen, onClose, onComplete }: Props) {
 
       if (error) throw error;
 
+      if (!user?.id) {
+        throw new Error('User ID is required to generate Aiiki');
+      }
+
       const { userId, result } = await generateAiikiForUser(
         conzon,
-        user?.id!,
+        user?.id,
         3,
       );
       console.log({ userId, result });

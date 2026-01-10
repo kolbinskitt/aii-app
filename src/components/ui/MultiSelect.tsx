@@ -7,7 +7,7 @@ import Label from './Label';
 type MultiSelectProps = {
   value: string[];
   label?: string;
-  onChange: (value: string[]) => void;
+  onChange: (_val: string[]) => void;
   options: { label: string; value: string }[];
   placeholder?: string;
   className?: string;

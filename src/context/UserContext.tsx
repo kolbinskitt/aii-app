@@ -5,25 +5,24 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { supabase } from '../lib/supabase';
-import { LoaderFullScreen } from '../components/ui';
-
-type User = any;
+import { supabase } from '@/lib/supabase';
+import { LoaderFullScreen } from '@/components/ui';
+import { UserWithSession } from '@/types';
 
 type UserContextValue = {
-  user: User | null;
+  user: UserWithSession | null;
   loading: boolean;
 };
 
 const UserContext = createContext<UserContextValue | null>(null);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserWithSession | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // ✅ Jeden jedyny getSession
-    supabase.auth.getSession().then(({ data, error }) => {
+    supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
       setLoading(false);
     });

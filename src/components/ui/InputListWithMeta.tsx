@@ -14,7 +14,11 @@ export default function InputListWithMeta({
     importance: 0.5,
   });
 
-  const handleChange = (index: number, key: keyof ItemWithMeta, value: any) => {
+  const handleChange = (
+    index: number,
+    key: keyof ItemWithMeta,
+    value: string | number,
+  ) => {
     const updated = [...items];
     updated[index] = { ...updated[index], [key]: value };
     onChange(updated);

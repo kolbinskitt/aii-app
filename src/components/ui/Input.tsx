@@ -11,7 +11,7 @@ export type InputProps = BaseProps & {
   label?: string;
   className?: string;
   value?: string;
-  onChange?: (val: string) => void;
+  onChange?: (_val: string) => void;
 };
 
 const Input = ({ className, label, value, onChange, ...props }: InputProps) => {

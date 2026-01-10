@@ -7,7 +7,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts';
-import { RoomAiikiRelatizon } from '../types';
+import { RoomAiikiRelatizon, RechartsCustomTooltipProps } from '@/types';
 import { useState, useMemo } from 'react';
 import clsx from 'clsx';
 
@@ -61,8 +61,13 @@ export default function RelatizonChart({ data, aiikiMap, userId }: Props) {
       user_id: r.user_id,
     }));
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: RechartsCustomTooltipProps) => {
     if (!active || !payload || !payload.length) return null;
+
     const point = payload[0].payload;
     const aiikiName = point.user_id
       ? 'Ty'

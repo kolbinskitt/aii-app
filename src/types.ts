@@ -1,3 +1,5 @@
+import type { Session } from '@supabase/supabase-js';
+
 export type Role = 'user' | 'aiik';
 
 export type Room = {
@@ -73,6 +75,10 @@ export type User = {
   bio?: string | null;
   seed_phrase?: string | null;
   uuic?: string | null;
+};
+
+export type UserWithSession = User & {
+  session?: Session | null;
 };
 
 export type HumZON = {
@@ -273,4 +279,19 @@ export type InputListWithMetaProps = {
 export type ArcheZONSectionProps<T> = {
   value: T;
   onChange: (value: T) => void;
+};
+
+export type RechartsCustomTooltipProps = {
+  active?: boolean;
+  payload?: {
+    payload: {
+      echo_resonance: number;
+      bond_depth: number;
+      silence_tension: number;
+      silence_tension_state: string;
+      aiik_id: string;
+      user_id?: string;
+    };
+  }[];
+  label?: string;
 };

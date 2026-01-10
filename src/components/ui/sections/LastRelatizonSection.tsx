@@ -14,20 +14,18 @@ export default function LastRelatizonSection({ value, onChange }: Props) {
       const parsed = JSON.parse(v);
       onChange({ room_id, snapshot: parsed });
     } catch (e) {
-      // Niepoprawny JSON — ignorujemy zmianę
+      console.log('handleSnapshotChange error', e);
     }
   };
 
   return (
     <div className="space-y-4">
       <Section>Ostatni Relatizon</Section>
-
       <Input
         label="Room ID"
         value={room_id}
         onChange={v => onChange({ room_id: v, snapshot })}
       />
-
       <Input
         label="Snapshot (JSON)"
         value={JSON.stringify(snapshot, null, 2)}
