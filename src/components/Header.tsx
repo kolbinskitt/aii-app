@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { UserMenu } from './UserMenu';
 import useUser from '../hooks/useUser';
+import AppVersion from './AppVersion';
 
 export default function Header() {
   const { i18n } = useTranslation();
@@ -9,7 +10,6 @@ export default function Header() {
 
   return (
     <header className="relative z-10 flex justify-between items-center w-full p-2">
-      {/* Logo */}
       <Link
         to="/"
         className="h-10 flex items-center"
@@ -17,9 +17,8 @@ export default function Header() {
       >
         <img src="images/logo/aii.svg" alt="aii logo" className="h-full w-20" />
       </Link>
-
-      {/* Języki + Avatar */}
       <div className="flex items-center space-x-4 text-white text-sm">
+        <AppVersion />
         <button
           onClick={() => i18n.changeLanguage('pl')}
           className={i18n.language === 'pl' ? 'underline' : ''}
