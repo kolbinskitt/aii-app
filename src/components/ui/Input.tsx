@@ -16,7 +16,7 @@ export type InputProps = BaseProps & {
 
 const Input = ({ className, label, value, onChange, ...props }: InputProps) => {
   return (
-    <div className="space-y-1">
+    <div className="space-y-1 w-full">
       {label && <Label>{label}</Label>}
       <AntdInput
         {...props}
@@ -24,7 +24,7 @@ const Input = ({ className, label, value, onChange, ...props }: InputProps) => {
         className={cn(
           `rounded-md font-system text-base px-3 py-1.5 bg-white text-zinc-900 
           border border-zinc-300 focus:border-echo focus:ring-1 focus:ring-echo transition-shadow
-          width-full`,
+          `,
           className,
         )}
         onChange={e => onChange?.(e.target.value)}
