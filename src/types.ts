@@ -1,4 +1,4 @@
-import type { Session } from '@supabase/supabase-js';
+import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 
 export type Role = 'user' | 'aiik';
 
@@ -77,8 +77,8 @@ export type User = {
   uuic?: string | null;
 };
 
-export type UserWithSession = User & {
-  session?: Session | null;
+export type UserWithSession = SupabaseUser & {
+  session: Session;
 };
 
 export type HumZON = {

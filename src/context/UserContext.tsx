@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LoaderFullScreen } from '@/components/ui';
-import { UserWithSession } from '@/types';
+import { type UserWithSession } from '@/types';
 
 type UserContextValue = {
   user: UserWithSession | null;
@@ -23,7 +23,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // ✅ Jeden jedyny getSession
     supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null);
+      const session = data.session;
+      if (session) {
+        const sessionUser: UserWithSession = {
+          ...session.user,
+          session,
+        };
+        setUser(sessionUser);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
@@ -31,7 +40,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      if (session) {
+        const sessionUser: UserWithSession = {
+          ...session.user,
+          session,
+        };
+        setUser(sessionUser);
+      } else {
+        setUser(null);
+      }
     });
 
     return () => {

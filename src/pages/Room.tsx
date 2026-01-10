@@ -22,7 +22,7 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
   return !room ? null : (
     <Tile className="space-y-1 p-2">
       <h2
-        className="text-2xl font-light font-echo text-gray-800 leading-snug font-semibold text-black truncate"
+        className="text-2xl font-echo text-gray-800 leading-snug font-semibold truncate"
         style={{
           maxWidth: 'calc(100vw - 500px)',
         }}
