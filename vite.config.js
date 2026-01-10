@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
-import { writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => {
@@ -12,10 +12,11 @@ export default defineConfig(({ mode }) => {
       tsconfigPaths(),
       {
         name: 'vite-plugin-404-fix',
-        closeBundle: () => {
-          const indexHtml = resolve(__dirname, 'dist/index.html');
-          const notFoundHtml = resolve(__dirname, 'dist/404.html');
-          writeFileSync(notFoundHtml, require('fs').readFileSync(indexHtml));
+        closeBundle() {
+          const indexHtml = resolve('dist/index.html');
+          const notFoundHtml = resolve('dist/404.html');
+          const html = readFileSync(indexHtml, 'utf-8');
+          writeFileSync(notFoundHtml, html);
         },
       },
     ],
