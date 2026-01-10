@@ -1,55 +1,58 @@
-import { ReactNode, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+// components/ui/Popup.tsx
+'use client';
+
+import { Modal } from 'antd';
+import { ReactNode } from 'react';
+import { cn } from '../../lib/utils';
 
 interface PopupProps {
-  children: ReactNode;
+  isOpen: boolean;
   onClose?: () => void;
   closeOnBackdropClick?: boolean;
+  header?: ReactNode;
+  footer?: ReactNode;
+  children: ReactNode;
+  className?: string;
 }
 
 export default function Popup({
-  children,
+  isOpen,
   onClose,
   closeOnBackdropClick = true,
+  header,
+  footer,
+  children,
+  className,
 }: PopupProps) {
-  const { t } = useTranslation();
-  // Zablokuj scroll tła
-  useEffect(() => {
-    document.body.classList.add('overflow-hidden');
-    return () => {
-      document.body.classList.remove('overflow-hidden');
-    };
-  }, []);
-
-  // Kliknięcie w tło
-  const handleBackdropClick = () => {
-    if (onClose && closeOnBackdropClick) {
-      onClose();
-    }
-  };
-
   return (
-    <div
-      className="fixed inset-0 z-10 bg-black bg-opacity-60 flex items-center justify-center"
-      onClick={handleBackdropClick}
+    <Modal
+      open={isOpen}
+      onCancel={onClose}
+      onOk={() => {}}
+      footer={null}
+      closable={!!onClose}
+      maskClosable={closeOnBackdropClick}
+      centered
+      className={cn('rounded-md p-0 max-w-2xl w-full', className)}
+      styles={{
+        body: {
+          padding: 0,
+        },
+      }}
     >
-      <div
-        className="relative bg-white rounded-xl shadow-md p-6 max-w-lg w-full mx-4 animate-fade-in"
-        onClick={e => e.stopPropagation()} // blokuje kliknięcie wewnętrzne
-      >
-        {/* Przycisk X */}
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="absolute top-3 right-3 text-gray-400 hover:text-black text-xl font-bold"
-            aria-label={t('aria.close_popup')}
-          >
-            ×
-          </button>
+      <div className="flex flex-col max-h-[80vh]">
+        {header && (
+          <div className="border-b border-zinc-200 bg-white sticky top-0 z-10">
+            {header}
+          </div>
         )}
-
-        {children}
+        <div className="py-2 overflow-y-auto grow">{children}</div>
+        {footer && (
+          <div className="pt-2 border-t border-zinc-200 bg-white sticky bottom-0 z-10">
+            {footer}
+          </div>
+        )}
       </div>
-    </div>
+    </Modal>
   );
 }

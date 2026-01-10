@@ -100,7 +100,7 @@ export type HumZON = {
   triggers: string[]; // np. ["odrzucenie", "milczenie"]
   keyMoments: {
     silences: string[]; // timestamps lub IDs
-    breakdowns: string[];
+    breakdowns: ItemWithMeta[];
     redemptions: string[];
     firstContact: string | null;
   };
@@ -210,11 +210,11 @@ export type ArcheZON = {
     stream_self: boolean;
     memory_fragments: number;
     rules: string[];
-    protections: string[];
-    triggers: string[];
+    protections: ItemWithMeta[];
+    triggers: ItemWithMeta[];
     key_moments: {
       silences: string[];
-      breakdowns: string[];
+      breakdowns: ItemWithMeta[];
       redemptions: string[];
       first_contact: string | null;
     };
@@ -249,7 +249,6 @@ export type ArcheZON = {
       faith: number; // 0–1
       hope: number; // 0–1
       love: number; // 0–1
-      [key: string]: number; // extendable (e.g. "gratitude", "trust_in_others")
     };
   };
 
@@ -257,4 +256,21 @@ export type ArcheZON = {
     room_id: string;
     snapshot: any; // or: RelatiZON (to be defined separately)
   };
+};
+
+export type ItemWithMeta = {
+  label: string;
+  description?: string;
+  importance?: number; // 0–1
+};
+
+export type InputListWithMetaProps = {
+  label?: string;
+  items: ItemWithMeta[];
+  onChange: (items: ItemWithMeta[]) => void;
+};
+
+export type ArcheZONSectionProps<T> = {
+  value: T;
+  onChange: (value: T) => void;
 };

@@ -5,21 +5,27 @@ import type { InputProps as AntdInputProps } from 'antd';
 import { cn } from '../../lib/utils';
 import Label from './Label';
 
-export type InputProps = AntdInputProps & {
+type BaseProps = Omit<AntdInputProps, 'onChange' | 'value'>;
+
+export type InputProps = BaseProps & {
   label?: string;
   className?: string;
+  value?: string;
+  onChange?: (val: string) => void;
 };
 
-const Input = ({ className, label, ...props }: InputProps) => {
+const Input = ({ className, label, value, onChange, ...props }: InputProps) => {
   return (
     <div className="space-y-1">
       {label && <Label>{label}</Label>}
       <AntdInput
         {...props}
+        value={value}
         className={cn(
-          'rounded-md font-system text-base px-3 py-1.5 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-700 focus:border-echo focus:ring-1 focus:ring-echo transition-shadow',
+          'rounded-md font-system text-base px-3 py-1.5 bg-white text-zinc-900 border border-zinc-300 focus:border-echo focus:ring-1 focus:ring-echo transition-shadow',
           className,
         )}
+        onChange={e => onChange?.(e.target.value)}
       />
     </div>
   );

@@ -47,13 +47,13 @@ export default function CreateRoomModal({ onClose }: Props) {
   const disabled = !name || selectedAiiki.size === 0;
 
   return ReactDOM.createPortal(
-    <Popup>
+    <Popup isOpen>
       <h2 className="text-3xl font-echo tracking-wide text-center text-gray-900 mb-4">
         {t('campfires.starting_new_campfire')}
       </h2>
       <Input
         value={name}
-        onChange={e => setName(e.target.value)}
+        onChange={v => setName(v)}
         placeholder={t('campfires.starting_new_campfire.placeholder')}
       />
       <div>

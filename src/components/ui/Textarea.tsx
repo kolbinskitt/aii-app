@@ -7,7 +7,7 @@ import Label from './Label';
 const { TextArea } = Input;
 
 type TextareaProps = {
-  value: string;
+  value?: string;
   onChange: (val: string) => void;
   placeholder?: string;
   className?: string;

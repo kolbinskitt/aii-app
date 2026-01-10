@@ -12,6 +12,9 @@ import Slider from './Slider';
 import Switch from './Switch';
 import Textarea from './Textarea';
 import Label from './Label';
+import Select from './Select';
+import InputList from './InputList';
+import InputListWithMeta from './InputListWithMeta';
 
 export {
   Button,
@@ -28,4 +31,7 @@ export {
   Switch,
   Textarea,
   Label,
+  Select,
+  InputList,
+  InputListWithMeta,
 };

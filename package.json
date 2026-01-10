@@ -2,7 +2,10 @@
   "name": "aii-app",
   "version": "0.1.1",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm-run-all --parallel dev:*",
+    "dev:app": "vite",
+    "dev:types": "tsc --noEmit --watch",
+    "dev:lint": "eslint-watch",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -26,8 +29,13 @@
   "devDependencies": {
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.23",
+    "eslint": "^9.39.2",
+    "eslint-plugin-react": "^7.37.5",
+    "npm-run-all": "^4.1.5",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.9.3",

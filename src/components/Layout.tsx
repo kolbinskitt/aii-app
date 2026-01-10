@@ -15,7 +15,7 @@ export default function Layout() {
     queryKey: ['humzon', userUser.user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('user_humzon')
+        .from('user_conzon')
         .select('*')
         .eq('user_id', userUser.user?.id);
 

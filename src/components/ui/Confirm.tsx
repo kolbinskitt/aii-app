@@ -36,7 +36,11 @@ export default function Confirm({
   };
 
   return (
-    <Popup onClose={handleClose} closeOnBackdropClick={closeOnBackdropClick}>
+    <Popup
+      isOpen
+      onClose={handleClose}
+      closeOnBackdropClick={closeOnBackdropClick}
+    >
       <div className="space-y-4 text-center">
         <h2 className="text-2xl font-semibold text-black font-echo">{title}</h2>
         {description && <p className="text-gray-600">{description}</p>}

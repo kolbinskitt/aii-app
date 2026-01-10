@@ -67,7 +67,7 @@ export function UserMenu() {
         {user && (
           <button
             onClick={() => setOpen(!open)}
-            className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-500 font-semibold text-sm overflow-hidden p-0.5 bg-white"
+            className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-500 font-semibold text-sm overflow-hidden p-0.5"
           >
             {user.profile_pic_url ? (
               <img
