@@ -1,44 +1,58 @@
+// src/hooks/useUser.ts
+
 import { useEffect, useState } from 'react';
 import { User } from '../types';
 import { supabase } from '../lib/supabase';
 import { api } from '../lib/api';
 
-export default function useUser() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+let userPromise: Promise<User | null> | null = null; // 🔁 singleton
+let cachedUser: User | null = null;
 
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+async function ensureUserOnce(): Promise<User | null> {
+  if (cachedUser) return cachedUser;
+  if (userPromise) return userPromise;
 
-        if (!session) return;
+  userPromise = (async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-        const res = await api('auth/ensure-user', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        });
+    if (!session) return null;
 
-        if (!res.ok) {
-          const err = await res.text(); // <- dostaniesz np. błąd SQL z backendu
-          throw new Error(`Błąd odpowiedzi z /auth/ensure-user: ${err}`);
-        }
+    const res = await api('auth/ensure-user', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
 
-        const user: User = await res.json();
-        setUser(user);
-      } catch (err) {
-        console.error('Błąd pobierania lub tworzenia usera:', err);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`Błąd odpowiedzi z /auth/ensure-user: ${err}`);
     }
 
-    fetchUser();
+    const user: User = await res.json();
+    cachedUser = user; // 💾 zapisujemy do pamięci
+    return user;
+  })();
+
+  return userPromise;
+}
+
+export default function useUser() {
+  const [user, setUser] = useState<User | null>(cachedUser);
+  const [loading, setLoading] = useState(!cachedUser);
+
+  useEffect(() => {
+    if (!cachedUser) {
+      ensureUserOnce()
+        .then(setUser)
+        .catch(err => {
+          console.error('❌ ensureUserOnce error:', err);
+          setUser(null);
+        })
+        .finally(() => setLoading(false));
+    }
   }, []);
 
   return { user, loading };
