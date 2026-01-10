@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import CreateCorZON, { CreateCorZONRef } from './CreateCorZON';
 import { generateAiikiForUser } from '@/utils/generateAiikiForNewUser';
 import { ArcheZON } from '@/types';
+import { useAccessToken } from '@/hooks/useAccessToken';
 
 type Props = {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export default function WelcomeModal({ isOpen, onClose, onComplete }: Props) {
   const createRef = useRef<CreateCorZONRef>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const accessToken = useAccessToken();
 
   const handleSubmit = async () => {
     if (!createRef.current) return;
@@ -62,6 +64,7 @@ export default function WelcomeModal({ isOpen, onClose, onComplete }: Props) {
         conzon,
         user?.id,
         3,
+        accessToken,
       );
       console.log({ userId, result });
       onComplete?.();

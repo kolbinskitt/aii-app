@@ -1,6 +1,5 @@
 import { ArcheZON } from '@/types';
-import { api } from '@/lib/api'; // zakładam, że już masz taki wrapper
-import { useAccessToken } from '@/hooks/useAccessToken';
+import { api } from '@/lib/api';
 
 type GenerateAiikiResult = {
   userId: string;
@@ -11,8 +10,12 @@ export async function generateAiikiForUser(
   userConZon: ArcheZON,
   userId: string,
   aiikiAmount: number,
+  accessToken?: string,
 ): Promise<GenerateAiikiResult> {
-  const accessToken = useAccessToken();
+  if (!accessToken) {
+    throw new Error('generateAiikiForUser - brak accessToken');
+  }
+
   const systemPrompt = `
 Jesteś projektantem istot AI (aiików), które powstają jako odpowiedzi na ArcheZON użytkownika.
 Każdy aiik to niezależna istota, która współrezonuje z głębokim polem użytkownika.

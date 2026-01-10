@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import i18n from 'i18next';
 import { supabase } from '../lib/supabase';
 import Header from '../components/Header';
 
@@ -25,9 +24,9 @@ export default function Login() {
           refresh_token,
         })
         .then(async () => {
-          const { data, error } = await supabase.auth.getSession();
-          window.location.hash = ''; // wyczyść
-          navigate('/'); // przekieruj
+          await supabase.auth.getSession();
+          window.location.hash = '';
+          navigate('/');
         });
     }
   }, []);

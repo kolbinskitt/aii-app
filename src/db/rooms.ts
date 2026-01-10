@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { Room, RoomWithMessages, HumZON, RelatiZON, Aiik } from '../types';
+import { Room, RoomWithMessages, HumZON, Aiik, Message } from '../types';
 import { api } from '../lib/api';
 
 /* ---------------------------------- */
@@ -39,7 +39,7 @@ export async function getRoomById(
 
   if (data?.messages_with_aiik) {
     data.messages_with_aiik.sort(
-      (a: any, b: any) =>
+      (a: Message, b: Message) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
     );
   }
@@ -108,7 +108,7 @@ export async function addMessageToRoom(
     .select('aiiki(id, name, rezon, description)')
     .eq('room_id', roomId)) as unknown as {
     data: { aiiki: Aiik }[];
-    error: any;
+    error: Error;
   };
 
   if (roomAiikiError || !roomAiiki?.length) return;

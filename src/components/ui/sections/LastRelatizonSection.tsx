@@ -1,5 +1,5 @@
 'use client';
-
+import { useState } from 'react';
 import { Input, Section } from '@/components/ui';
 import { ArcheZON, ArcheZONSectionProps } from '@/types';
 
@@ -7,12 +7,15 @@ type Props = ArcheZONSectionProps<ArcheZON['last_relatizon']>;
 
 export default function LastRelatizonSection({ value, onChange }: Props) {
   const room_id = value?.room_id ?? '';
-  const snapshot = value?.snapshot ?? {};
+  const [snapshot, setSnapshot] = useState(
+    JSON.stringify(value?.snapshot ?? {}),
+  );
 
   const handleSnapshotChange = (v: string) => {
     try {
       const parsed = JSON.parse(v);
       onChange({ room_id, snapshot: parsed });
+      setSnapshot(v);
     } catch (e) {
       console.log('handleSnapshotChange error', e);
     }

@@ -59,5 +59,14 @@ export function generateRelatizon(
     initiation_count: 0,
     last_emotion: lastEmotion,
     message_event,
+    alignment_score: 0,
+    curiosity_level: 0,
+    rupture_signal: false,
+    synchrony_delta: 0,
+    telepathy_level: 0,
+    vulnerability_index: 0,
+    archetype_echo: '',
+    memory_activation: false,
+    time_warp: 'present',
   };
 }

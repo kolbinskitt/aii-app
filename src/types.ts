@@ -260,7 +260,7 @@ export type ArcheZON = {
 
   last_relatizon?: {
     room_id: string;
-    snapshot: any; // or: RelatiZON (to be defined separately)
+    snapshot: string; // FIXME: powinien być docelowy typ
   };
 };
 
@@ -273,12 +273,12 @@ export type ItemWithMeta = {
 export type InputListWithMetaProps = {
   label?: string;
   items: ItemWithMeta[];
-  onChange: (items: ItemWithMeta[]) => void;
+  onChange: (_items: ItemWithMeta[]) => void;
 };
 
 export type ArcheZONSectionProps<T> = {
   value: T;
-  onChange: (value: T) => void;
+  onChange: (_val: T) => void;
 };
 
 export type RechartsCustomTooltipProps = {

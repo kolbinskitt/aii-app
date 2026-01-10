@@ -9,9 +9,7 @@ import RoomFieldView from './pages/RoomFieldView';
 import ErrorPage from './pages/ErrorPage';
 import { Sidebar } from './components/ui';
 
-type LeftSidebarProps = {};
-
-function LeftSidebar({ children }: PropsWithChildren<LeftSidebarProps>) {
+function LeftSidebar({ children }: PropsWithChildren) {
   return (
     <Sidebar
       className="bg-gradient-to-t from-white/40 via-white/60 to-white/80"
@@ -27,9 +25,7 @@ function LeftSidebar({ children }: PropsWithChildren<LeftSidebarProps>) {
   );
 }
 
-type GridProps = {};
-
-function Grid({ children }: PropsWithChildren<GridProps>) {
+function Grid({ children }: PropsWithChildren) {
   return <div className="flex items-start w-full gap-2 pr-2">{children}</div>;
 }
 

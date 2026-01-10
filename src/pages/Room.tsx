@@ -3,7 +3,6 @@ import {
   useEffect,
   useState,
   useRef,
-  ChangeEventHandler,
   KeyboardEventHandler,
   MouseEventHandler,
   PropsWithChildren,
@@ -133,7 +132,7 @@ function BottomTile({
   onClick,
 }: {
   value: string;
-  onChange: (val: string) => void;
+  onChange: (_val: string) => void;
   onKeyDown: KeyboardEventHandler<HTMLInputElement>;
   onClick: MouseEventHandler<HTMLButtonElement>;
 }) {
@@ -183,7 +182,6 @@ export default function Room() {
   async function fetchAiikResponse(
     prompt: string,
     aiik: Aiik,
-    humZON?: any, // jeśli masz, można później rozwinąć
   ): Promise<string | null> {
     try {
       // 🧠 buduj systemowy prompt
@@ -310,7 +308,7 @@ Osobowość Aiika: ${aiik.rezon}
           table: 'messages',
           filter: `room_id=eq.${id}`,
         },
-        async payload => {
+        async () => {
           const updated = await getRoomById(id);
           setRoom(updated as RoomWithMessages);
         },
