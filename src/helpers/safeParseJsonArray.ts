@@ -17,7 +17,7 @@ export function safeParseJsonArray(raw: string): ArcheZON[] {
   try {
     return JSON.parse(cleaned);
   } catch (err) {
-    console.error('❌ RAW GPT OUTPUT:', raw);
+    console.error('❌ RAW GPT OUTPUT:', raw, err);
     console.error('❌ CLEANED JSON:', cleaned);
     throw new Error('Nie udało się sparsować JSON z GPT');
   }

@@ -1,4 +1,5 @@
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
+import * as PhosphorIcons from '@phosphor-icons/react';
 
 export type Role = 'user' | 'aiik';
 
@@ -295,3 +296,8 @@ export type RechartsCustomTooltipProps = {
   }[];
   label?: string;
 };
+
+export type OnboardingStage = 'form' | 'processing';
+export type ProcessingStep = 'save-profile' | 'generate-aiiki';
+export type IconName = keyof typeof PhosphorIcons;
+export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';

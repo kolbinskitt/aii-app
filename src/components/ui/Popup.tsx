@@ -47,16 +47,18 @@ export default function Popup({
       }}
     >
       <div className="flex flex-col max-h-[80vh]">
-        {(header || title) && (
-          <div className="border-b border-zinc-200 bg-white sticky top-0 z-10">
-            {title && (
-              <h2 className="text-2xl font-semibold text-black font-echo">
-                {title}
-              </h2>
-            )}
-            {header}
-          </div>
-        )}
+        <div className="flex justify-between border-b border-zinc-200 bg-white sticky top-0 z-10">
+          {(header || title) && (
+            <div className="">
+              {title && (
+                <h2 className="text-2xl font-semibold text-black font-echo">
+                  {title}
+                </h2>
+              )}
+              {header}
+            </div>
+          )}
+        </div>
         <div className="py-2 overflow-y-auto grow">{children}</div>
         {(footer || primaryActions || secondaryActions) && (
           <div className="pt-2 border-t border-zinc-200 bg-white sticky bottom-0 z-10">

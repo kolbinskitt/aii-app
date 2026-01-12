@@ -66,6 +66,7 @@ export default function CreateRoomModal({ onClose }: Props) {
         </div>
       }
       secondaryActions={<Button onClick={onClose}>{t('cancel')}</Button>}
+      onClose={onClose}
     >
       <Input
         value={name}
