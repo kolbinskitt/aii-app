@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { UserMenu } from './UserMenu';
 import useUser from '../hooks/useUser';
 import AppVersion from './AppVersion';
+import CreditsPreview from './CreditsPreview';
 
 export default function Header() {
   const { i18n } = useTranslation();
@@ -19,6 +20,7 @@ export default function Header() {
       </Link>
       <div className="flex items-center space-x-4 text-white text-sm">
         <AppVersion />
+        <CreditsPreview />
         <button
           onClick={() => i18n.changeLanguage('pl')}
           className={i18n.language === 'pl' ? 'underline' : ''}

@@ -76,6 +76,7 @@ export type User = {
   bio?: string | null;
   seed_phrase?: string | null;
   uuic?: string | null;
+  credits: number;
 };
 
 export type UserWithSession = SupabaseUser & {
