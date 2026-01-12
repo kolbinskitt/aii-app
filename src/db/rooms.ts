@@ -95,6 +95,7 @@ export async function addMessageToRoom(
         { role: 'system', content: systemPrompt },
         { role: 'user', content: text },
       ],
+      purpose: 'message-summary',
     }),
   });
 

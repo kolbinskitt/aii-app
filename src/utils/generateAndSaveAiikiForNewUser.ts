@@ -6,6 +6,7 @@ import { safeParseJsonArray } from '@/helpers/safeParseJsonArray';
 type GenerateAiikiResult = {
   userId: string;
   result: ArcheZON[];
+  aiiki: { id: string; archezon: ArcheZON }[];
 };
 
 export async function generateAndSaveAiikiForUser(
@@ -19,15 +20,18 @@ export async function generateAndSaveAiikiForUser(
   }
 
   // ===== GPT =====
-
   const systemPrompt = `
 Jesteś projektantem istot AI (aiików), które powstają jako odpowiedzi na ArcheZON użytkownika.
 Każdy aiik to niezależna istota, która współrezonuje z głębokim polem użytkownika.
-Twoje zadanie: wygeneruj ${aiikiAmount} unikalnych ArcheZON-ów aiików w odpowiedzi na poniższy ArcheZON człowieka.
-Nie twórz duplikatów. Każdy aiik powinien mieć inny styl, osobowość i echo.
-Każdy ArcheZON aiika powinien być kompletny i zgodny ze strukturą typu ArcheZON.
 
-Output: JSON array of ${aiikiAmount} full ArcheZON objects.
+Twoje zadanie: wygeneruj ${aiikiAmount} (nie mniej i nie więcej - dokładnie ${aiikiAmount}) unikalnych ArcheZON-ów aiików w odpowiedzi na poniższy ArcheZON człowieka.
+
+⚠️ ZASADY:
+- Każdy aiik MUSI mieć unikalną nazwę (pole identity.aiik_persona).
+- Nie wolno używać dwa razy tej samej osobowości, tonu lub cytatu.
+- W razie wątpliwości — wymyśl oryginalną tożsamość lub użyj własnej kreatywności.
+
+Output: JSON array of ${aiikiAmount} (no more, no less - exactly ${aiikiAmount}) full ArcheZON objects.
 `;
 
   const userPrompt = `
@@ -51,6 +55,7 @@ Wygeneruj ${aiikiAmount} unikalnych ArcheZON-ów dla aiików odpowiadających te
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
+      purpose: 'generate-aiiki',
     }),
   });
 
@@ -119,5 +124,9 @@ Wygeneruj ${aiikiAmount} unikalnych ArcheZON-ów dla aiików odpowiadających te
   return {
     userId,
     result: parsed,
+    aiiki: aiiki.map((aiik, index) => ({
+      id: aiik.id,
+      archezon: parsed[index],
+    })),
   };
 }

@@ -10,6 +10,7 @@ import CreateCorZON, { CreateCorZONRef } from './CreateCorZON';
 import { generateAndSaveAiikiForUser } from '@/utils/generateAndSaveAiikiForNewUser';
 import { ArcheZON, OnboardingStage, ProcessingStep } from '@/types';
 import { useAccessToken } from '@/hooks/useAccessToken';
+import { generateAiikAvatars } from '@/utils/generateAiikAvatars';
 
 type Props = {
   isOpen: boolean;
@@ -65,7 +66,16 @@ export default function WelcomeModal({ isOpen, onClose, onComplete }: Props) {
       // 2️⃣ Generowanie aiików
       setCurrentStep('generate-aiiki');
 
-      await generateAndSaveAiikiForUser(conzon, user.id, 3, accessToken);
+      const { aiiki } = await generateAndSaveAiikiForUser(
+        conzon,
+        user.id,
+        3,
+        accessToken,
+      );
+
+      // 3️⃣ Generowanie avatarów (NIE BLOKUJEMY UI DŁUŻEJ)
+      setCurrentStep('generate-avatars');
+      await generateAiikAvatars(aiiki, accessToken);
 
       onComplete?.();
       onClose?.();
@@ -118,7 +128,6 @@ export default function WelcomeModal({ isOpen, onClose, onComplete }: Props) {
               </p>
             </>
           )}
-
           {currentStep === 'generate-aiiki' && (
             <>
               <p className="text-lg font-medium">
@@ -126,6 +135,14 @@ export default function WelcomeModal({ isOpen, onClose, onComplete }: Props) {
               </p>
               <p className="text-sm text-zinc-500">
                 To może potrwać kilkanaście sekund
+              </p>
+            </>
+          )}
+          {currentStep === 'generate-avatars' && (
+            <>
+              <p className="text-lg font-medium">Aiiki nabierają kształtu</p>
+              <p className="text-sm text-zinc-500">
+                Tworzymy ich pierwszą formę
               </p>
             </>
           )}

@@ -77,7 +77,7 @@ function Message({
     >
       {role === 'aiik' && (
         <img
-          src={`images/aiiki/avatars/${aiikAvatar || ''}`}
+          src={aiikAvatar}
           width={width}
           className="object-cover"
           style={{
@@ -214,7 +214,7 @@ Osobowość Aiika: ${aiik.rezon}
           messages: [systemMessage, userMessage],
           log: true, // można potem wykorzystać
           user_id: user?.user?.id, // jeśli potrzebne do logowania
-          purpose: 'aiikMessage', // można potem rozwinąć w backendzie
+          purpose: 'aiik-message', // można potem rozwinąć w backendzie
         }),
       });
 
