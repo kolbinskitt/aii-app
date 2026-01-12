@@ -1,28 +1,42 @@
-import { ButtonHTMLAttributes } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 import clsx from 'clsx';
 
+type ButtonKind = 'default' | 'submit' | 'danger' | 'primary' | 'ghost';
+type ButtonSize = 'small' | 'medium' | 'large';
+
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  kind?: 'default' | 'submit' | 'danger' | 'primary';
+  kind?: ButtonKind;
+  size?: ButtonSize;
   tooltip?: string;
+  icon?: ReactNode;
 }
 
 export default function Button({
   kind = 'default',
+  size = 'medium',
   className,
   disabled,
   tooltip,
+  icon,
+  children,
   ...props
 }: ButtonProps) {
   const baseClasses =
-    'px-4 py-2 rounded-md font-medium border transition-all duration-150';
+    'inline-flex items-center justify-center gap-2 font-medium transition-all duration-150 rounded-md';
 
-  const typeClasses = {
-    default: 'bg-white text-black border-black hover:bg-gray-100',
-    submit:
-      'bg-green-600 text-white border-green-700 hover:bg-green-500 border-none',
-    danger: 'bg-red-600 text-white border-red-700 hover:bg-red-700 border-none',
+  const sizeClasses: Record<ButtonSize, string> = {
+    small: 'px-2 py-2 text-sm',
+    medium: 'px-4 py-2 text-sm',
+    large: 'px-6 py-3 text-base',
+  };
+
+  const typeClasses: Record<ButtonKind, string> = {
+    default: 'bg-white text-black border border-black hover:bg-gray-100',
+    submit: 'bg-green-600 text-white hover:bg-green-500 border-none',
+    danger: 'bg-red-600 text-white hover:bg-red-700 border-none',
     primary:
-      'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow hover:brightness-110 transition border-none',
+      'bg-blue-600 hover:bg-blue-700 text-white shadow hover:brightness-110 border-none',
+    ghost: 'bg-transparent text-current border-none hover:bg-zinc-100',
   };
 
   const disabledClasses = 'opacity-50 cursor-not-allowed pointer-events-none';
@@ -34,11 +48,15 @@ export default function Button({
         disabled={disabled}
         className={clsx(
           baseClasses,
+          sizeClasses[size],
           typeClasses[kind],
           disabled && disabledClasses,
           className,
         )}
-      />
+      >
+        {icon && <span className="inline-flex">{icon}</span>}
+        {children && <span>{children}</span>}
+      </button>
     </div>
   );
 }

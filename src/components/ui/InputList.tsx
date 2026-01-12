@@ -1,7 +1,10 @@
 'use client';
+
 import { useState } from 'react';
 import Input from './Input';
 import Button from './Button';
+import Icon from './Icon';
+import IconButton from './IconButton';
 
 type InputListProps = {
   label?: string;
@@ -33,6 +36,7 @@ export default function InputList({ label, items, onChange }: InputListProps) {
   return (
     <div className="space-y-2">
       {label && <div className="font-semibold">{label}</div>}
+
       <div className="space-y-2">
         {items.map((item, index) => (
           <div
@@ -40,14 +44,28 @@ export default function InputList({ label, items, onChange }: InputListProps) {
             className="flex items-center justify-between gap-2 bg-muted p-2 rounded-xl"
           >
             <div className="flex-1">{item}</div>
-            <div className="flex gap-1">
-              <button onClick={() => moveItem(index, index - 1)}>⬆️</button>
-              <button onClick={() => moveItem(index, index + 1)}>⬇️</button>
-              <button onClick={() => removeItem(index)}>❌</button>
+
+            <div className="flex items-center gap-1">
+              <IconButton
+                onClick={() => moveItem(index, index - 1)}
+                aria-label="Move up"
+                icon={<Icon name="CaretUp" size="sm" />}
+              />
+              <IconButton
+                onClick={() => moveItem(index, index + 1)}
+                aria-label="Move down"
+                icon={<Icon name="CaretDown" size="sm" />}
+              />
+              <IconButton
+                onClick={() => removeItem(index)}
+                aria-label="Remove"
+                icon={<Icon name="X" size="sm" />}
+              />
             </div>
           </div>
         ))}
       </div>
+
       <div className="flex gap-2">
         <Input
           value={newItem}

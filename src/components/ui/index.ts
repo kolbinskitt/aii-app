@@ -15,6 +15,7 @@ import Label from './Label';
 import Select from './Select';
 import InputList from './InputList';
 import InputListWithMeta from './InputListWithMeta';
+import IconButton from './IconButton';
 
 export {
   Button,
@@ -34,4 +35,5 @@ export {
   Select,
   InputList,
   InputListWithMeta,
+  IconButton,
 };
