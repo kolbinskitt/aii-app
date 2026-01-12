@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Popup, Button } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 import CreateCorZON, { CreateCorZONRef } from './CreateCorZON';
-import { generateAiikiForUser } from '@/utils/generateAiikiForNewUser';
+import { generateAndSaveAiikiForUser } from '@/utils/generateAndSaveAiikiForNewUser';
 import { ArcheZON } from '@/types';
 import { useAccessToken } from '@/hooks/useAccessToken';
 
@@ -60,13 +60,7 @@ export default function WelcomeModal({ isOpen, onClose, onComplete }: Props) {
         throw new Error('User ID is required to generate Aiiki');
       }
 
-      const { userId, result } = await generateAiikiForUser(
-        conzon,
-        user?.id,
-        3,
-        accessToken,
-      );
-      console.log({ userId, result });
+      await generateAndSaveAiikiForUser(conzon, user?.id, 3, accessToken);
       onComplete?.();
       onClose?.();
     } catch (err) {
@@ -83,15 +77,11 @@ export default function WelcomeModal({ isOpen, onClose, onComplete }: Props) {
     <Popup
       isOpen
       closeOnBackdropClick={false}
-      header={
-        <h2 className="text-2xl font-bold font-echo">{t('welcome.hello')}</h2>
-      }
-      footer={
-        <div className="flex justify-end gap-2">
-          <Button onClick={handleSubmit} disabled={loading} kind="submit">
-            {loading ? t('saving') : t('save')}
-          </Button>
-        </div>
+      title={t('welcome.hello')}
+      primaryActions={
+        <Button onClick={handleSubmit} disabled={loading} kind="submit">
+          {loading ? t('saving') : t('save')}
+        </Button>
       }
     >
       <CreateCorZON ref={createRef} />

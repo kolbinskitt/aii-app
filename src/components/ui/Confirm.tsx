@@ -40,30 +40,29 @@ export default function Confirm({
       isOpen
       onClose={handleClose}
       closeOnBackdropClick={closeOnBackdropClick}
+      title={title}
+      primaryActions={
+        <Button
+          className="px-4 py-2 rounded bg-black text-white hover:bg-gray-800"
+          onClick={() => {
+            onConfirm();
+            onClose?.();
+          }}
+          kind={danger ? 'danger' : 'submit'}
+        >
+          {confirmText_}
+        </Button>
+      }
+      secondaryActions={
+        <Button
+          className="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+          onClick={handleClose}
+        >
+          {cancelText_}
+        </Button>
+      }
     >
-      <div className="space-y-4 text-center">
-        <h2 className="text-2xl font-semibold text-black font-echo">{title}</h2>
-        {description && <p className="text-gray-600">{description}</p>}
-
-        <div className="flex justify-center gap-4 mt-6">
-          <Button
-            className="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
-            onClick={handleClose}
-          >
-            {cancelText_}
-          </Button>
-          <Button
-            className="px-4 py-2 rounded bg-black text-white hover:bg-gray-800"
-            onClick={() => {
-              onConfirm();
-              onClose?.();
-            }}
-            kind={danger ? 'danger' : 'submit'}
-          >
-            {confirmText_}
-          </Button>
-        </div>
-      </div>
+      {description}
     </Popup>
   );
 }

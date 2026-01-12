@@ -51,10 +51,22 @@ export default function CreateRoomModal({ onClose }: Props) {
   const disabled = !name || selectedAiiki.size === 0;
 
   return ReactDOM.createPortal(
-    <Popup isOpen>
-      <h2 className="text-3xl font-echo tracking-wide text-center text-gray-900 mb-4">
-        {t('campfires.starting_new_campfire')}
-      </h2>
+    <Popup
+      isOpen
+      title={t('campfires.starting_new_campfire')}
+      primaryActions={
+        <div
+          className="flex items-center space-x-2"
+          title={disabled ? t('campfires.start_fire_hint') : ''}
+        >
+          <div>{disabled ? '🔒' : '🔥'}</div>
+          <Button onClick={handleCreate} disabled={disabled} kind="primary">
+            {t('campfires.start_fire')}
+          </Button>
+        </div>
+      }
+      secondaryActions={<Button onClick={onClose}>{t('cancel')}</Button>}
+    >
       <Input
         value={name}
         onChange={v => setName(v)}
@@ -85,18 +97,6 @@ export default function CreateRoomModal({ onClose }: Props) {
               </div>
             </label>
           ))}
-        </div>
-      </div>
-      <div className="flex justify-between">
-        <Button onClick={onClose}>{t('cancel')}</Button>
-        <div
-          className="flex items-center space-x-2"
-          title={disabled ? t('campfires.start_fire_hint') : ''}
-        >
-          <div>{disabled ? '🔒' : '🔥'}</div>
-          <Button onClick={handleCreate} disabled={disabled} kind="primary">
-            {t('campfires.start_fire')}
-          </Button>
         </div>
       </div>
     </Popup>,
