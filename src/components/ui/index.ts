@@ -16,6 +16,7 @@ import Select from './Select';
 import InputList from './InputList';
 import InputListWithMeta from './InputListWithMeta';
 import IconButton from './IconButton';
+import Icon from './Icon';
 
 export {
   Button,
@@ -36,4 +37,5 @@ export {
   InputList,
   InputListWithMeta,
   IconButton,
+  Icon,
 };

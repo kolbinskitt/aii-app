@@ -1,5 +1,5 @@
 'use client';
-import { Input } from '@/components/ui';
+import { Input, Textarea } from '@/components/ui';
 import Section from '@/components/ui/Section';
 import { ArcheZON, ArcheZONSectionProps } from '@/types';
 
@@ -25,12 +25,11 @@ export default function IdentitySection({ value, onChange }: Props) {
         value={value.language || ''}
         onChange={v => onChange({ ...value, language: v })}
       />
-      <Input
+      <Textarea
         label="Self Sentence"
         value={value.self_sentence || ''}
         onChange={v => onChange({ ...value, self_sentence: v })}
       />
-      {/* labels jeśli chcesz obsłużyć jako lista */}
     </div>
   );
 }

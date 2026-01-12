@@ -272,7 +272,8 @@ export type ItemWithMeta = {
 };
 
 export type InputListWithMetaProps = {
-  label?: string;
+  title: string;
+  label: string;
   items: ItemWithMeta[];
   onChange: (_items: ItemWithMeta[]) => void;
 };

@@ -42,13 +42,14 @@ export default function CognitionSection({ value, onChange }: Props) {
       />
 
       <InputList
-        label="Rules"
+        title="Rules"
         items={value.rules || []}
         onChange={items => update({ rules: items })}
       />
 
       <InputListWithMeta
-        label="Protections"
+        title="Protections"
+        label="Protection"
         items={protections}
         onChange={items => {
           setProtections(items);
@@ -57,7 +58,8 @@ export default function CognitionSection({ value, onChange }: Props) {
       />
 
       <InputListWithMeta
-        label="Triggers"
+        title="Triggers"
+        label="Trigger"
         items={triggers}
         onChange={items => {
           setTriggers(items);
@@ -66,7 +68,8 @@ export default function CognitionSection({ value, onChange }: Props) {
       />
 
       <InputListWithMeta
-        label="Breakdowns"
+        title="Breakdowns"
+        label="Breakdown"
         items={breakdowns}
         onChange={items => {
           setBreakdowns(items);

@@ -7,23 +7,16 @@ import Icon from './Icon';
 import IconButton from './IconButton';
 
 type InputListProps = {
-  label?: string;
+  title?: string;
   items: string[];
   onChange: (_items: string[]) => void;
 };
 
-export default function InputList({ label, items, onChange }: InputListProps) {
+export default function InputList({ title, items, onChange }: InputListProps) {
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editedValue, setEditedValue] = useState('');
+  const [isAdding, setIsAdding] = useState(false);
   const [newItem, setNewItem] = useState('');
-
-  const addItem = () => {
-    if (!newItem.trim()) return;
-    onChange([...items, newItem.trim()]);
-    setNewItem('');
-  };
-
-  const removeItem = (index: number) => {
-    onChange(items.filter((_, i) => i !== index));
-  };
 
   const moveItem = (from: number, to: number) => {
     if (to < 0 || to >= items.length) return;
@@ -33,53 +26,133 @@ export default function InputList({ label, items, onChange }: InputListProps) {
     onChange(updated);
   };
 
+  const removeItem = (index: number) => {
+    onChange(items.filter((_, i) => i !== index));
+    if (editingIndex === index) {
+      setEditingIndex(null);
+      setEditedValue('');
+    }
+  };
+
+  const startEdit = (index: number) => {
+    setEditingIndex(index);
+    setEditedValue(items[index]);
+  };
+
+  const saveEdit = () => {
+    if (editingIndex === null || !editedValue.trim()) return;
+    const updated = [...items];
+    updated[editingIndex] = editedValue.trim();
+    onChange(updated);
+    setEditingIndex(null);
+    setEditedValue('');
+  };
+
+  const addItem = () => {
+    if (!newItem.trim()) return;
+    onChange([...items, newItem.trim()]);
+    setNewItem('');
+    setIsAdding(false);
+  };
+
   return (
     <div className="space-y-2">
-      {label && <div className="font-semibold">{label}</div>}
+      {title && <div className="font-semibold">{title}</div>}
 
-      <div className="space-y-2">
-        {items.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between gap-2 bg-muted p-2 rounded-xl"
-          >
-            <div className="flex-1">{item}</div>
+      {/* ===== LIST ===== */}
+      <div className="divide-y divide-border">
+        {items.map((item, index) => {
+          const isEditing = editingIndex === index;
 
-            <div className="flex items-center gap-1">
-              <IconButton
-                onClick={() => moveItem(index, index - 1)}
-                aria-label="Move up"
-                icon={<Icon name="CaretUp" size="sm" />}
-              />
-              <IconButton
-                onClick={() => moveItem(index, index + 1)}
-                aria-label="Move down"
-                icon={<Icon name="CaretDown" size="sm" />}
-              />
-              <IconButton
-                onClick={() => removeItem(index)}
-                aria-label="Remove"
-                icon={<Icon name="X" size="sm" />}
-              />
+          return (
+            <div key={index} className="py-2">
+              {/* ===== VIEW MODE ===== */}
+              {!isEditing && (
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex-1 text-sm">{item}</div>
+
+                  <div className="flex shrink-0">
+                    <IconButton
+                      aria-label="Edit"
+                      icon={<Icon name="PencilSimple" size="sm" />}
+                      onClick={() => startEdit(index)}
+                    />
+                    <IconButton
+                      aria-label="Move up"
+                      icon={<Icon name="CaretUp" size="sm" />}
+                      onClick={() => moveItem(index, index - 1)}
+                    />
+                    <IconButton
+                      aria-label="Move down"
+                      icon={<Icon name="CaretDown" size="sm" />}
+                      onClick={() => moveItem(index, index + 1)}
+                    />
+                    <IconButton
+                      aria-label="Delete"
+                      icon={<Icon name="X" size="sm" />}
+                      onClick={() => removeItem(index)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* ===== EDIT MODE ===== */}
+              {isEditing && (
+                <div className="space-y-2">
+                  <Input
+                    value={editedValue}
+                    onChange={setEditedValue}
+                    className="w-full"
+                    autoFocus
+                  />
+
+                  <div className="flex justify-end gap-2">
+                    <Button kind="ghost" onClick={() => setEditingIndex(null)}>
+                      Anuluj
+                    </Button>
+                    <Button kind="primary" onClick={saveEdit}>
+                      OK
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      <div className="flex gap-2">
-        <Input
-          value={newItem}
-          onChange={setNewItem}
-          className="flex-1 px-2 py-1 border rounded-xl"
-          placeholder="Dodaj nową zasadę"
-        />
+      {/* ===== ADD NEW ===== */}
+      {!isAdding && (
         <Button
-          onClick={addItem}
-          className="bg-foreground text-background px-3 py-1 rounded-xl"
+          className="w-full"
+          kind="ghost"
+          icon={<Icon name="Plus" size="sm" />}
+          onClick={() => setIsAdding(true)}
         >
-          OK
+          Dodaj nową zasadę
         </Button>
-      </div>
+      )}
+
+      {isAdding && (
+        <div className="space-y-2">
+          <Input
+            value={newItem}
+            onChange={setNewItem}
+            className="w-full"
+            placeholder="Nowa zasada"
+            autoFocus
+          />
+
+          <div className="flex justify-end gap-2">
+            <Button kind="ghost" onClick={() => setIsAdding(false)}>
+              Anuluj
+            </Button>
+            <Button kind="primary" onClick={addItem}>
+              OK
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
