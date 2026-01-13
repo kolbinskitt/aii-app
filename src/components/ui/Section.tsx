@@ -9,7 +9,7 @@ type SectionProps = {
 
 function Section({ children, className }: PropsWithChildren<SectionProps>) {
   return (
-    <div className={cn('my-6', className)}>
+    <div className={cn('my-6 bg-white', className)}>
       <h2 className="text-xl font-echo text-center text-gray-800 tracking-wide">
         {children}
       </h2>

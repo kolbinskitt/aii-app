@@ -9,6 +9,7 @@ import RoomFieldView from './pages/RoomFieldView';
 import ErrorPage from './pages/ErrorPage';
 import { Sidebar } from './components/ui';
 import Credits from './components/Credits';
+import Aiiki from './components/Aiiki';
 
 function LeftSidebar({ children }: PropsWithChildren) {
   return (
@@ -79,6 +80,17 @@ export const router = createHashRouter([
                   <Rooms />
                 </LeftSidebar>
                 <Credits />
+              </Grid>
+            ),
+          },
+          {
+            path: 'aiiki',
+            element: (
+              <Grid>
+                <LeftSidebar>
+                  <Rooms />
+                </LeftSidebar>
+                <Aiiki />
               </Grid>
             ),
           },
