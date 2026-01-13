@@ -41,7 +41,7 @@ Oto ArcheZON użytkownika (user_id: ${userId}):
 ${JSON.stringify(userConZon, null, 2)}
 \`\`\`
 
-Wygeneruj ${aiikiAmount} unikalnych ArcheZON-ów dla aiików odpowiadających temu użytkownikowi.
+Wygeneruj ${aiikiAmount} unikalnych ArcheZON-ów dla aiików odpowiadających temu użytkownikowi i zwróć je w tablicy (array).
 `;
 
   const gptResponse = await api('gpt-proxy', {
@@ -104,20 +104,6 @@ Wygeneruj ${aiikiAmount} unikalnych ArcheZON-ów dla aiików odpowiadających te
 
   if (conzonInsertError || !conzons) {
     throw new Error(`Błąd zapisu aiiki_conzon: ${conzonInsertError?.message}`);
-  }
-
-  // 3️⃣ UPDATE aiiki.conzon_id — WYŁĄCZNIE PRZEZ RPC
-  for (const conzon of conzons) {
-    const { error } = await supabase.rpc('update_aiiki_conzon', {
-      p_aiik_id: conzon.aiik_id,
-      p_conzon_id: conzon.id,
-    });
-
-    if (error) {
-      throw new Error(
-        `Błąd RPC update_aiiki_conzon (aiik ${conzon.aiik_id}): ${error.message}`,
-      );
-    }
   }
 
   return {
