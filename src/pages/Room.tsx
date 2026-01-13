@@ -192,7 +192,7 @@ export default function Room() {
 
 Aiik: ${aiik.name}
 Opis Aiika: ${aiik.description}
-Osobowość Aiika: ${aiik.rezon}
+Osobowość Aiika: ${aiik.conzon}
 
 [Wiadomość od użytkownika]
       `.trim(),

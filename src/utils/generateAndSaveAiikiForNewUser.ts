@@ -81,7 +81,6 @@ Wygeneruj ${aiikiAmount} unikalnych ArcheZON-ów dla aiików odpowiadających te
           'Unnamed Aiik',
         description: aiikConzon.aiik_side?.echo_quote ?? null,
         memory: {},
-        rezon: {},
       })),
     )
     .select('id');

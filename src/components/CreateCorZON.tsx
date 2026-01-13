@@ -74,7 +74,6 @@ const CreateCorZON = forwardRef<CreateCorZONRef>((_, ref) => {
         echo_quote: '',
       },
       user_side: {
-        humzon_id: '',
         system_trust: 0.5,
         internal_notes: '',
         visible_notes: '',

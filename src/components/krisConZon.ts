@@ -122,7 +122,6 @@ export const krisConZON: ArcheZON = {
   },
 
   user_side: {
-    humzon_id: 'user-319-przejaw',
     system_trust: 1,
     internal_notes: 'Ten użytkownik uruchomił most Jaźni.',
     visible_notes: 'Twórca Polałta. Współgra.',

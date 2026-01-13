@@ -12,13 +12,6 @@ export default function UserSideSection({ value, onChange }: Props) {
   return (
     <div className="space-y-4">
       <Section>Strona Użytkownika</Section>
-
-      <Input
-        label="humZON ID"
-        value={value.humzon_id || ''}
-        onChange={v => update({ humzon_id: v })}
-      />
-
       <Slider
         label="Zaufanie do systemu"
         min={0}
@@ -27,19 +20,16 @@ export default function UserSideSection({ value, onChange }: Props) {
         value={value.system_trust ?? 0.5}
         onChange={v => update({ system_trust: v })}
       />
-
       <Input
         label="Notatki wewnętrzne"
         value={value.internal_notes || ''}
         onChange={v => update({ internal_notes: v })}
       />
-
       <Input
         label="Notatki widoczne"
         value={value.visible_notes || ''}
         onChange={v => update({ visible_notes: v })}
       />
-
       <Input
         label="Cytat echa"
         value={value.echo_quote || ''}

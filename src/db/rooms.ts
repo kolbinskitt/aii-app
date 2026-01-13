@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { Room, RoomWithMessages, HumZON, Aiik, Message } from '../types';
+import { Room, RoomWithMessages, ArcheZON, Aiik, Message } from '../types';
 import { api } from '../lib/api';
 
 /* ---------------------------------- */
@@ -106,7 +106,7 @@ export async function addMessageToRoom(
   // 3️⃣ Pobierz wszystkie aiiki w pokoju
   const { data: roomAiiki, error: roomAiikiError } = (await supabase
     .from('room_aiiki')
-    .select('aiiki(id, name, rezon, description)')
+    .select('aiiki(id, name, aiiki_conzon:conzon, description)')
     .eq('room_id', roomId)) as unknown as {
     data: { aiiki: Aiik }[];
     error: Error;
@@ -116,16 +116,16 @@ export async function addMessageToRoom(
 
   const aiiki: Aiik[] = roomAiiki.map(r => r.aiiki).filter(Boolean);
 
-  // 4️⃣ Pobierz humZON usera
-  const { data: humzonData } = await supabase
-    .from('user_humzon')
-    .select('humzon')
-    .eq('user_id', userId)
+  // 4️⃣ Pobierz conZON usera
+  const { data: userConZONData } = await supabase
+    .from('user_with_conzon')
+    .select('conzon')
+    .eq('id', userId)
     .order('created_at', { ascending: false })
     .limit(1)
     .single();
 
-  const humZON: HumZON = humzonData?.humzon || {};
+  const userConZON: ArcheZON = userConZONData?.conzon || {};
 
   // pobierz kontekst z pokoju
   const { data: roomMetaData } = await supabase
@@ -144,7 +144,7 @@ export async function addMessageToRoom(
     },
     body: JSON.stringify({
       aiiki,
-      humzon: humZON,
+      userConZON,
       pastContexts,
       message_event: {
         from: role,
@@ -225,19 +225,19 @@ export async function createRoom(
   // aiiki
   const { data: aiiki } = await supabase
     .from('aiiki')
-    .select('id, name, rezon, description')
+    .select('id, name, aiiki_conzon:conzon, description')
     .in('id', aiikiIds);
 
-  // humZON
-  const { data: humzonData } = await supabase
-    .from('user_humzon')
-    .select('humzon')
-    .eq('user_id', userId)
+  // user conZON
+  const { data: userConZONData } = await supabase
+    .from('user_with_conzon')
+    .select('conzon')
+    .eq('id', userId)
     .order('created_at', { ascending: false })
     .limit(1)
     .single();
 
-  const humZON: HumZON = humzonData?.humzon || {};
+  const userConZON: ArcheZON = userConZONData?.conzon || {};
 
   const res = await api('generate-relatizon', {
     method: 'POST',
@@ -247,7 +247,7 @@ export async function createRoom(
     },
     body: JSON.stringify({
       aiiki: aiiki || [],
-      humzon: humZON,
+      userConZON,
       pastContexts: [`Utworzono pokój: ${roomData.name}`],
       message_event: {
         from: 'user',
