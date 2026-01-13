@@ -8,6 +8,7 @@ import AuthGuard from './components/AuthGuard';
 import RoomFieldView from './pages/RoomFieldView';
 import ErrorPage from './pages/ErrorPage';
 import { Sidebar } from './components/ui';
+import Credits from './components/Credits';
 
 function LeftSidebar({ children }: PropsWithChildren) {
   return (
@@ -67,6 +68,17 @@ export const router = createHashRouter([
                   <Rooms />
                 </LeftSidebar>
                 <Room />
+              </Grid>
+            ),
+          },
+          {
+            path: 'credits',
+            element: (
+              <Grid>
+                <LeftSidebar>
+                  <Rooms />
+                </LeftSidebar>
+                <Credits />
               </Grid>
             ),
           },

@@ -10,9 +10,11 @@ export default function Rooms() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
+
   useEffect(() => {
     getAllRooms().then(setRooms);
   }, []);
+
   const roomsList =
     rooms.length === 0 ? (
       <p className="text-muted-foreground">{t('campfires.no_campfires')}</p>
