@@ -26,9 +26,7 @@ export default function Layout() {
   });
 
   useEffect(() => {
-    if (!data?.[0].conzon) {
-      setWelcomeModalOpened(true);
-    }
+    setWelcomeModalOpened(data === undefined ? false : !data?.[0].conzon);
   }, [data]);
 
   return (

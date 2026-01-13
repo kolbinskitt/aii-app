@@ -1,6 +1,6 @@
 {
   "name": "aii-app",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "type": "module",
   "scripts": {
     "dev": "npm-run-all --parallel dev:*",
@@ -19,6 +19,7 @@
     "@tanstack/react-query": "^5.90.16",
     "antd": "^6.1.4",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "i18next": "^25.7.4",
     "i18next-browser-languagedetector": "^8.2.0",
     "react": "^18.2.0",

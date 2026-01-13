@@ -17,6 +17,8 @@ import InputList from './InputList';
 import InputListWithMeta from './InputListWithMeta';
 import IconButton from './IconButton';
 import Icon from './Icon';
+import { Card, CardContent } from './Card';
+import { Table } from './Table';
 
 export {
   Button,
@@ -38,4 +40,7 @@ export {
   InputListWithMeta,
   IconButton,
   Icon,
+  Card,
+  CardContent,
+  Table,
 };

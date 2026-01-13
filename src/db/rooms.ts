@@ -106,7 +106,7 @@ export async function addMessageToRoom(
   // 3️⃣ Pobierz wszystkie aiiki w pokoju
   const { data: roomAiiki, error: roomAiikiError } = (await supabase
     .from('room_aiiki')
-    .select('aiiki(id, name, aiiki_conzon:conzon, description)')
+    .select('aiiki_with_conzon(id, name, conzon, description)')
     .eq('room_id', roomId)) as unknown as {
     data: { aiiki: Aiik }[];
     error: Error;
@@ -121,7 +121,7 @@ export async function addMessageToRoom(
     .from('user_with_conzon')
     .select('conzon')
     .eq('id', userId)
-    .order('created_at', { ascending: false })
+    .order('conzon_created_at', { ascending: false })
     .limit(1)
     .single();
 
@@ -224,8 +224,8 @@ export async function createRoom(
 
   // aiiki
   const { data: aiiki } = await supabase
-    .from('aiiki')
-    .select('id, name, aiiki_conzon:conzon, description')
+    .from('aiiki_with_conzon')
+    .select('id, name, conzon, description')
     .in('id', aiikiIds);
 
   // user conZON
@@ -233,7 +233,7 @@ export async function createRoom(
     .from('user_with_conzon')
     .select('conzon')
     .eq('id', userId)
-    .order('created_at', { ascending: false })
+    .order('conzon_created_at', { ascending: false })
     .limit(1)
     .single();
 
