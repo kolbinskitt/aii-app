@@ -43,6 +43,11 @@ PRZYKŁAD:
 Wejście: "Jak się dziś czujesz?"
 Wyjście: "Aiik zapytał użytkownika, jak się czuje."
 
+PRZYKŁAD NEGATYWNY:
+Wejście: "Jesteś jak słońce w moim życiu"
+Zła odpowiedź: "Aiik porównał użytkownika do słońca" ❌ (to jest metafora)
+Dobra odpowiedź: "Aiik wyraził uznanie i ciepło wobec użytkownika" ✅
+
 FORMA:
 - 1 zdanie
 - 3. osoba (np. "Aiik stwierdził…")
@@ -55,6 +60,11 @@ ZASADY:
 - NIE dodawaj kontekstu
 - NIE używaj metafor
 - Maksymalnie 15 słów
+
+DODATKOWE ZASADY:
+- NIE opisuj stylu Aiika
+- NIE przetwarzaj metafor ani porównań
+- Skup się tylko na funkcji: co zrobił Aiik? zapytał? stwierdził? zaoferował coś?
 `;
 
   const res = await fetch(`${API_URL}mistral-proxy`, {
@@ -70,7 +80,7 @@ ZASADY:
       ],
       model: 'TheBloke/Mistral-7B-Instruct-v0.1-AWQ',
       temperature: 0.3,
-      max_tokens: 40,
+      max_tokens: 80,
       purpose: 'message-summary',
     }),
   });

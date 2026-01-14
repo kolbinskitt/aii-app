@@ -79,31 +79,7 @@ export async function addMessageToRoom(
     return;
   }
 
-  // 2️⃣ Streszczenie GPT
-  // const systemPrompt =
-  //   role === 'user'
-  //     ? 'Stwórz bardzo krótkie streszczenie tego, co powiedział użytkownik.'
-  //     : 'Stwórz bardzo krótkie streszczenie tego, co powiedział aiik.';
-
-  // const response = await api('gpt-proxy', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     Authorization: `Bearer ${accessToken}`,
-  //   },
-  //   body: JSON.stringify({
-  //     messages: [
-  //       { role: 'system', content: systemPrompt },
-  //       { role: 'user', content: text },
-  //     ],
-  //     purpose: 'message-summary',
-  //   }),
-  // });
-
-  // const { content: summary } = await response.json();
-
   const summary = await generateMessageSummary(text, role, accessToken);
-  console.log({ summary });
 
   if (!summary || !userId) return;
 
@@ -112,13 +88,13 @@ export async function addMessageToRoom(
     .from('room_aiiki')
     .select('aiiki_with_conzon(id, name, conzon, description)')
     .eq('room_id', roomId)) as unknown as {
-    data: { aiiki: Aiik }[];
+    data: { aiiki_with_conzon: Aiik }[];
     error: Error;
   };
 
   if (roomAiikiError || !roomAiiki?.length) return;
 
-  const aiiki: Aiik[] = roomAiiki.map(r => r.aiiki).filter(Boolean);
+  const aiiki: Aiik[] = roomAiiki.map(r => r.aiiki_with_conzon).filter(Boolean);
 
   // 4️⃣ Pobierz conZON usera
   const { data: userConZONData } = await supabase
@@ -176,7 +152,7 @@ export async function addMessageToRoom(
         {
           room_aiiki_id: link.id,
           relatizon: baseRelatizon,
-          user_id: role === 'user' ? userId : null,
+          user_id: userId,
         },
       ])
       .select()
@@ -265,7 +241,12 @@ export async function createRoom(
   for (const aiik of aiiki || []) {
     const { data: link } = await supabase
       .from('room_aiiki')
-      .insert([{ room_id: roomData.id, aiik_id: aiik.id }])
+      .insert([
+        {
+          room_id: roomData.id,
+          aiik_id: aiik.id,
+        },
+      ])
       .select()
       .single();
 
