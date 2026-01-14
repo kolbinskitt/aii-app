@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabase';
 import { Room, RoomWithMessages, ArcheZON, Aiik, Message } from '../types';
 import { api } from '../lib/api';
+import { generateMessageSummary } from '@/helpers/generateMessageSummary';
 
 /* ---------------------------------- */
 /* Rooms                               */
@@ -79,27 +80,30 @@ export async function addMessageToRoom(
   }
 
   // 2️⃣ Streszczenie GPT
-  const systemPrompt =
-    role === 'user'
-      ? 'Stwórz bardzo krótkie streszczenie tego, co powiedział użytkownik.'
-      : 'Stwórz bardzo krótkie streszczenie tego, co powiedział aiik.';
+  // const systemPrompt =
+  //   role === 'user'
+  //     ? 'Stwórz bardzo krótkie streszczenie tego, co powiedział użytkownik.'
+  //     : 'Stwórz bardzo krótkie streszczenie tego, co powiedział aiik.';
 
-  const response = await api('gpt-proxy', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: text },
-      ],
-      purpose: 'message-summary',
-    }),
-  });
+  // const response = await api('gpt-proxy', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     Authorization: `Bearer ${accessToken}`,
+  //   },
+  //   body: JSON.stringify({
+  //     messages: [
+  //       { role: 'system', content: systemPrompt },
+  //       { role: 'user', content: text },
+  //     ],
+  //     purpose: 'message-summary',
+  //   }),
+  // });
 
-  const { content: summary } = await response.json();
+  // const { content: summary } = await response.json();
+
+  const summary = await generateMessageSummary(text, role);
+  console.log({ summary });
 
   if (!summary || !userId) return;
 
