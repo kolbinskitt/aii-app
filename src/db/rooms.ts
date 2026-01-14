@@ -102,7 +102,7 @@ export async function addMessageToRoom(
 
   // const { content: summary } = await response.json();
 
-  const summary = await generateMessageSummary(text, role);
+  const summary = await generateMessageSummary(text, role, accessToken);
   console.log({ summary });
 
   if (!summary || !userId) return;

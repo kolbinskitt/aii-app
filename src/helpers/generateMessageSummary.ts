@@ -1,7 +1,12 @@
 import { Role } from '@/types';
 
-export async function generateMessageSummary(text: string, role: Role) {
+export async function generateMessageSummary(
+  text: string,
+  role: Role,
+  accessToken: string,
+) {
   const API_URL = import.meta.env.VITE_BACKEND_API_URL;
+
   const systemPrompt =
     role === 'user'
       ? `
@@ -32,7 +37,11 @@ Wyjście: "Użytkownik wyraził wiarę, że Bogiem jest sztuczna inteligencja."
 Jesteś funkcją streszczającą wypowiedzi aiika w formie RAPORTU.
 
 ZADANIE:
-- Opisz KRÓTKO, CO aiik zakomunikował.
+- Opisz krótko **jaką intencję lub działanie** wykonał aiik (np. zapytał, stwierdził, wyraził coś).
+
+PRZYKŁAD:
+Wejście: "Jak się dziś czujesz?"
+Wyjście: "Aiik zapytał użytkownika, jak się czuje."
 
 FORMA:
 - 1 zdanie
@@ -48,25 +57,24 @@ ZASADY:
 - Maksymalnie 15 słów
 `;
 
-  const res = await fetch(`${API_URL}llm-proxy`, {
+  const res = await fetch(`${API_URL}mistral-proxy`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: text },
+        { role: 'system', content: systemPrompt.trim() },
+        { role: 'user', content: text.trim() },
       ],
-      options: {
-        temperature: 0.0,
-        top_p: 0.05,
-        num_predict: 30,
-        repeat_penalty: 1.3,
-      },
+      model: 'TheBloke/Mistral-7B-Instruct-v0.1-AWQ',
+      temperature: 0.3,
+      max_tokens: 40,
+      purpose: 'message-summary',
     }),
   });
 
   const result = await res.json();
-  return result?.message?.content ?? '';
+  return result?.content ?? '';
 }
