@@ -74,6 +74,7 @@ export function UserMenu() {
                 src={user.profile_pic_url}
                 alt="Avatar"
                 className="w-full h-full object-cover rounded-full"
+                referrerPolicy="no-referrer"
               />
             ) : (
               <span>{getInitials()}</span>

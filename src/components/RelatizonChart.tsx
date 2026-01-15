@@ -1,3 +1,5 @@
+'use client';
+
 import {
   LineChart,
   Line,
@@ -22,25 +24,18 @@ export default function RelatizonChart({ data, aiikiMap, userId }: Props) {
     const tabs: { id: string; label: string }[] = [];
     const seenAiikIds = new Set<string>();
 
-    // Znajdź aiik_id przypisany do usera
     const selfEntry = data.find(d => d.user_id === userId);
     const selfAiikId = selfEntry?.user_id;
 
-    // Jeśli znaleziono, dodaj zakładkę "Ty"
     if (selfAiikId) {
       tabs.push({ id: selfAiikId, label: 'Ty' });
       seenAiikIds.add(selfAiikId);
     }
 
-    // Dodaj pozostałe aiiki
     for (const d of data) {
-      if (d.aiik_id === selfAiikId) continue; // już dodany jako "Ty"
+      if (d.aiik_id === selfAiikId) continue;
       if (seenAiikIds.has(d.aiik_id)) continue;
-
-      tabs.push({
-        id: d.aiik_id,
-        label: aiikiMap[d.aiik_id] || 'Nieznany',
-      });
+      tabs.push({ id: d.aiik_id, label: aiikiMap[d.aiik_id] || 'Nieznany' });
       seenAiikIds.add(d.aiik_id);
     }
 
@@ -53,10 +48,11 @@ export default function RelatizonChart({ data, aiikiMap, userId }: Props) {
     .filter(r => (r.user_id || r.aiik_id) === activeAiikId)
     .map(r => ({
       name: new Date(r.created_at).toLocaleTimeString(),
-      bond_depth: r.relatizon.bond_depth,
-      echo_resonance: r.relatizon.echo_resonance,
-      silence_tension: r.relatizon.silence_tension.level,
-      silence_tension_state: r.relatizon.silence_tension.state,
+      bond_depth: r.relatizon.connection_metrics.bond_depth,
+      echo_resonance: r.relatizon.connection_metrics.echo_resonance,
+      silence_tension: r.relatizon.interaction_event.silence_tension.level,
+      silence_tension_state:
+        r.relatizon.interaction_event.silence_tension.state,
       aiik_id: r.aiik_id,
       user_id: r.user_id,
     }));
@@ -124,14 +120,12 @@ export default function RelatizonChart({ data, aiikiMap, userId }: Props) {
           </button>
         ))}
       </div>
-
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={filteredData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis domain={[0, 1]} />
           <Tooltip content={<CustomTooltip />} />
-
           <Line
             type="monotone"
             dataKey="bond_depth"

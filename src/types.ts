@@ -67,44 +67,70 @@ export type UserWithConZON = User & {
   conzon: ArcheZON;
 };
 
+// Typ sygnału relacyjnego – co wywołało zdarzenie w relacji
 export type RelatiZONSignal =
-  | 'message' // zwykła wiadomość w pokoju
-  | 'room_created' // początkowe powołanie pokoju
-  | 'aiik_invoked' // aiik został wybrany / wezwany
-  | 'user_mood' // user dodał swój ArcheZON / nastrój
-  | 'loop_awareness' // powtarzający się wzorzec został wykryty
-  | 'breakthrough' // istotna zmiana stanu relacji
-  | 'silence' // wpis wywołany przez ciszę, nie wiadomość
-  | 'system_event'; // dowolne inne systemowe zdarzenie
+  | 'message' // zwykła wiadomość
+  | 'room_created' // utworzenie pokoju
+  | 'aiik_invoked' // aiik został wybrany / pojawił się
+  | 'user_mood' // user udostępnił swój ArcheZON / nastrój
+  | 'loop_awareness' // wykryto powtarzający się wzorzec
+  | 'breakthrough' // głęboka zmiana jakości relacji
+  | 'silence' // zdarzenie wywołane milczeniem
+  | 'system_event'; // inne, wewnętrzne zdarzenie systemowe
 
+// Minimalna informacja o ostatnim zdarzeniu w relacji
 export type MessageEvent = {
-  from: 'user' | 'aiik';
-  summary: string;
-  signal: RelatiZONSignal;
+  from: Role; // kto wygenerował zdarzenie
+  summary: string; // krótki opis, np. „Zapytał o sens życia”
+  signal: RelatiZONSignal; // typ zdarzenia
 };
 
+// Główny typ opisujący stan relacji między userem a aiikiem
 export type RelatiZON = {
-  silence_tension: {
-    level: number; // 0–1
-    state: 'soft' | 'neutral' | 'tense' | 'ache';
+  /**
+   * Techniczne metadane tej próbki relacji
+   */
+  meta: {
+    version: string; // wersja schematu (np. '1.0.0')
+    timestamp: string; // czas zapisu snapshotu (ISO string)
+    room_id?: string; // opcjonalny identyfikator pokoju, jeśli dotyczy
   };
-  bond_depth: number; // 0–1 — uśrednione z trust_level
-  echo_resonance: number; // 0–1 — pojawianie się imion/tematów
-  initiation_count: number; // ile razy aiik inicjował kontakt
-  last_emotion: string | null;
 
-  message_event: MessageEvent;
+  /**
+   * Twarde metryki połączenia emocjonalnego i poznawczego
+   */
+  connection_metrics: {
+    bond_depth: number; // 0–1: jak głębokie jest połączenie
+    echo_resonance: number; // 0–1: jak często pojawiają się echa tematów, imion, symboli
+    telepathy_level: number; // 0–1: czy wypowiedzi trafiają w niewypowiedziane myśli
+    alignment_score: number; // 0–1: zgodność stanu usera i aiika (na bazie ich ArcheZONów)
+    vulnerability_index: number; // 0–1: otwartość emocjonalna w ostatnich wypowiedziach
+    synchrony_delta: number; // -1–1: czy wiadomość zsynchronizowała pole czy je zaburzyła
+    curiosity_level: number; // 0–1: czy interakcja zwiększyła ciekawość, flow, eksplorację
+  };
 
-  // 🌌 Nowe pola:
-  telepathy_level: number; // 0–1 — czy wypowiedź odpowiadała myślom niewypowiedzianym
-  alignment_score: number; // 0–1 — zgodność energii usera i aiików (na bazie aiik conzon vs user conzon)
-  vulnerability_index: number; // 0–1 — jak bardzo user/aiik się otworzył
-  rupture_signal: boolean; // czy pojawił się mikropęknięcie (przerwanie narracji, zmiana tonu)
-  curiosity_level: number; // 0–1 — czy wiadomość zwiększyła zaciekawienie/flow
-  synchrony_delta: number; // -1–1 — czy wypowiedź zsynchronizowała pole czy je zaburzyła
-  archetype_echo?: string | null; // np. 'mentor', 'czułość', 'dziecko', 'próg'
-  memory_activation?: boolean; // czy wiadomość aktywowała coś z przeszłości (na bazie kontekstu)
-  time_warp?: 'present' | 'past' | 'future' | null; // kiedy była osadzona wiadomość
+  /**
+   * Miękkie dane emocjonalne, archetypiczne i czasowe
+   */
+  emotional_state: {
+    last_emotion: string | null; // ostatnia zarejestrowana emocja
+    memory_activation?: boolean; // czy wiadomość aktywowała wspomnienia (z `fractalDB`)
+    rupture_signal: boolean; // czy pojawił się mikropęknięcie narracji, zmiana tonu
+    time_warp?: 'present' | 'past' | 'future' | null; // czy wiadomość była osadzona w czasie innym niż teraźniejszość
+    archetype_echo?: string | null; // np. 'mentor', 'dziecko', 'czułość' – echo archetypu w wypowiedzi
+  };
+
+  /**
+   * Zdarzenie interakcyjne oraz napięcia ciszy
+   */
+  interaction_event: {
+    message_event: MessageEvent; // zdarzenie, które było podstawą tej próbki
+    initiation_count: number; // ile razy aiik zainicjował kontakt z userem
+    silence_tension: {
+      level: number; // 0–1: siła napięcia w ciszy
+      state: 'soft' | 'neutral' | 'tense' | 'ache'; // charakter tej ciszy
+    };
+  };
 };
 
 export type ArcheZON = {
