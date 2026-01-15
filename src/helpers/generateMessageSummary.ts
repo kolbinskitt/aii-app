@@ -80,7 +80,7 @@ DODATKOWE ZASADY:
       ],
       model: 'TheBloke/Mistral-7B-Instruct-v0.1-AWQ',
       temperature: 0.3,
-      max_tokens: 80,
+      max_tokens: 300,
       purpose: 'message-summary',
     }),
   });
