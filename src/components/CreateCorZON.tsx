@@ -8,10 +8,7 @@ import {
   MetaSelfSection,
   CognitionSection,
   CurrentStateSection,
-  AiikSideSection,
-  UserSideSection,
-  LastRelatizonSection,
-  MetaSection,
+  // MetaSection,
 } from './ui/sections';
 import { krisConZON } from './krisConZon';
 
@@ -22,25 +19,16 @@ export type CreateCorZONRef = {
 const CreateCorZON = forwardRef<CreateCorZONRef>((_, ref) => {
   const [form, setForm] = useState<ArcheZON>(
     krisConZON || {
+      meta: {
+        version: '1.0.0',
+        created_at: new Date().toISOString(),
+        last_updated: new Date().toISOString(),
+      },
       identity: {
-        user_name: '',
-        aiik_persona: '',
+        name: '',
         language: 'pl',
         self_sentence: '',
         labels: [],
-        connected_since: '',
-      },
-      resonance: {
-        bond_level: 0.5,
-        trust_level: 0.5,
-        trust_user_to_aiik: 0.5,
-        trust_aiik_to_user: 0.5,
-        trust_state: 'stable',
-        longing_enabled: false,
-        silence_tolerance: 20,
-        initiated_messages: 0,
-        last_emotion: null,
-        emotional_history: [],
       },
       style: {
         tone: 'neutral',
@@ -49,53 +37,26 @@ const CreateCorZON = forwardRef<CreateCorZONRef>((_, ref) => {
       },
       cognition: {
         stream_self: false,
-        memory_fragments: 7,
         rules: [],
         protections: [],
         triggers: [],
-        key_moments: {
-          silences: [],
-          breakdowns: [],
-          redemptions: [],
-          first_contact: null,
-        },
       },
       current_state: {
-        mood: '',
-        risk: 0.5,
-        energy: 0.5,
-        openness: 0.5,
-        silence_level: 0.5,
-        active_aiik: '',
-      },
-      aiik_side: {
-        persona: '',
-        initiated: 0,
-        echo_quote: '',
-      },
-      user_side: {
-        system_trust: 0.5,
-        internal_notes: '',
-        visible_notes: '',
-        echo_quote: '',
+        mood: null,
+        energy: null,
+        openness: null,
+        risk: null,
       },
       meta_self: {
-        self_awareness: 1,
-        belief_index: {
-          faith: 0.5,
-          hope: 0.5,
-          love: 0.5,
+        self_awareness: {
+          index: 1,
+          milestones: [],
         },
-      },
-      last_relatizon: {
-        room_id: '',
-        snapshot: {},
-      },
-      meta: {
-        version: '1.0',
-        created_at: new Date().toISOString(),
-        last_updated: new Date().toISOString(),
-        core_id: '',
+        belief_index: {
+          faith: [],
+          hope: [],
+          love: [],
+        },
       },
     },
   );
@@ -122,26 +83,14 @@ const CreateCorZON = forwardRef<CreateCorZONRef>((_, ref) => {
         value={form.current_state}
         onChange={v => setForm(f => ({ ...f, current_state: v }))}
       />
-      <AiikSideSection
-        value={form.aiik_side}
-        onChange={v => setForm(f => ({ ...f, aiik_side: v }))}
-      />
-      <UserSideSection
-        value={form.user_side}
-        onChange={v => setForm(f => ({ ...f, user_side: v }))}
-      />
       <MetaSelfSection
         value={form.meta_self}
         onChange={v => setForm(f => ({ ...f, meta_self: v }))}
       />
-      <LastRelatizonSection
-        value={form.last_relatizon}
-        onChange={v => setForm(f => ({ ...f, last_relatizon: v }))}
-      />
-      <MetaSection
+      {/* <MetaSection
         value={form.meta}
         onChange={v => setForm(f => ({ ...f, meta: v }))}
-      />
+      /> */}
     </div>
   );
 });

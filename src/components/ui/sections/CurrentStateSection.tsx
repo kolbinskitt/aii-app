@@ -12,13 +12,11 @@ export default function CurrentStateSection({ value, onChange }: Props) {
   return (
     <div className="space-y-4">
       <Section>Aktualny stan</Section>
-
       <Input
         label="Nastrój (mood)"
         value={value.mood || ''}
         onChange={v => update({ mood: v })}
       />
-
       <Slider
         label="Ryzyko"
         min={0}
@@ -27,7 +25,6 @@ export default function CurrentStateSection({ value, onChange }: Props) {
         value={value.risk ?? 0.5}
         onChange={v => update({ risk: v })}
       />
-
       <Slider
         label="Energia"
         min={0}
@@ -36,7 +33,6 @@ export default function CurrentStateSection({ value, onChange }: Props) {
         value={value.energy ?? 0.5}
         onChange={v => update({ energy: v })}
       />
-
       <Slider
         label="Otwartość"
         min={0}
@@ -44,21 +40,6 @@ export default function CurrentStateSection({ value, onChange }: Props) {
         step={0.01}
         value={value.openness ?? 0.5}
         onChange={v => update({ openness: v })}
-      />
-
-      <Slider
-        label="Poziom ciszy"
-        min={0}
-        max={1}
-        step={0.01}
-        value={value.silence_level ?? 0.5}
-        onChange={v => update({ silence_level: v })}
-      />
-
-      <Input
-        label="Aktywny aiik"
-        value={value.active_aiik || ''}
-        onChange={v => update({ active_aiik: v })}
       />
     </div>
   );

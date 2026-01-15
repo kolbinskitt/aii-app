@@ -11,35 +11,25 @@ export default function MetaSection({ value, onChange }: Props) {
     version: value?.version ?? '',
     created_at: value?.created_at ?? '',
     last_updated: value?.last_updated ?? '',
-    core_id: value?.core_id ?? '',
   };
 
   return (
     <div className="space-y-4">
       <Section>Meta</Section>
-
       <Input
         label="Version"
         value={safeValue.version}
         onChange={v => onChange({ ...safeValue, version: v })}
       />
-
       <Input
         label="Created At"
         value={safeValue.created_at}
         onChange={v => onChange({ ...safeValue, created_at: v })}
       />
-
       <Input
         label="Last Updated"
         value={safeValue.last_updated}
         onChange={v => onChange({ ...safeValue, last_updated: v })}
-      />
-
-      <Input
-        label="Core ID"
-        value={safeValue.core_id}
-        onChange={v => onChange({ ...safeValue, core_id: v })}
       />
     </div>
   );

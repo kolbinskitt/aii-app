@@ -3,7 +3,6 @@
 import { useRef, useState } from 'react';
 import useUser from '@/hooks/useUser';
 import { supabase } from '@/lib/supabase';
-import { v4 as uuidv4 } from 'uuid';
 import { Popup, Button } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 import CreateCorZON, { CreateCorZONRef } from './CreateCorZON';
@@ -31,7 +30,6 @@ export default function WelcomeModal({ isOpen, onClose, onComplete }: Props) {
 
     const data = createRef.current.getForm();
     const now = new Date().toISOString();
-    const id = uuidv4();
 
     const conzon: ArcheZON = {
       ...data,
@@ -39,7 +37,6 @@ export default function WelcomeModal({ isOpen, onClose, onComplete }: Props) {
         version: '0.1',
         created_at: now,
         last_updated: now,
-        core_id: id,
       },
     };
 

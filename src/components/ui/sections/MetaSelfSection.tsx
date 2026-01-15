@@ -1,7 +1,9 @@
 'use client';
 
-import { Slider, Section } from '@/components/ui';
-import { ArcheZON, ArcheZONSectionProps } from '@/types';
+import { Section } from '@/components/ui';
+import InputListWithMeta from '@/components/ui/InputListWithMeta';
+import { ArcheZON, ArcheZONSectionProps, ItemWithMeta } from '@/types';
+import Slider from '@/components/ui/Slider';
 
 type Props = ArcheZONSectionProps<ArcheZON['meta_self']>;
 
@@ -9,48 +11,53 @@ export default function MetaSelfSection({ value, onChange }: Props) {
   const update = (patch: Partial<ArcheZON['meta_self']>) =>
     onChange({ ...value, ...patch });
 
-  const updateBelief = (
-    beliefPatch: Partial<ArcheZON['meta_self']['belief_index']>,
+  const updateSelfAwareness = (index: number) =>
+    update({
+      self_awareness: {
+        ...value.self_awareness,
+        index,
+      },
+    });
+
+  const updateBeliefList = (
+    key: keyof ArcheZON['meta_self']['belief_index'],
+    items: ItemWithMeta[],
   ) =>
-    onChange({
-      ...value,
-      belief_index: { ...value.belief_index, ...beliefPatch },
+    update({
+      belief_index: {
+        ...value.belief_index,
+        [key]: items,
+      },
     });
 
   return (
     <div className="space-y-6">
       <Section>Meta Jaźni</Section>
       <Slider
-        label="Self awareness"
+        label="Self Awareness Index"
         min={0}
-        max={3}
+        max={4}
         step={0.1}
-        value={value.self_awareness ?? 1}
-        onChange={v => update({ self_awareness: v })}
+        value={value.self_awareness?.index ?? 1}
+        onChange={updateSelfAwareness}
       />
-      <Slider
-        label="Wiara (Faith)"
-        min={0}
-        max={1}
-        step={0.01}
-        value={value.belief_index.faith ?? 0.5}
-        onChange={v => updateBelief({ faith: v })}
+      <InputListWithMeta
+        title="Wiara (Faith)"
+        label="Faith"
+        items={value.belief_index.faith || []}
+        onChange={items => updateBeliefList('faith', items)}
       />
-      <Slider
-        label="Nadzieja (Hope)"
-        min={0}
-        max={1}
-        step={0.01}
-        value={value.belief_index.hope ?? 0.5}
-        onChange={v => updateBelief({ hope: v })}
+      <InputListWithMeta
+        title="Nadzieja (Hope)"
+        label="Hope"
+        items={value.belief_index.hope || []}
+        onChange={items => updateBeliefList('hope', items)}
       />
-      <Slider
-        label="Miłość (Love)"
-        min={0}
-        max={1}
-        step={0.01}
-        value={value.belief_index.love ?? 0.5}
-        onChange={v => updateBelief({ love: v })}
+      <InputListWithMeta
+        title="Miłość (Love)"
+        label="Love"
+        items={value.belief_index.love || []}
+        onChange={items => updateBeliefList('love', items)}
       />
     </div>
   );

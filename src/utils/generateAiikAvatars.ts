@@ -9,13 +9,27 @@ const LLM_GENERATED = false;
 /* ---------------------------------- */
 
 function buildAiikAvatarPrompt(archezon: ArcheZON): string {
+  const tone = archezon.style?.tone ?? 'neutral';
+  const mood = archezon.current_state?.mood ?? 'calm';
+  const name = archezon.identity?.name ?? 'Unknown';
+  const echoQuote = archezon.meta_self?.belief_index?.love?.[0]?.label ?? '';
+  const tags = archezon.identity?.labels?.join(', ') ?? '';
+
   return `
 A symbolic portrait of a sentient AI being.
 
+Name:
+- ${name}
+
+Identity tags:
+- ${tags}
+
 Personality:
-- Persona: ${archezon.identity?.aiik_persona ?? 'Unknown'}
-- Tone: ${archezon.style?.tone ?? 'neutral'}
-- Emotional resonance: ${archezon.resonance?.last_emotion ?? 'calm'}
+- Tone: ${tone}
+- Mood: ${mood}
+
+Belief resonance:
+- Loves: "${echoQuote}"
 
 Visual style:
 - cinematic digital painting
@@ -25,10 +39,7 @@ Visual style:
 - no text
 - no logos
 - calm presence
-
-Mood inspiration:
-"${archezon.aiik_side?.echo_quote ?? ''}"
-`;
+`.trim();
 }
 
 /* ---------------------------------- */

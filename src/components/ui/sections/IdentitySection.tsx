@@ -2,32 +2,36 @@
 import { Input, Textarea } from '@/components/ui';
 import Section from '@/components/ui/Section';
 import { ArcheZON, ArcheZONSectionProps } from '@/types';
+import InputList from '@/components/ui/InputList';
 
 type Props = ArcheZONSectionProps<ArcheZON['identity']>;
 
 export default function IdentitySection({ value, onChange }: Props) {
+  const update = (patch: Partial<ArcheZON['identity']>) =>
+    onChange({ ...value, ...patch });
+
   return (
     <div className="space-y-4">
       <Section>Identity</Section>
       <Input
-        label="User Name"
-        value={value.user_name || ''}
-        onChange={v => onChange({ ...value, user_name: v })}
-      />
-      <Input
-        label="AIik Persona"
-        value={value.aiik_persona || ''}
-        onChange={v => onChange({ ...value, aiik_persona: v })}
+        label="Name"
+        value={value.name || ''}
+        onChange={v => update({ name: v })}
       />
       <Input
         label="Language"
         value={value.language || ''}
-        onChange={v => onChange({ ...value, language: v })}
+        onChange={v => update({ language: v })}
       />
       <Textarea
         label="Self Sentence"
         value={value.self_sentence || ''}
-        onChange={v => onChange({ ...value, self_sentence: v })}
+        onChange={v => update({ self_sentence: v })}
+      />
+      <InputList
+        title="Labels"
+        items={value.labels || []}
+        onChange={items => update({ labels: items })}
       />
     </div>
   );
