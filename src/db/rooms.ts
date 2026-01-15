@@ -1,7 +1,6 @@
 import { supabase } from '../lib/supabase';
-import { Room, RoomWithMessages, ArcheZON, Aiik, Message } from '@/types';
+import { Room, RoomWithMessages, ArcheZON, Aiik, Message, Role } from '@/types';
 import { api } from '../lib/api';
-import { generateMessageSummary } from '@/helpers/generateMessageSummary';
 import { saveFractalNode } from '@/lib/fractal/saveFractalNode';
 
 /* ---------------------------------- */
@@ -56,8 +55,12 @@ export async function getRoomById(
 export async function addMessageToRoom(
   accessToken: string,
   roomId: string,
-  text: string,
-  role: 'user' | 'aiik',
+  message: {
+    response: string;
+    message_summary: string;
+    response_summary: string;
+  },
+  role: Role,
   userId?: string,
   aiikId?: string,
   aiikName?: string,
@@ -67,7 +70,7 @@ export async function addMessageToRoom(
   const { error: messageError } = await supabase.from('messages').insert([
     {
       room_id: roomId,
-      text,
+      text: message.response,
       role,
       aiik_id: aiikId ?? null,
       user_id: userId ?? null,
@@ -80,18 +83,16 @@ export async function addMessageToRoom(
     return;
   }
 
-  const summary = await generateMessageSummary(text, role, accessToken);
-
   await saveFractalNode({
     accessToken,
     type: 'message',
-    content: text,
+    content: message.response,
     user_id: userId,
     aiik_id: aiikId,
     room_id: roomId,
   });
 
-  if (!summary || !userId) return;
+  if (!message.message_summary || !message.response_summary || !userId) return;
 
   // 3️⃣ Pobierz wszystkie aiiki w pokoju
   const { data: roomAiiki, error: roomAiikiError } = (await supabase
@@ -138,7 +139,8 @@ export async function addMessageToRoom(
       pastContexts,
       message_event: {
         from: role,
-        summary,
+        summary:
+          role === 'user' ? message.message_summary : message.response_summary,
         signal: 'message' as const,
       },
     }),
@@ -195,7 +197,9 @@ export async function addMessageToRoom(
         ...oldMeta,
         context: [
           ...context,
-          `${role === 'user' ? 'User' : `Aiik ${aiikName}`}: ${summary}`,
+          `${role === 'user' ? 'User' : `Aiik ${aiikName}`}: ${
+            role === 'user' ? message.message_summary : message.response_summary
+          }`,
         ].slice(-10),
       },
     })

@@ -182,23 +182,35 @@ export default function Room() {
   async function fetchAiikResponse(
     prompt: string,
     aiik: Aiik,
-  ): Promise<string | null> {
+  ): Promise<{
+    response: string;
+    message_summary: string;
+    response_summary: string;
+  } | null> {
     try {
-      // 🧠 buduj systemowy prompt
       const systemMessage = {
         role: 'system' as const,
         content: `
-[Uwaga: Aiik to rezonansowa postać wspierająca użytkownika. Ma unikalną osobowość i styl odpowiadania.]
+Jesteś Aiikiem – rezonansową postacią wspierającą użytkownika. Twoja odpowiedź powinna być naturalna, empatyczna i zgodna z osobowością Aiika.
+
+Zwróć **tylko poprawny JSON** w formacie:
+
+{
+  "response": "...",             // Twoja odpowiedź jako Aiika
+  "message_summary": "...",      // Krótkie podsumowanie wiadomości użytkownika – w trzeciej osobie
+  "response_summary": "..."      // Krótkie podsumowanie Twojej odpowiedzi – opisowo, w trzeciej osobie (np. "Aiik zapytał...", "Aiik zauważył...", "Aiik odpowiedział...")
+}
+
+Pamiętaj:
+– **Nie mówisz** bezpośrednio do użytkownika w podsumowaniach.
+– **Nie używaj drugiej osoby ("ty", "twój")** w żadnym z pól \`*_summary\`.
 
 Aiik: ${aiik.name}
-Opis Aiika: ${aiik.description}
-Osobowość Aiika: ${aiik.conzon}
-
-[Wiadomość od użytkownika]
-      `.trim(),
+Opis: ${aiik.description}
+Osobowość: ${aiik.conzon}
+`.trim(),
       };
 
-      // 🧠 prompt usera jako wiadomość
       const userMessage = {
         role: 'user' as const,
         content: prompt,
@@ -212,16 +224,22 @@ Osobowość Aiika: ${aiik.conzon}
         },
         body: JSON.stringify({
           messages: [systemMessage, userMessage],
-          log: true, // można potem wykorzystać
-          user_id: user?.user?.id, // jeśli potrzebne do logowania
-          purpose: 'aiik-message', // można potem rozwinąć w backendzie
+          purpose: 'aiik-message',
         }),
       });
 
-      const data = await res.json();
-      return data.content ?? null;
+      const { content } = await res.json();
+
+      if (!content) return null;
+
+      const parsed = JSON.parse(content);
+      return {
+        response: parsed.response,
+        message_summary: parsed.message_summary,
+        response_summary: parsed.response_summary,
+      };
     } catch (err) {
-      console.error('❌ Błąd AI:', err);
+      console.error('❌ Błąd AI (parse or fetch):', err);
       return null;
     }
   }
@@ -230,17 +248,6 @@ Osobowość Aiika: ${aiik.conzon}
     if (!id || message.trim() === '' || !room) return;
 
     const userMsg = message.trim();
-
-    // 1️⃣ Zapisz wiadomość usera
-    await addMessageToRoom(
-      accessToken!,
-      id,
-      userMsg,
-      'user',
-      user.user?.id,
-      // tutaj powinniśmy przekazać aiik id
-      // tutaj powinniśmy przekazać aiik name
-    );
 
     // 2️⃣ Odśwież pokój (żeby UI był responsywny)
     const updatedRoom = await getRoomById(id);
@@ -262,6 +269,19 @@ Osobowość Aiika: ${aiik.conzon}
       const aiikResponse = await fetchAiikResponse(userMsg, chosenAiik.aiiki);
 
       if (aiikResponse) {
+        // 1️⃣ Zapisz wiadomość usera
+        await addMessageToRoom(
+          accessToken!,
+          id,
+          {
+            response: userMsg,
+            message_summary: aiikResponse.message_summary,
+            response_summary: aiikResponse.response_summary,
+          },
+          'user',
+          user.user?.id,
+        );
+
         // 5️⃣ Zapisz odpowiedź aiika z aiik_id
         await addMessageToRoom(
           accessToken!,
