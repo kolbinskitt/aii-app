@@ -260,3 +260,20 @@ export type ProcessingStep =
   | 'generate-avatars';
 export type IconName = keyof typeof PhosphorIcons;
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+export type SaveFractalNodeArgs = {
+  accessToken: string;
+  type:
+    | 'message'
+    | 'relatizon'
+    | 'archezon'
+    | 'intention'
+    | 'insight'
+    | 'memory'
+    | 'event';
+  content: string | Record<string, unknown>;
+  user_id?: string;
+  aiik_id?: string;
+  room_id?: string;
+  metadata?: Record<string, unknown>;
+};

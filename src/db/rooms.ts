@@ -1,7 +1,8 @@
 import { supabase } from '../lib/supabase';
-import { Room, RoomWithMessages, ArcheZON, Aiik, Message } from '../types';
+import { Room, RoomWithMessages, ArcheZON, Aiik, Message } from '@/types';
 import { api } from '../lib/api';
 import { generateMessageSummary } from '@/helpers/generateMessageSummary';
+import { saveFractalNode } from '@/lib/fractal/saveFractalNode';
 
 /* ---------------------------------- */
 /* Rooms                               */
@@ -75,11 +76,20 @@ export async function addMessageToRoom(
   ]);
 
   if (messageError) {
-    console.error('❌ Error adding message:', messageError);
+    console.error('❌ Error adding message: ', messageError);
     return;
   }
 
   const summary = await generateMessageSummary(text, role, accessToken);
+
+  await saveFractalNode({
+    accessToken,
+    type: 'message',
+    content: text,
+    user_id: userId,
+    aiik_id: aiikId,
+    room_id: roomId,
+  });
 
   if (!summary || !userId) return;
 

@@ -12,7 +12,7 @@ import type { RoomWithMessages, Aiik, Role } from '../types';
 import useUser from '../hooks/useUser';
 import { useAccessToken } from '../hooks/useAccessToken';
 import { supabase } from '../lib/supabase';
-import { api } from '../lib/api';
+import { api } from '@/lib/api';
 import { useTranslation } from 'react-i18next';
 import { Button, Tile, Input } from '../components/ui';
 
