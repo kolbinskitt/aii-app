@@ -9,7 +9,6 @@ export default function IdentitySection({ value, onChange }: Props) {
   return (
     <div className="space-y-4">
       <Section>Identity</Section>
-
       <Input
         label="User Name"
         value={value.user_name || ''}

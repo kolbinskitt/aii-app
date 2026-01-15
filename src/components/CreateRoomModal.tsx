@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { createRoom } from '../db/rooms';
-import useUserAiiki from '../db/aiiki';
+import useGlobalAiiki from '../db/aiiki';
 import { Aiik } from '../types';
 import useUser from '../hooks/useUser';
 import { useAccessToken } from '../hooks/useAccessToken';
@@ -18,14 +18,15 @@ export default function CreateRoomModal({ onClose }: Props) {
   const [name, setName] = useState('');
   const [aiiki, setAiiki] = useState<Aiik[]>([]);
   const [selectedAiiki, setSelectedAiiki] = useState<Set<string>>(new Set());
-  const userAiiki = useUserAiiki();
+  const globalAiiki = useGlobalAiiki();
   const navigate = useNavigate();
   const user = useUser();
   const accessToken = useAccessToken();
+  const [opened, setOpened] = useState<boolean>(true);
 
   useEffect(() => {
-    setAiiki(userAiiki);
-  }, [userAiiki]);
+    setAiiki(globalAiiki);
+  }, [globalAiiki]);
 
   const toggleAiik = (id: string) => {
     setSelectedAiiki(prev => {
@@ -45,6 +46,7 @@ export default function CreateRoomModal({ onClose }: Props) {
       const aiikiIds = Array.from(selectedAiiki);
       await createRoom(accessToken!, id, name, aiikiIds, user.user.id);
       navigate(`/room/${id}`);
+      setOpened(false);
     }
   }
 
@@ -52,7 +54,7 @@ export default function CreateRoomModal({ onClose }: Props) {
 
   return ReactDOM.createPortal(
     <Popup
-      isOpen
+      isOpen={opened}
       title={t('campfires.starting_new_campfire')}
       primaryActions={
         <div
