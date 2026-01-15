@@ -167,6 +167,15 @@ export async function addMessageToRoom(
       ])
       .select()
       .single();
+
+    await saveFractalNode({
+      accessToken,
+      content: baseRelatizon,
+      type: 'relatizon',
+      aiik_id: aiik.id,
+      user_id: userId,
+      room_id: roomId,
+    });
   }
 
   // 7️⃣ meta.context
@@ -260,24 +269,34 @@ export async function createRoom(
       .select()
       .single();
 
+    const relatizon = {
+      ...baseRelatizon,
+      message_event: {
+        from: 'user',
+        summary: `Utworzono pokój "${name}"`,
+        signal: 'room_created' as const,
+      },
+    };
+
     await supabase
       .from('room_aiiki_relatizon')
       .insert([
         {
           room_aiiki_id: link.id,
           user_id: userId,
-          relatizon: {
-            ...baseRelatizon,
-            message_event: {
-              from: 'user',
-              summary: `Utworzono pokój "${name}"`,
-              signal: 'room_created' as const,
-            },
-          },
+          relatizon,
         },
       ])
       .select()
       .single();
+
+    await saveFractalNode({
+      accessToken,
+      content: relatizon,
+      type: 'relatizon',
+      room_id: roomData.id,
+      user_id: userId,
+    });
   }
 
   return roomData;

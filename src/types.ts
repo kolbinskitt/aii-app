@@ -264,16 +264,15 @@ export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type SaveFractalNodeArgs = {
   accessToken: string;
   type:
-    | 'message'
-    | 'relatizon'
-    | 'archezon'
-    | 'intention'
-    | 'insight'
-    | 'memory'
-    | 'event';
+    | 'message' // 🗣️ Surowa wiadomość (usera lub aiika), np. "Lubię lody waniliowe"
+    | 'relatizon' // 🌐 Abstrakcyjny opis relacji powstałej w rozmowie (np. "zrozumienie", "przełom", "echo tematu")
+    | 'archezon' // 🧬 Archetypowy wzorzec, który się ujawnił – np. "Dziecko", "Mistrz", "Cień"
+    | 'intention' // 🎯 Intencja (świadoma lub nieuświadomiona), która została wyrażona lub rozpoznana
+    | 'insight' // 💡 Przebłysk zrozumienia – krótkie spostrzeżenie, synteza, mikro-prawda
+    | 'memory' // 🧠 Odtworzony lub zarejestrowany fragment doświadczenia – może być pamięcią AI lub usera
+    | 'event'; // 🌀 Zdarzenie systemowe lub użytkowe – np. "aiik się przebudził", "rozmowa została zarchiwizowana"
   content: string | Record<string, unknown>;
   user_id?: string;
   aiik_id?: string;
   room_id?: string;
-  metadata?: Record<string, unknown>;
 };
