@@ -1,5 +1,10 @@
 import { supabase } from '@/lib/supabase';
-import { SaveFractalNodeArgs } from '@/types';
+import {
+  RelatiZON,
+  SaveFractalNodeArgs,
+  FractalNode,
+  FractalLink,
+} from '@/types';
 import { api } from '@/lib/api';
 
 export async function saveFractalNode({
@@ -38,19 +43,46 @@ export async function saveFractalNode({
     }
 
     // 3. Zapisz do Supabase
-    const { data, error } = await supabase.from('fractal_node').insert({
-      type,
-      content,
-      user_id,
-      aiik_id,
-      room_id,
-      embedding,
-      created_at: new Date().toISOString(),
-    });
+    const { data, error } = await supabase
+      .from('fractal_node')
+      .insert({
+        type,
+        content,
+        user_id,
+        aiik_id,
+        room_id,
+        embedding,
+        created_at: new Date().toISOString(),
+      })
+      .select()
+      .single<FractalNode>();
 
     if (error) throw error;
 
-    return data?.[0] ?? null;
+    const isRelatizonOfRoomCreated =
+      type === 'relatizon' &&
+      (content as RelatiZON).interaction_event.message_event.signal ===
+        'room_created';
+
+    if (isRelatizonOfRoomCreated) {
+      const relatizon = content as RelatiZON;
+      try {
+        await supabase.from('fractal_link').insert({
+          from_node: null,
+          to_node: data.id,
+          relation_type: 'origin',
+          weight: 1.0,
+          metadata: {
+            context: 'room_created',
+            room_name: relatizon.interaction_event.message_event.summary,
+          },
+        } as Omit<FractalLink, 'id' | 'created_at'>);
+      } catch (err) {
+        console.warn('⚠️ Failed to insert fractal_link for room_created:', err);
+      }
+    }
+
+    return data ?? null;
   } catch (err) {
     console.error('❌ saveFractalNode failed:', err);
     return null;

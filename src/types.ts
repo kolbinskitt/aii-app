@@ -276,3 +276,36 @@ export type SaveFractalNodeArgs = {
   aiik_id?: string;
   room_id?: string;
 };
+
+export type FractalNode = {
+  id: string; // uuid
+  type: 'message' | 'relatizon'; // możesz dodać inne typy później
+  content: string | object; // oryginalna wiadomość lub RelatiZON
+  user_id?: string | null;
+  aiik_id?: string | null;
+  room_id?: string | null;
+  embedding: number[];
+  created_at: string; // Znacznik czasu utworzenia rekordu (ISO timestamp)
+};
+
+export type RelationType =
+  | 'origin' // Pierwotne powiązanie, np. relatizon tworzący pokój
+  | 'echo' // Echo jednej wiadomości w drugiej (np. odpowiedź aiika)
+  | 'memory' // Powiązanie z wcześniejszą pamięcią
+  | 'intention' // Intencjonalne powiązanie przez użytkownika lub aiika
+  | 'insight' // Wniosek, refleksja powiązana z czymś wcześniejszym
+  | 'reinforcement' // Wzmocnienie idei przez powtórzenie / podobieństwo
+  | 'reference' // Odniesienie do czegoś (np. cytat, wspomnienie)
+  | 'association' // Swobodne skojarzenie między węzłami
+  | 'emergence' // Gdy nowy węzeł wynika z kilku poprzednich (emergentnie)
+  | 'custom'; // Dowolny inny – pozwala na elastyczność
+
+export type FractalLink = {
+  id: string; // Unikalny identyfikator rekordu (UUID)
+  from_node: string | null; // ID węzła źródłowego (może być null, np. dla źródła absolutnego)
+  to_node: string; // ID węzła docelowego (zawsze wymagane)
+  relation_type: RelationType; // Typ relacji (np. 'origin', 'echo', 'memory'…)
+  weight: number; // Waga relacji (domyślnie 1.0, ale może reprezentować siłę połączenia)
+  metadata?: Record<string, unknown>; // Dowolne dane kontekstowe (np. room_name, trigger_message…)
+  created_at: string; // Znacznik czasu utworzenia rekordu (ISO timestamp)
+};

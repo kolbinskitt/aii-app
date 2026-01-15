@@ -1,5 +1,13 @@
 import { supabase } from '../lib/supabase';
-import { Room, RoomWithMessages, ArcheZON, Aiik, Message, Role } from '@/types';
+import {
+  Room,
+  RoomWithMessages,
+  ArcheZON,
+  Aiik,
+  Message,
+  Role,
+  RelatiZON,
+} from '@/types';
 import { api } from '../lib/api';
 import { saveFractalNode } from '@/lib/fractal/saveFractalNode';
 
@@ -174,7 +182,7 @@ export async function addMessageToRoom(
       accessToken,
       content: baseRelatizon,
       type: 'relatizon',
-      aiik_id: aiik.id,
+      aiik_id: role === 'aiik' ? aiik.id : undefined,
       user_id: userId,
       room_id: roomId,
     });
@@ -259,7 +267,8 @@ export async function createRoom(
       },
     }),
   });
-  const { relatizon: baseRelatizon } = await res.json();
+  const { relatizon: baseRelatizon }: { relatizon: RelatiZON } =
+    await res.json();
 
   for (const aiik of aiiki || []) {
     const { data: link } = await supabase
@@ -273,12 +282,15 @@ export async function createRoom(
       .select()
       .single();
 
-    const relatizon = {
+    const relatizon: RelatiZON = {
       ...baseRelatizon,
-      message_event: {
-        from: 'user',
-        summary: `Utworzono pokój "${name}"`,
-        signal: 'room_created' as const,
+      interaction_event: {
+        ...baseRelatizon.interaction_event,
+        message_event: {
+          from: 'user',
+          summary: name,
+          signal: 'room_created' as const,
+        },
       },
     };
 
