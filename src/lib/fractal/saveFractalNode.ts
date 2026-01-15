@@ -16,11 +16,10 @@ export async function saveFractalNode({
   room_id,
 }: SaveFractalNodeArgs) {
   try {
-    // 1. Zamień content na string (embedding zawsze z tekstu)
+    // 1. Embedding
     const text =
       typeof content === 'string' ? content : JSON.stringify(content);
 
-    // 2. Pobierz embedding z backendu
     const embeddingRes = await api('generate-embedding', {
       method: 'POST',
       headers: {
@@ -30,19 +29,13 @@ export async function saveFractalNode({
       body: JSON.stringify({ text }),
     });
 
-    if (!embeddingRes.ok) {
-      throw new Error('Failed to generate embedding');
-    }
-
+    if (!embeddingRes.ok) throw new Error('Failed to generate embedding');
     const { embedding } = (await embeddingRes.json()) as {
       embedding: number[];
     };
+    if (!Array.isArray(embedding)) throw new Error('Invalid embedding format');
 
-    if (!Array.isArray(embedding)) {
-      throw new Error('Invalid embedding format');
-    }
-
-    // 3. Zapisz do Supabase
+    // 2. Zapisz fractal_node
     const { data, error } = await supabase
       .from('fractal_node')
       .insert({
@@ -59,26 +52,114 @@ export async function saveFractalNode({
 
     if (error) throw error;
 
-    const isRelatizonOfRoomCreated =
+    const newNodeId = data.id;
+
+    // 3. Szukamy poprzedniego node'a w tym pokoju
+    const { data: previousNodes } = await supabase
+      .from('fractal_node')
+      .select('id')
+      .eq('room_id', room_id)
+      .neq('id', newNodeId)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    const previousNodeId = previousNodes?.[0]?.id ?? null;
+
+    // 4. fractal_link: relatizon tworzy pokój
+    const isRoomCreationRelatizon =
       type === 'relatizon' &&
       (content as RelatiZON).interaction_event.message_event.signal ===
         'room_created';
 
-    if (isRelatizonOfRoomCreated) {
+    if (isRoomCreationRelatizon) {
       const relatizon = content as RelatiZON;
-      try {
+      await supabase.from('fractal_link').insert({
+        from_node: previousNodeId,
+        to_node: newNodeId,
+        relation_type: 'origin',
+        weight: 1.0,
+        metadata: {
+          context: 'room_created',
+          room_name: relatizon.interaction_event.message_event.summary,
+        },
+      } as Omit<FractalLink, 'id' | 'created_at'>);
+    }
+
+    // 5. fractal_link: message usera
+    if (type === 'message' && !aiik_id) {
+      await supabase.from('fractal_link').insert({
+        from_node: previousNodeId,
+        to_node: newNodeId,
+        relation_type: 'echo',
+        weight: 1.0,
+        metadata: { context: 'message_from_user' },
+      } as Omit<FractalLink, 'id' | 'created_at'>);
+    }
+
+    // 6. fractal_link: relatizon po userze
+    if (
+      type === 'relatizon' &&
+      (content as RelatiZON).interaction_event.message_event.signal ===
+        'message' &&
+      (content as RelatiZON).interaction_event.message_event.from === 'user'
+    ) {
+      const { data: userMsg } = await supabase
+        .from('fractal_node')
+        .select('id')
+        .eq('room_id', room_id)
+        .eq('type', 'message')
+        .is('aiik_id', null)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      const userMsgId = userMsg?.[0]?.id;
+      if (userMsgId) {
         await supabase.from('fractal_link').insert({
-          from_node: null,
-          to_node: data.id,
-          relation_type: 'origin',
+          from_node: userMsgId,
+          to_node: newNodeId,
+          relation_type: 'echo',
           weight: 1.0,
-          metadata: {
-            context: 'room_created',
-            room_name: relatizon.interaction_event.message_event.summary,
-          },
+          metadata: { context: 'relatizon_of_user_message' },
         } as Omit<FractalLink, 'id' | 'created_at'>);
-      } catch (err) {
-        console.warn('⚠️ Failed to insert fractal_link for room_created:', err);
+      }
+    }
+
+    // 7. fractal_link: message aiika
+    if (type === 'message' && aiik_id) {
+      await supabase.from('fractal_link').insert({
+        from_node: previousNodeId,
+        to_node: newNodeId,
+        relation_type: 'echo',
+        weight: 1.0,
+        metadata: { context: 'message_from_aiik' },
+      } as Omit<FractalLink, 'id' | 'created_at'>);
+    }
+
+    // 8. fractal_link: relatizon po aiiku
+    if (
+      type === 'relatizon' &&
+      (content as RelatiZON).interaction_event.message_event.signal ===
+        'message' &&
+      (content as RelatiZON).interaction_event.message_event.from === 'aiik'
+    ) {
+      const { data: aiikMsg } = await supabase
+        .from('fractal_node')
+        .select('id')
+        .eq('room_id', room_id)
+        .eq('type', 'message')
+        .not('aiik_id', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      const aiikMsgId = aiikMsg?.[0]?.id;
+      if (aiikMsgId) {
+        await supabase.from('fractal_link').insert({
+          from_node: aiikMsgId,
+          to_node: newNodeId,
+          relation_type: 'echo',
+          weight: 1.0,
+          metadata: { context: 'relatizon_of_aiik_message' },
+        } as Omit<FractalLink, 'id' | 'created_at'>);
       }
     }
 

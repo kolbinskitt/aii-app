@@ -288,7 +288,7 @@ export type FractalNode = {
   created_at: string; // Znacznik czasu utworzenia rekordu (ISO timestamp)
 };
 
-export type RelationType =
+export type FractalLinkRelationType =
   | 'origin' // Pierwotne powiązanie, np. relatizon tworzący pokój
   | 'echo' // Echo jednej wiadomości w drugiej (np. odpowiedź aiika)
   | 'memory' // Powiązanie z wcześniejszą pamięcią
@@ -304,7 +304,7 @@ export type FractalLink = {
   id: string; // Unikalny identyfikator rekordu (UUID)
   from_node: string | null; // ID węzła źródłowego (może być null, np. dla źródła absolutnego)
   to_node: string; // ID węzła docelowego (zawsze wymagane)
-  relation_type: RelationType; // Typ relacji (np. 'origin', 'echo', 'memory'…)
+  relation_type: FractalLinkRelationType; // Typ relacji (np. 'origin', 'echo', 'memory'…)
   weight: number; // Waga relacji (domyślnie 1.0, ale może reprezentować siłę połączenia)
   metadata?: Record<string, unknown>; // Dowolne dane kontekstowe (np. room_name, trigger_message…)
   created_at: string; // Znacznik czasu utworzenia rekordu (ISO timestamp)
