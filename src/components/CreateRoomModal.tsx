@@ -23,10 +23,15 @@ export default function CreateRoomModal({ onClose }: Props) {
   const user = useUser();
   const accessToken = useAccessToken();
   const [opened, setOpened] = useState<boolean>(true);
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   useEffect(() => {
     setAiiki(globalAiiki);
   }, [globalAiiki]);
+
+  useEffect(() => {
+    setDisabled(!name || selectedAiiki.size === 0);
+  }, [name, selectedAiiki]);
 
   const toggleAiik = (id: string) => {
     setSelectedAiiki(prev => {
@@ -42,6 +47,7 @@ export default function CreateRoomModal({ onClose }: Props) {
 
   async function handleCreate() {
     if (user.user) {
+      setDisabled(true);
       const id = crypto.randomUUID();
       const aiikiIds = Array.from(selectedAiiki);
       await createRoom(accessToken!, id, name, aiikiIds, user.user.id);
@@ -49,8 +55,6 @@ export default function CreateRoomModal({ onClose }: Props) {
       setOpened(false);
     }
   }
-
-  const disabled = !name || selectedAiiki.size === 0;
 
   return ReactDOM.createPortal(
     <Popup
@@ -61,7 +65,6 @@ export default function CreateRoomModal({ onClose }: Props) {
           className="flex items-center space-x-2"
           title={disabled ? t('campfires.start_fire_hint') : ''}
         >
-          <div>{disabled ? '🔒' : '🔥'}</div>
           <Button onClick={handleCreate} disabled={disabled} kind="primary">
             {t('campfires.start_fire')}
           </Button>
