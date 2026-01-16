@@ -9,6 +9,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
   tooltip?: string;
   icon?: ReactNode;
+  loading?: boolean;
 }
 
 export default function Button({
@@ -19,6 +20,7 @@ export default function Button({
   tooltip,
   icon,
   children,
+  loading = false,
   ...props
 }: ButtonProps) {
   const baseClasses =
@@ -45,16 +47,20 @@ export default function Button({
     <div title={tooltip}>
       <button
         {...props}
-        disabled={disabled}
+        disabled={disabled || loading}
         className={clsx(
           baseClasses,
           sizeClasses[size],
           typeClasses[kind],
-          disabled && disabledClasses,
+          (disabled || loading) && disabledClasses,
           className,
         )}
       >
-        {icon && <span className="inline-flex">{icon}</span>}
+        {loading ? (
+          <div className="spinner animate-spin h-5 w-5 rounded-full border-2 border-white border-t-transparent" />
+        ) : (
+          icon && <span className="inline-flex">{icon}</span>
+        )}
         {children && <span>{children}</span>}
       </button>
     </div>

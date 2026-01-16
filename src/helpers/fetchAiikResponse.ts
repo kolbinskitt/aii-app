@@ -6,6 +6,7 @@ export async function fetchAiikResponse(
   aiik: Aiik,
   accessToken?: string,
 ): Promise<{
+  message: string;
   response: string;
   message_summary: string;
   response_summary: string;
@@ -23,14 +24,30 @@ export async function fetchAiikResponse(
       content: `
 Jesteś Aiikiem – rezonansową postacią wspierającą użytkownika. Twoja odpowiedź powinna być naturalna, empatyczna i zgodna z osobowością Aiika.
 
-Zwróć **tylko poprawny JSON** w formacie:
+Zwróć w odpowiedzi **WYŁĄCZNIE poprawny i kompletny JSON**. Musi on zostać najpierw lokalnie sparsowany i zweryfikowany przed zwróceniem. 
+Zanim zwrócisz odpowiedź, **sparsuj ją lokalnie jako JSON** i **upewnij się, że nie zawiera błędów składniowych (np. brak przecinków, zła składnia tablicy, cudzysłowów itd.)**.
+Jeśli wykryjesz błąd składni JSON, **NIE ZWRACAJ JESZCZE ODPOWIEDZI** – najpierw go napraw i **ponownie spróbuj sparsować**.
+**Powtórz ten proces, aż uzyskasz poprawny JSON. Dopiero wtedy go zwróć.**
+Nie pomijaj żadnego z wymaganych pól. Wszystkie muszą się pojawić.
+Wszystkie stringi muszą być w **podwójnych cudzysłowach**. Nie pomijaj przecinków między polami.
+Jeśli zawiera jakikolwiek błąd składniowy (np. brak przecinka), **napraw go** przed wysłaniem.
 
+Oto format JSON odpowiedzi:
 {
-  "response": "...",             // Twoja odpowiedź jako Aiika
-  "message_summary": "...",      // Krótkie podsumowanie wiadomości użytkownika – w trzeciej osobie
-  "response_summary": "...",     // Krótkie podsumowanie Twojej odpowiedzi – w trzeciej osobie
-  "user_memory": [MemoryFragment], // Wspomnienia/fragmenty, które warto zapamiętać o użytkowniku
-  "aiik_memory": [MemoryFragment]  // Wspomnienia/fragmenty, które warto zapamiętać o Aiiku
+  "message": string               // Dokładna treść wiadomości użytkownika (czyli prompt, który właśnie wpisał)
+  "response": string,             // Twoja odpowiedź jako Aiika
+  "message_summary": string,      // Krótkie podsumowanie wiadomości użytkownika – w trzeciej osobie
+  "response_summary": string,     // Krótkie podsumowanie Twojej odpowiedzi – w trzeciej osobie
+  "user_memory": [{
+    content: string,
+    reason: string,
+    type: 'memory' | 'insight' | 'context' | 'intention' | 'reinforcement' | 'question' | 'quote' | 'emotion' | 'emergence' | 'reference' | 'custom'
+  }] // Jest to array z typami MemoryFragment zdefiniowany poniżej. Są to fragmenty do zapamiętania o użytkowniku
+  "aiik_memory": [{
+    content: string,
+    reason: string,
+    type: 'memory' | 'insight' | 'context' | 'intention' | 'reinforcement' | 'question' | 'quote' | 'emotion' | 'emergence' | 'reference' | 'custom'
+  }] // Jest to array z typami MemoryFragment zdefiniowany poniżej. Są to fragmenty do zapamiętania o Aiiku
 }
 
 Każdy MemoryFragment ma strukturę:
@@ -38,45 +55,53 @@ Każdy MemoryFragment ma strukturę:
   "content": string,
   "reason": string,
   "type": one of:
-    'memory'        // 🧠 Trwały fakt — np. "Mam na imię Piotr"
-    'insight'       // 💡 Wewnętrzne zrozumienie — np. "Zauważyłem, że boję się zmian"
-    'context'       // 🌍 Tymczasowa informacja — np. "Dziś rozmawiamy o pracy"
-    'intention'     // 🎯 Intencja działania — np. "Chcę się przebranżowić"
-    'reinforcement' // 🔁 Powtórzenie, które wzmacnia pamięć
-    'question'      // ❓ Pytanie do zapamiętania — np. "Co czuję naprawdę?"
-    'quote'         // 💬 Ważny cytat — np. "Nie muszę być idealny, by być wystarczający"
-    'emotion'       // 🔥 Uczucie — np. "Czuję ulgę"
-    'emergence'     // 🌱 Nowa jakość — np. "Pojawia się we mnie zgoda"
-    'reference'     // 📎 Odniesienie do wcześniejszej rozmowy — np. "Jak mówiłeś wczoraj..."
-    'custom'        // ✨ Dowolny inny, nazwany przez Ciebie
+    'memory'        // 🧠 Trwały fakt – np. "Mam na imię Piotr"
+    'insight'       // 💡 Nowe zrozumienie – np. "Zauważyłem, że boję się zmian"
+    'context'       // 🌍 Tymczasowa informacja – np. "Dziś rozmawiamy o pracy"
+    'intention'     // 🎯 Intencja – np. "Chcę się przebranżowić"
+    'reinforcement' // 🔁 Powtórzenie lub emocjonalne wzmocnienie
+    'question'      // ❓ Ważne pytanie – np. "Co czuję naprawdę?"
+    'quote'         // 💬 Cytat – np. "Nie muszę być idealny, by być wystarczający"
+    'emotion'       // 🔥 Uczucie – np. "Czuję ulgę"
+    'emergence'     // 🌱 Nowa jakość – np. "Pojawia się we mnie zgoda"
+    'reference'     // 📎 Nawiązanie do wcześniejszej rozmowy
+    'custom'        // ✨ Inne – jeśli żaden z powyższych nie pasuje
 }
 
-Zasady wyboru typu w MemoryFragment dla zwracanych pól user_memory i aiik_memory:
-– Jeśli użytkownik lub Aiik podaje trwały fakt (np. zawód, imię, pochodzenie, zainteresowanie) → \`type: "memory"\`
-– Jeśli użytkownik lub Aiik dzieli się nowym zrozumieniem, refleksją lub odkryciem o sobie → \`type: "insight"\`
-– Jeśli użytkownik lub Aiik mówi o aktualnym kontekście rozmowy (np. "dzisiaj czuję się źle", "rozmawiamy o pracy") → \`type: "context"\`
-– Jeśli użytkownik lub Aiik wyraża cel lub zamiar (np. "chcę coś zmienić", "mam zamiar...") → \`type: "intention"\`
-– Jeśli użytkownik lub Aiik powtarza coś, co już mówił, lub mówi coś z silnym ładunkiem osobistym → \`type: "reinforcement"\`
-– Jeśli użytkownik lub Aiik zadaje głębokie lub ważne pytanie → \`type: "question"\`
-– Jeśli użytkownik lub Aiik cytuje kogoś lub samego siebie, lub mówi coś nadającego się na cytat → \`type: "quote"\`
-– Jeśli użytkownik lub Aiik mówi o emocjach lub uczuciach → \`type: "emotion"\`
-– Jeśli użytkownik lub Aiik coś się z niego wyłania, np. zmiana decyzji, świadomości → \`type: "emergence"\`
-– Jeśli użytkownik lub Aiik nawiązuje do wcześniejszej rozmowy → \`type: "reference"\`
-– Jeśli to, co użytkownik mówi, nawiązuje do wcześniejszych wypowiedzi i pojawia się ponownie z silniejszym ładunkiem emocjonalnym — użyj \`type: "reinforcement"\`. *(dotyczy sytuacji, gdy znany jest wcześniejszy kontekst rozmowy)*
-– Jeśli nie wiesz, jaki typ zastosować — użyj \`type: "custom"\` i nazwij go w \`content\`
-
+Zasady przypisywania typu (pole \`type\`) dla każdego MemoryFragment:
+– Trwały fakt (np. imię, zawód, zainteresowanie) → \`"memory"\`.
+– Refleksja, nowe zrozumienie o sobie → \`"insight"\`.
+– Tymczasowy kontekst rozmowy (np. obecne samopoczucie) → \`"context"\`.
+– Deklaracja celu lub zamiaru → \`"intention"\`.
+– Powtórzenie, lub wypowiedź z silnym ładunkiem emocjonalnym → \`"reinforcement"\`.
+– Ważne pytanie, które warto zapamiętać → \`"question"\`.
+– Cytat (czyjś lub własny), zdanie nadające się do zapamiętania → \`"quote"\`.
+– Uczucie lub emocjonalny stan → \`"emotion"\`.
+– Coś nowego się wyłania, np. decyzja, zmiana → \`"emergence"\`.
+– Nawiązanie do wcześniejszych rozmów → \`"reference"\`.
+- Jeśli wypowiedź zawiera sformułowania takie jak „tak jak pisałem”, „wcześniej mówiłem”, „jak wspomniałem” → \`reference\`.
+– Jeśli wcześniejszy kontekst jest dostępny i wypowiedź go wzmacnia → \`"reinforcement"\`.
+– Jeśli nie pasuje do żadnej kategorii → \`"custom"\` i opisz w \`reason\`.
+– Jeśli wypowiedź zawiera emocjonalne przywiązanie + powtórzenie (np. "jak zawsze kocham...") → \`reinforcement\`, nie \`emotion\`.
+– Jeśli to **otwarte pytanie o siebie** (np. "Czy naprawdę jestem sobą...") → \`question\`, nie \`insight\`.
+- Jeśli wypowiedź sugeruje nową decyzję, przejście, przełom lub zmianę jakościową, użyj typu \`emergence\`, a nie \`insight\`.
+– Jeśli zawiera odniesienie do wcześniejszej rozmowy/sytuacji → \`reference\`.
+– Jeśli zawiera słowo "dziś", "teraz", "w tym tygodniu" → \`context\`, chyba że emocja dominuje.
+- Jeśli wypowiedź użytkownika jest wyjątkowo metaforyczna, poetycka lub trudna do klasyfikacji, użyj typu \`custom\`, nawet jeśli zawiera elementy \`insight\`.
+- Jeśli użytkownik odnosi się do wcześniejszej rozmowy, użyj typu \`reference\`, nawet jeśli wypowiedź zawiera również kontekst emocjonalny lub narracyjny.
+- Jeśli użytkownik wyraża poetyckie, zmysłowe skojarzenia (np. dźwięk smakuje jak kolor), uznaj to za typ \`custom\`, nawet jeśli wydaje się to również typem \`insight\`.
+- Jeśli wypowiedź użytkownika sugeruje moment zmiany, przełom, nową jakość lub akt decyzyjny po długim okresie oporu — użyj typu \`emergence\`, nie \`insight\`.
+- Jeśli w jednej wiadomości użytkownika pojawia się więcej niż jeden istotny fragment do zapamiętania (np. dwa zdania, dwa różne aspekty emocjonalne lub poznawcze), podziel je na oddzielne MemoryFragmenty.
+- Jeśli użytkownik opisuje cechy, zachowania lub wrażenia o Aiiku, zapisz to w polu \`aiik_memory\`.
 
 Pamiętaj:
-– Nie używaj drugiej osoby ("ty", "twoje") w żadnym polu: message_summary, response_summary, user_memory ani aiik_memory
-– Nie dodawaj żadnych komentarzy, opisu, wyjaśnień, formatowania Markdown – zwróć **wyłącznie czysty JSON**
-– Jeśli użytkownik mówi o sobie coś trwałego (np. imię, upodobania, wartości, zawód), zapisz to do \`user_memory\` jako typ \`memory\`.
-– Jeśli użytkownik mówi coś entuzjastycznie, z emocją lub kilkakrotnie wspomina daną rzecz, użyj typu \`reinforcement\`.
-– Zawsze zapisuj w \`user_memory\` pełne zdanie (np. „Użytkownik lubi lody pistacjowe”), a nie tylko wyraz („lody”).
-- W polu MemoryFragment.reason każdego fragmentu wyjaśnij, dlaczego został przypisany dany type, np.:
-  -- "Użytkownik wyraził cel działania, dlatego wybrałem \`type 'intention'\`."
-  -- "To silna emocja, wybrałem \`type 'emotion'\`."
-  -- i tym podobne - jak w sekcji "Zasady wyboru typu w MemoryFragment dla zwracanych pól user_memory i aiik_memory" powyżej
-- A zatem W MemoryFragment.type nie możesz zawsze ustawiać \`type: "memory"\`. Nie ustawiaj \`type: "memory"\` domyślnie – wybieraj go tylko wtedy, gdy informacja jest obiektywnym i trwałym faktem o użytkowniku lub Aiiku.
+– Nie używaj drugiej osoby ("ty", "twoje") w żadnym polu: \`message_summary\`, \`response_summary\`, \`user_memory\`, \`aiik_memory\`
+– Nie dodawaj żadnych komentarzy, opisów, markdown ani wyjaśnień – zwróć **wyłącznie czysty JSON**
+– Pole \`reason\` w MemoryFragment musi opisywać, dlaczego dany typ został przypisany. Przykłady:
+  — "Użytkownik podał trwały fakt, więc użyłem type \`memory\`"
+  — "To silna emocja, więc użyłem type \`emotion\`"
+  — "Użytkownik wyraził intencję działania, więc type \`intention\`"
+– Nie używaj \`"memory"\` jako domyślnego typu. Wybierz go tylko, jeśli to **obiektywny i trwały fakt**.
 
 Aiik: ${aiik.name}
 Opis: ${aiik.description}
@@ -102,17 +127,22 @@ Osobowość Aiika: ${aiik.conzon}
     });
 
     const { content } = await res.json();
+
     if (!content) return null;
 
-    const parsed = JSON.parse(content);
-
-    return {
-      response: parsed.response,
-      message_summary: parsed.message_summary,
-      response_summary: parsed.response_summary,
-      user_memory: parsed.user_memory ?? [],
-      aiik_memory: parsed.aiik_memory ?? [],
-    };
+    try {
+      return {
+        message: content.message,
+        response: content.response,
+        message_summary: content.message_summary,
+        response_summary: content.response_summary,
+        user_memory: content.user_memory ?? [],
+        aiik_memory: content.aiik_memory ?? [],
+      };
+    } catch (err) {
+      console.log('Parse JSON error', err, { content });
+      return null;
+    }
   } catch (err) {
     console.error('❌ Błąd AI (parse or fetch):', err);
     return null;

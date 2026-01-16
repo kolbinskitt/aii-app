@@ -312,6 +312,7 @@ export type FractalLink = {
 
 export type MemoryFragment = {
   content: string;
+  reason: string;
   type:
     | 'memory' // 🧠 Trwały fakt — np. "Mam na imię Piotr", "Pracuję w IT"
     | 'insight' // 💡 Wewnętrzne zrozumienie — np. "Zauważyłem, że boję się zmian"

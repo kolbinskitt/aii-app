@@ -24,6 +24,7 @@ export default function CreateRoomModal({ onClose }: Props) {
   const accessToken = useAccessToken();
   const [opened, setOpened] = useState<boolean>(true);
   const [disabled, setDisabled] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
 
   useEffect(() => {
     setAiiki(globalAiiki);
@@ -48,6 +49,7 @@ export default function CreateRoomModal({ onClose }: Props) {
   async function handleCreate() {
     if (user.user) {
       setDisabled(true);
+      setSaving(true);
       const id = crypto.randomUUID();
       const aiikiIds = Array.from(selectedAiiki);
       await createRoom(accessToken!, id, name, aiikiIds, user.user.id);
@@ -65,7 +67,12 @@ export default function CreateRoomModal({ onClose }: Props) {
           className="flex items-center space-x-2"
           title={disabled ? t('campfires.start_fire_hint') : ''}
         >
-          <Button onClick={handleCreate} disabled={disabled} kind="primary">
+          <Button
+            onClick={handleCreate}
+            disabled={disabled}
+            kind="primary"
+            loading={saving}
+          >
             {t('campfires.start_fire')}
           </Button>
         </div>

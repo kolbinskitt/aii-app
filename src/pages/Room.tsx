@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import { getRoomById, addMessageToRoom } from '../db/rooms';
-import type { RoomWithMessages, Aiik } from '../types';
-import useUser from '../hooks/useUser';
-import { useAccessToken } from '../hooks/useAccessToken';
-import { supabase } from '../lib/supabase';
+import { getRoomById, addMessageToRoom } from '@/db/rooms';
+import type { RoomWithMessages, Aiik } from '@/types';
+import useUser from '@/hooks/useUser';
+import { useAccessToken } from '@/hooks/useAccessToken';
+import { supabase } from '@/lib/supabase';
 import { useTranslation } from 'react-i18next';
 import {
   BottomTile,
@@ -12,6 +12,7 @@ import {
   MessageArea,
 } from '@/components/ui/room/RoomComponents';
 import { fetchAiikResponse } from '@/helpers/fetchAiikResponse';
+import { runMemoryTests } from '@/tests/manual/runMemoryTests';
 
 export default function Room() {
   const { t } = useTranslation();
@@ -128,12 +129,21 @@ export default function Room() {
     };
   }, [id]);
 
+  const handleTest = async () => {
+    if (accessToken) {
+      await runMemoryTests(accessToken);
+    }
+  };
+
   if (!room) {
     return <div className="p-6">Nie znaleziono pokoju.</div>;
   }
 
   return (
     <div className="relative w-full">
+      <button onClick={handleTest} style={{ backgroundColor: 'white' }}>
+        TEST
+      </button>
       <MessageArea room={room}>
         {aiikThinking &&
           Object.values(thinkingAiiki).map(aiik => (
