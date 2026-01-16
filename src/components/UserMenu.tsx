@@ -81,7 +81,6 @@ export function UserMenu() {
             )}
           </button>
         )}
-
         {open && (
           <div className="absolute right-0 mt-2 w-40 bg-white shadow-xl rounded-lg z-50 overflow-hidden">
             <button
@@ -99,7 +98,6 @@ export function UserMenu() {
           </div>
         )}
       </div>
-
       {showConfirm && (
         <Confirm
           title={t('confirm.delete_account')}
