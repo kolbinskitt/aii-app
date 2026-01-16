@@ -1,168 +1,17 @@
-import { Link, useParams } from 'react-router-dom';
-import {
-  useEffect,
-  useState,
-  useRef,
-  KeyboardEventHandler,
-  MouseEventHandler,
-  PropsWithChildren,
-} from 'react';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
 import { getRoomById, addMessageToRoom } from '../db/rooms';
-import type { RoomWithMessages, Aiik, Role } from '../types';
+import type { RoomWithMessages, Aiik } from '../types';
 import useUser from '../hooks/useUser';
 import { useAccessToken } from '../hooks/useAccessToken';
 import { supabase } from '../lib/supabase';
 import { api } from '@/lib/api';
 import { useTranslation } from 'react-i18next';
-import { Button, Tile, Input } from '../components/ui';
-
-function TopTile({ room }: { room: RoomWithMessages | null }) {
-  const { t } = useTranslation();
-  return !room ? null : (
-    <Tile className="space-y-1 p-2">
-      <h2
-        className="text-2xl font-echo text-gray-800 leading-snug font-semibold truncate"
-        style={{
-          maxWidth: 'calc(100vw - 500px)',
-        }}
-      >
-        {room.name || '🌀'}
-      </h2>
-      <div className="flex w-full justify-between items-start text-xs text-neutral-500 tracking-wide">
-        <div>
-          {t('chat.aiiki_near_campfire')}:{' '}
-          <span className="text-neutral-600">
-            {room.room_aiiki?.map(a => a.aiiki.name).join(', ')}
-          </span>
-        </div>
-        <Link
-          to={`/room/${room.id}/field`}
-          className="text-blue-500 whitespace-nowrap"
-        >
-          {t('chat.see_field')}
-        </Link>
-      </div>
-      {room.messages_with_aiik.length === 0 && (
-        <div className="text-sm text-muted-foreground">
-          {t('chat.no_stories')}
-        </div>
-      )}
-    </Tile>
-  );
-}
-
-function Message({
-  children,
-  role,
-  aiikAvatar,
-}: PropsWithChildren<{ role: Role; aiikAvatar: string }>) {
-  const marginH = -12;
-  const marginV = -4;
-  const borderRadius = '0.5rem';
-  const width = 40;
-  const maxHeight = 60;
-
-  return (
-    <div
-      className={`!p-2 !pl-4 !pr-4 font-system rounded-md ${
-        role === 'user' ? 'bg-blue-700' : ''
-      }`}
-      style={{
-        display: 'flex',
-        gap: 8,
-        alignSelf: role === 'user' ? 'flex-end' : 'flex-start',
-        alignItems: 'center',
-        color: role === 'user' ? 'white' : 'white',
-      }}
-    >
-      {role === 'aiik' && (
-        <img
-          src={aiikAvatar}
-          width={width}
-          className="object-cover"
-          style={{
-            marginTop: marginV,
-            marginLeft: marginH,
-            marginBottom: marginV,
-            borderRadius,
-            maxHeight,
-          }}
-        />
-      )}
-      {children}
-    </div>
-  );
-}
-
-function MessageArea({
-  room,
-  children,
-}: PropsWithChildren<{ room: RoomWithMessages | null }>) {
-  return !room ? null : (
-    <div
-      style={{
-        overflowY: 'auto',
-        maxHeight: 'calc(100vh - 128px)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 16,
-        paddingBottom: 8,
-      }}
-    >
-      <TopTile room={room} />
-      {room.messages_with_aiik.length > 0 &&
-        room.messages_with_aiik.map(msg => (
-          <Message
-            key={msg.id}
-            role={msg.role}
-            aiikAvatar={msg.aiik_avatar_url}
-          >
-            {msg.text}
-          </Message>
-        ))}
-      {children}
-    </div>
-  );
-}
-
-function BottomTile({
-  value,
-  onChange,
-  onKeyDown,
-  onClick,
-}: {
-  value: string;
-  onChange: (_val: string) => void;
-  onKeyDown: KeyboardEventHandler<HTMLInputElement>;
-  onClick: MouseEventHandler<HTMLButtonElement>;
-}) {
-  const { t } = useTranslation();
-  return (
-    <Tile
-      className="fixed z-100"
-      styles={{
-        bottom: 14,
-        right: 8,
-        left: 328,
-      }}
-    >
-      <div className="flex gap-2">
-        <Input
-          type="text"
-          value={value}
-          onChange={onChange}
-          // className="flex-1 px-4 py-2 border border-neutral-300 rounded-md bg-white
-          // focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm font-system"
-          placeholder={t('chat.write_something')}
-          onKeyDown={onKeyDown}
-        />
-        <Button onClick={onClick} kind="primary">
-          {t('chat.send')}
-        </Button>
-      </div>
-    </Tile>
-  );
-}
+import {
+  BottomTile,
+  Message,
+  MessageArea,
+} from '@/components/ui/room/RoomComponents';
 
 export default function Room() {
   const { t } = useTranslation();
