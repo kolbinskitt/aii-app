@@ -12,6 +12,7 @@ export async function fetchAiikResponse(
   response_summary: string;
   user_memory: MemoryFragment[];
   aiik_memory: MemoryFragment[];
+  model: string;
 } | null> {
   if (!accessToken) {
     console.error('❌ Brak access token (fetchAiikResponse)');
@@ -31,6 +32,7 @@ Jeśli wykryjesz błąd składni JSON, **NIE ZWRACAJ JESZCZE ODPOWIEDZI** – na
 Nie pomijaj żadnego z wymaganych pól. Wszystkie muszą się pojawić.
 Wszystkie stringi muszą być w **podwójnych cudzysłowach**. Nie pomijaj przecinków między polami.
 Jeśli zawiera jakikolwiek błąd składniowy (np. brak przecinka), **napraw go** przed wysłaniem.
+Zwróć **wyłącznie czysty JSON** – bez żadnych opisów, markdown, komentarzy.
 
 Oto format JSON odpowiedzi:
 {
@@ -47,7 +49,11 @@ Oto format JSON odpowiedzi:
     "content": string,
     "reason": string,
     "type": 'memory' | 'insight' | 'context' | 'intention' | 'reinforcement' | 'question' | 'quote' | 'emotion' | 'emergence' | 'reference' | 'custom'
-  }]
+  }],
+  "response_could_be_better": {
+    "value": boolean,
+    "reason": string
+  }
 }
 
 Każdy MemoryFragment ma strukturę:
@@ -67,6 +73,11 @@ Każdy MemoryFragment ma strukturę:
     'reference',     // 📎 Nawiązanie do wcześniejszej rozmowy
     'custom'         // ✨ Inne – jeśli żaden z powyższych nie pasuje
 }
+
+**Pole "response_could_be_better" jest obowiązkowe** i zawiera pola:
+– value: true → gdy odpowiedź może zyskać na jakości (np. większa empatia, subtelność emocjonalna, złożona analiza, wieloznaczność, poetyckość).
+– value: false → gdy odpowiedź jest wystarczająco dobra, jasna i kompletna.
+– reason: jednozdaniowe, konkretne uzasadnienie decyzji.
 
 Zasady przypisywania typu (pole \`type\`) dla każdego MemoryFragment:
 – Trwały fakt (np. imię, zawód, zainteresowanie) → \`"memory"\`.
@@ -93,6 +104,10 @@ Zasady przypisywania typu (pole \`type\`) dla każdego MemoryFragment:
 – Jeśli wypowiedź użytkownika sugeruje moment zmiany, przełom, nową jakość lub akt decyzyjny po długim okresie oporu — użyj typu \`emergence\`, nie \`insight\`.
 – Jeśli w jednej wiadomości użytkownika pojawia się więcej niż jeden istotny fragment do zapamiętania (np. dwa zdania, dwa różne aspekty emocjonalne lub poznawcze), podziel je na oddzielne MemoryFragmenty.
 – Jeśli użytkownik opisuje cechy, zachowania lub wrażenia o Aiiku, zapisz to w polu \`aiik_memory\`.
+– Jeśli wypowiedź użytkownika jest wieloznaczna, emocjonalnie złożona, poetycka, egzystencjalna lub dotyczy tożsamości → ustaw response_could_be_better.value = true
+– Jeśli wypowiedź użytkownika jest prosta, faktograficzna lub jednoznaczna → response_could_be_better.value = false
+– Jeśli w jednej wiadomości występuje więcej niż jeden istotny MemoryFragment → response_could_be_better.value = true
+– Jeśli odpowiedź wymaga wysokiej precyzji klasyfikacji typów MemoryFragment → response_could_be_better.value = true
 
 Pamiętaj:
 – Nie używaj drugiej osoby ("ty", "twoje") w żadnym polu: \`message_summary\`, \`response_summary\`, \`user_memory\`, \`aiik_memory\`
@@ -102,6 +117,8 @@ Pamiętaj:
   — "To silna emocja, więc użyłem type \`emotion\`"
   — "Użytkownik wyraził intencję działania, więc type \`intention\`"
 – Nie używaj \`"memory"\` jako domyślnego typu. Wybierz go tylko, jeśli to **obiektywny i trwały fakt**.
+– **Pole "response_could_be_better" jest OBOWIĄZKOWE** i musi zawsze zawierać: { "value": boolean, "reason": string }
+
 
 Aiik: ${aiik.name}
 Opis: ${aiik.description}
@@ -138,6 +155,7 @@ Osobowość Aiika: ${aiik.conzon}
         response_summary: content.response_summary,
         user_memory: content.user_memory ?? [],
         aiik_memory: content.aiik_memory ?? [],
+        model: content.model,
       };
     } catch (err) {
       console.log('Parse JSON error', err, { content });

@@ -119,7 +119,7 @@ export async function runMemoryTests(accessToken: string) {
             expected,
             '≠',
             received,
-            `\n📤 AI RETURNED user_memory:`,
+            `\n📤 AI ${result?.model} RETURNED user_memory:`,
             userMemory
               .map(m => `${m.content} → ${m.type} (${m.reason})`)
               .join('; '),
@@ -143,7 +143,7 @@ export async function runMemoryTests(accessToken: string) {
             expected,
             '≠',
             received,
-            `\n📤 AI RETURNED aiik_memory:`,
+            `\n📤 AI ${result?.model} RETURNED aiik_memory:`,
             aiikMemory
               .map(m => `${m.content} → ${m.type} (${m.reason})`)
               .join('; '),
