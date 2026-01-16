@@ -41,6 +41,7 @@ export async function runMemoryTests(accessToken: string) {
   let hardFailsTotal = 0;
   let alternativePasses = 0;
   let totalChecks = 0;
+  const modelsCount: { [key: string]: number } = {};
 
   for (let i = 1; i <= 3; i += 1) {
     console.log(`--- START SERII ${i} ---`);
@@ -52,6 +53,14 @@ export async function runMemoryTests(accessToken: string) {
           testAiik,
           accessToken,
         );
+
+        const model = result?.model || '';
+
+        if (!modelsCount[model]) {
+          modelsCount[model] = 0;
+        }
+
+        modelsCount[model] += 1;
 
         const userMemory = result?.user_memory || [];
         const aiikMemory = result?.aiik_memory || [];
@@ -181,6 +190,12 @@ export async function runMemoryTests(accessToken: string) {
   console.log(`🧮 Alternatywy: ${altRatio.toFixed(1)}% — ${verdict}`);
   console.log(
     `🟡 Alternatywne przejścia (user + aiik): ${alternativePasses} z ${totalChecks} (${altRatio.toFixed(1)}%)`,
+  );
+  console.log(
+    'Models: ',
+    Object.keys(modelsCount)
+      .map(key => `${key}: ${modelsCount[key]}`)
+      .join(', '),
   );
   console.log(`--- KONIEC TESTÓW ---`);
 }
