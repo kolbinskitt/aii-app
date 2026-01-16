@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '../lib/supabase';
-import Header from '../components/Header';
+import { supabase } from '@/lib/supabase';
+import Header from '@/components/Header';
+import { Button } from '@/components/ui';
 
 const redirectTo = import.meta.env.PROD
   ? 'https://kolbinskitt.github.io/aii-app/'
@@ -67,17 +68,20 @@ export default function Login() {
           <p className="text-md md:text-lg text-gray-700 mb-6 font-system">
             {t('landing.description')}
           </p>
-          <button
+          <Button
             onClick={loginWithGoogle}
             className="bg-black text-white hover:bg-gray-800 px-6 py-3 rounded-full transition flex items-center justify-center space-x-3 mx-auto font-sans"
+            kind="primary"
+            icon={
+              <img
+                src={`images/logo/google.png`}
+                alt="Google"
+                className="w-5 h-5"
+              />
+            }
           >
-            <img
-              src={`images/logo/google.png`}
-              alt="Google"
-              className="w-5 h-5"
-            />
-            <span>{t('landing.join.google')}</span>
-          </button>
+            {t('landing.join.google')}
+          </Button>
         </div>
       </div>
     </div>

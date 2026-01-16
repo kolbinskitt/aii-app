@@ -38,7 +38,8 @@ export default function Button({
     danger: 'bg-red-600 text-white hover:bg-red-700 border-none',
     primary:
       'bg-blue-600 hover:bg-blue-700 text-white shadow hover:brightness-110 border-none',
-    ghost: 'bg-transparent text-current border-none hover:bg-zinc-100',
+    ghost:
+      'bg-transparent text-current border-none hover:bg-zinc-100 hover:text-black',
   };
 
   const disabledClasses = 'opacity-50 cursor-not-allowed pointer-events-none';

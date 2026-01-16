@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { UserMenu } from './UserMenu';
-import useUser from '../hooks/useUser';
+import useUser from '@/hooks/useUser';
 import AppVersion from './AppVersion';
 import CreditsPreview from './CreditsPreview';
+import { Button } from './ui';
 
 export default function Header() {
   const { i18n } = useTranslation();
@@ -21,18 +22,22 @@ export default function Header() {
       <div className="flex items-center space-x-4 text-white text-sm">
         <AppVersion />
         <CreditsPreview />
-        <button
+        <Button
           onClick={() => i18n.changeLanguage('pl')}
           className={i18n.language === 'pl' ? 'underline' : ''}
+          kind="ghost"
+          size="small"
         >
           PL
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => i18n.changeLanguage('en')}
           className={i18n.language === 'en' ? 'underline' : ''}
+          kind="ghost"
+          size="small"
         >
           EN
-        </button>
+        </Button>
         {user && <UserMenu />}
       </div>
     </header>
