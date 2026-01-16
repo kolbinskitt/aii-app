@@ -1,6 +1,6 @@
 import { fetchAiikResponse } from '@/helpers/fetchAiikResponse';
 import { Aiik } from '@/types';
-import { testAiikConZON } from './testAiikConzon';
+import { testAiikConZON } from './testAiik';
 
 const testAiik: Aiik = {
   id: 'test-aiik-id',
