@@ -90,8 +90,10 @@ const testCases = [
 ];
 
 export async function runMemoryTests(accessToken: string) {
+  console.log(`--- START TESTOW ---`);
+  let failedAmountTotal = 0;
   for (let i = 1; i <= 3; i += 1) {
-    console.log(`--- START SERIE ${i} ---`);
+    console.log(`--- START SERII ${i} ---`);
     let failedAmount = 0;
 
     for (const testCase of testCases) {
@@ -153,7 +155,10 @@ export async function runMemoryTests(accessToken: string) {
       }
     }
 
-    console.log(`Ilość błędów: ${failedAmount}`);
-    console.log(`--- END SERIE ${i} ---`);
+    console.log(`Ilość błędów serii: ${failedAmount}`);
+    console.log(`--- KONIEC SERII ${i} ---`);
+    failedAmountTotal += failedAmount;
   }
+  console.log(`Ilość błędów wszystkich: ${failedAmountTotal}`);
+  console.log(`--- KONIEC TESTOW ---`);
 }
