@@ -1,49 +1,19 @@
 import { fetchAiikResponse } from '@/helpers/fetchAiikResponse';
 import { testAiik } from './testAiik';
 import { memoryTestCases } from './memoryTestCases';
+import { MemoryFragment } from '@/types';
 
-const PASS_TEST_THREASHOLD = 5;
-const SHOW_ALTERNATIVES_LOGS = false;
-
-function matchTypes(expected: string[], received: string[]): boolean {
-  return (
-    expected.length === received.length &&
-    expected.every((type, idx) => type === received[idx])
-  );
-}
-
-function normalizeAlternatives(
-  alternatives: string[] | string[][] | undefined,
-): string[][] {
-  if (!alternatives) return [];
-  if (Array.isArray(alternatives[0])) return alternatives as string[][];
-  return [alternatives as string[]];
-}
-
-function matchAlternatives(
-  alternatives: string[] | string[][] | undefined,
-  received: string[],
-): boolean {
-  if (!alternatives) return false;
-  if (received.length === 0) return false;
-
-  const normalized = normalizeAlternatives(alternatives);
-
-  return normalized.some(
-    alt =>
-      alt.length === received.length &&
-      alt.every((type, idx) => type === received[idx]),
-  );
-}
+const SHOW_USER_MEMORY_OK = false;
+const SHOW_AIIK_MEMORY_OK = false;
+const SERIES_AMOUNT = 3;
 
 export async function runMemoryTests(accessToken: string) {
   console.log(`--- START TESTÓW ---`);
   let hardFailsTotal = 0;
-  let alternativePasses = 0;
-  let totalChecks = 0;
-  const modelsCount: { [key: string]: number } = {};
+  let totalCases = 0;
+  const modelsCount: Record<string, number> = {};
 
-  for (let i = 1; i <= 3; i += 1) {
+  for (let i = 1; i <= SERIES_AMOUNT; i += 1) {
     console.log(`--- START SERII ${i} ---`);
 
     const testResults = await Promise.all(
@@ -54,147 +24,95 @@ export async function runMemoryTests(accessToken: string) {
           accessToken,
         );
 
-        const model = result?.model || '';
-
-        if (!modelsCount[model]) {
-          modelsCount[model] = 0;
-        }
-
-        modelsCount[model] += 1;
+        const model = result?.model || 'unknown';
+        modelsCount[model] = (modelsCount[model] || 0) + 1;
 
         const userMemory = result?.user_memory || [];
         const aiikMemory = result?.aiik_memory || [];
 
         let caseHardFails = 0;
-        let caseAlternativePasses = 0;
-        let caseChecks = 0;
 
-        // === USER MEMORY ===
-        if (testCase.expectedUserTypes) {
-          caseChecks += 1;
-          const received = userMemory.map(m => m.type);
-          const expectedMatch = matchTypes(
-            testCase.expectedUserTypes,
-            received,
-          );
-          const alternativeMatch =
-            !expectedMatch &&
-            matchAlternatives(testCase.alternativesUserTypes, received);
-
-          if (!expectedMatch && !alternativeMatch) {
-            caseHardFails += 1;
+        const checkMemorySet = (
+          memorySet: MemoryFragment[],
+          label: 'USER' | 'AIIK',
+        ): void => {
+          if (memorySet.length === 0) {
             console.log(
               `\n👉 INPUT: ${testCase.input}`,
-              `\n📌 USER TYPES EXPECTED vs. RETURNED:`,
-              testCase.expectedUserTypes,
-              '≠',
-              received,
-              testCase.alternativesUserTypes
-                ? `\n🔁 ALTERNATIVES ALLOWED: ${testCase.alternativesUserTypes.join(', ')}`
-                : '',
-              `\n📤 AI ${result?.model} RETURNED user_memory:`,
-              userMemory
-                .map(m => `${m.content} → ${m.type} (${m.reason})`)
-                .join('; '),
+              `\n📌 ${label}_MEMORY is empty.`,
+              `\n📤 AI ${model} RETURNED: []`,
               `\n❌ PASSED: NO`,
             );
-          } else if (!expectedMatch && alternativeMatch) {
-            caseAlternativePasses += 1;
-            if (SHOW_ALTERNATIVES_LOGS) {
-              console.log(
-                `\n👉 INPUT: ${testCase.input}`,
-                `\n🟡 PASSED via alternative (USER):`,
-                received,
-              );
-            }
-          }
-        }
-
-        // === AIIK MEMORY ===
-        if (testCase.expectedAiikTypes) {
-          caseChecks += 1;
-          const received = aiikMemory.map(m => m.type);
-          const expectedMatch = matchTypes(
-            testCase.expectedAiikTypes,
-            received,
-          );
-          const alternativeMatch =
-            !expectedMatch &&
-            matchAlternatives(testCase.alternativesAiikTypes, received);
-
-          if (!expectedMatch && !alternativeMatch) {
             caseHardFails += 1;
-            console.log(
-              `\n👉 INPUT: ${testCase.input}`,
-              `\n📌 AIIK TYPES EXPECTED vs. RETURNED:`,
-              testCase.expectedAiikTypes,
-              '≠',
-              received,
-              testCase.alternativesAiikTypes
-                ? `\n🔁 ALTERNATIVES ALLOWED: ${testCase.alternativesAiikTypes.join(', ')}`
-                : '',
-              `\n📤 AI ${result?.model} RETURNED aiik_memory:`,
-              aiikMemory
-                .map(m => `${m.content} → ${m.type} (${m.reason})`)
-                .join('; '),
-              `\n❌ PASSED: NO`,
-            );
-          } else if (!expectedMatch && alternativeMatch) {
-            caseAlternativePasses += 1;
-            if (SHOW_ALTERNATIVES_LOGS) {
+            return;
+          }
+
+          for (const fragment of memorySet) {
+            const missingFields = [];
+            if (!fragment.content) missingFields.push('content');
+            if (!fragment.interpretation) missingFields.push('interpretation');
+            if (!fragment.reason) missingFields.push('reason');
+            if (
+              typeof fragment.weight !== 'number' ||
+              fragment.weight < 0 ||
+              fragment.weight > 1
+            )
+              missingFields.push('weight');
+
+            if (missingFields.length > 0) {
               console.log(
                 `\n👉 INPUT: ${testCase.input}`,
-                `\n🟡 PASSED via alternative (AIIK):`,
-                received,
+                `\n📌 ${label}_MEMORY missing required fields: ${missingFields.join(', ')}`,
+                `\n📤 AI ${model} RETURNED:`,
+                JSON.stringify(fragment, null, 2),
+                `\n❌ PASSED: NO`,
               );
+              caseHardFails += 1;
+            } else {
+              if (
+                (label === 'USER' && SHOW_USER_MEMORY_OK) ||
+                (label === 'AIIK' && SHOW_AIIK_MEMORY_OK)
+              ) {
+                console.log(
+                  `\n✅ ${label}_MEMORY fragment OK`,
+                  `\n👉 INPUT: ${testCase.input}`,
+                  `\ncontent: ${fragment.content}`,
+                  `\ninterpretation: ${fragment.interpretation}`,
+                  `\nreason: ${fragment.reason}`,
+                  `\nweight: ${fragment.weight}`,
+                  `\ntags: ${JSON.stringify(fragment.tags || [])}`,
+                  `\ntraits: ${JSON.stringify(fragment.traits || [])}`,
+                  `\nrelates_to: ${JSON.stringify(fragment.relates_to || [])}`,
+                );
+              }
             }
           }
-        }
-
-        return {
-          caseHardFails,
-          caseAlternativePasses,
-          caseChecks,
         };
+
+        checkMemorySet(userMemory, 'USER');
+        checkMemorySet(aiikMemory, 'AIIK');
+
+        totalCases += 1;
+        return { caseHardFails };
       }),
     );
 
-    const seriesHardFails = testResults.reduce(
-      (sum, r) => sum + r.caseHardFails,
+    const hardFailsInSeries = testResults.reduce(
+      (s, r) => s + r.caseHardFails,
       0,
     );
-    const seriesAltPasses = testResults.reduce(
-      (sum, r) => sum + r.caseAlternativePasses,
-      0,
-    );
-    const seriesChecks = testResults.reduce((sum, r) => sum + r.caseChecks, 0);
+    hardFailsTotal += hardFailsInSeries;
 
-    hardFailsTotal += seriesHardFails;
-    alternativePasses += seriesAltPasses;
-    totalChecks += seriesChecks;
-
-    console.log(`Ilość błędów serii: ${seriesHardFails}`);
+    console.log(`Ilość błędów serii: ${hardFailsInSeries}`);
     console.log(`--- KONIEC SERII ${i} ---`);
   }
 
   console.log(`Ilość błędów wszystkich (hard fails): ${hardFailsTotal}`);
-  console.log(`Liczba alternatywnych przejść: ${alternativePasses}`);
-  console.log(`Łączna liczba przypadków: ${totalChecks}`);
-
-  const altRatio = (alternativePasses / totalChecks) * 100;
-  const verdict =
-    altRatio <= PASS_TEST_THREASHOLD
-      ? `✅ OK — alternatywy ≤ ${PASS_TEST_THREASHOLD}%`
-      : `❗ Zbyt dużo alternatywnych przejść (>${PASS_TEST_THREASHOLD}%)`;
-
-  console.log(`🧮 Alternatywy: ${altRatio.toFixed(1)}% — ${verdict}`);
+  console.log(`Łączna liczba przypadków: ${totalCases}`);
   console.log(
-    `🟡 Alternatywne przejścia (user + aiik): ${alternativePasses} z ${totalChecks} (${altRatio.toFixed(1)}%)`,
-  );
-  console.log(
-    'Models: ',
-    Object.keys(modelsCount)
-      .map(key => `${key}: ${modelsCount[key]}`)
+    'Models:',
+    Object.entries(modelsCount)
+      .map(([k, v]) => `${k}: ${v}`)
       .join(', '),
   );
   console.log(`--- KONIEC TESTÓW ---`);
