@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { Role, ArcheZON, Aiik } from '@/types';
+import { Role, ArcheZON, Aiik, MemoryFragment } from '@/types';
 import { saveFractalNode } from '@/lib/fractal/saveFractalNode';
 import { api } from '@/lib/api';
 
@@ -10,6 +10,8 @@ export async function addMessageToRoom(
     response: string;
     message_summary: string;
     response_summary: string;
+    user_memory: MemoryFragment[];
+    aiik_memory: MemoryFragment[];
   },
   role: Role,
   userId?: string,
@@ -44,6 +46,43 @@ export async function addMessageToRoom(
   });
 
   if (!message.message_summary || !message.response_summary || !userId) return;
+
+  // 2️⃣ Zapisz user_memory i aiik_memory jako fractal_node
+  const memoryFragments = [
+    ...(role === 'user'
+      ? message.user_memory.map(mem => ({
+          ...mem,
+          type: 'user_memory' as const,
+          user_id: userId,
+          aiik_id: null,
+        }))
+      : []),
+    ...(role === 'aiik'
+      ? message.aiik_memory.map(mem => ({
+          ...mem,
+          type: 'aiik_memory' as const,
+          user_id: userId,
+          aiik_id: aiikId ?? null,
+        }))
+      : []),
+  ];
+
+  for (const fragment of memoryFragments) {
+    await saveFractalNode({
+      accessToken,
+      type: fragment.type,
+      content: fragment.content,
+      interpretation: fragment.interpretation,
+      reason: fragment.reason,
+      weight: fragment.weight,
+      tags: fragment.tags,
+      traits: fragment.traits,
+      relates_to: fragment.relates_to,
+      user_id: fragment.user_id,
+      aiik_id: fragment.aiik_id ?? undefined,
+      room_id: roomId,
+    });
+  }
 
   // 3️⃣ Pobierz wszystkie aiiki w pokoju
   const { data: roomAiiki, error: roomAiikiError } = (await supabase

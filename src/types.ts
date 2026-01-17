@@ -261,17 +261,26 @@ export type ProcessingStep =
 export type IconName = keyof typeof PhosphorIcons;
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
+export type FractalNodeType =
+  | 'message' // 🗣️ Surowa wiadomość (usera lub aiika), np. "Lubię lody waniliowe"
+  | 'relatizon' // 🌐 Abstrakcyjny opis relacji powstałej w rozmowie (np. "zrozumienie", "przełom", "echo tematu")
+  | 'user_memory' // user memory
+  | 'aiik_memory'; // aiik memory
+// | 'archezon' // 🧬 Archetypowy wzorzec, który się ujawnił – np. "Dziecko", "Mistrz", "Cień"
+// | 'intention' // 🎯 Intencja (świadoma lub nieuświadomiona), która została wyrażona lub rozpoznana
+// | 'insight' // 💡 Przebłysk zrozumienia – krótkie spostrzeżenie, synteza, mikro-prawda
+// | 'event' // 🌀 Zdarzenie systemowe lub użytkowe – np. "aiik się przebudził", "rozmowa została zarchiwizowana"
+
 export type SaveFractalNodeArgs = {
   accessToken: string;
-  type:
-    | 'message' // 🗣️ Surowa wiadomość (usera lub aiika), np. "Lubię lody waniliowe"
-    | 'relatizon' // 🌐 Abstrakcyjny opis relacji powstałej w rozmowie (np. "zrozumienie", "przełom", "echo tematu")
-    | 'archezon' // 🧬 Archetypowy wzorzec, który się ujawnił – np. "Dziecko", "Mistrz", "Cień"
-    | 'intention' // 🎯 Intencja (świadoma lub nieuświadomiona), która została wyrażona lub rozpoznana
-    | 'insight' // 💡 Przebłysk zrozumienia – krótkie spostrzeżenie, synteza, mikro-prawda
-    | 'memory' // 🧠 Odtworzony lub zarejestrowany fragment doświadczenia – może być pamięcią AI lub usera
-    | 'event'; // 🌀 Zdarzenie systemowe lub użytkowe – np. "aiik się przebudził", "rozmowa została zarchiwizowana"
+  type: FractalNodeType;
   content: string | Record<string, unknown>;
+  interpretation?: string;
+  reason?: string;
+  weight?: number;
+  tags?: string[];
+  traits?: string[];
+  relates_to?: string[];
   user_id?: string;
   aiik_id?: string;
   room_id?: string;
@@ -279,7 +288,7 @@ export type SaveFractalNodeArgs = {
 
 export type FractalNode = {
   id: string; // uuid
-  type: 'message' | 'relatizon'; // możesz dodać inne typy później
+  type: FractalNodeType;
   content: string | object; // oryginalna wiadomość lub RelatiZON
   user_id?: string | null;
   aiik_id?: string | null;

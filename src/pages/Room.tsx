@@ -67,6 +67,8 @@ export default function Room() {
             response: userMsg,
             message_summary: aiikResponse.message_summary,
             response_summary: aiikResponse.response_summary,
+            user_memory: aiikResponse.user_memory,
+            aiik_memory: [],
           },
           'user',
           user.user?.id,

@@ -11,6 +11,12 @@ export async function saveFractalNode({
   accessToken,
   type,
   content,
+  interpretation,
+  reason,
+  weight,
+  tags,
+  traits,
+  relates_to,
   user_id,
   aiik_id,
   room_id,
@@ -41,11 +47,16 @@ export async function saveFractalNode({
       .insert({
         type,
         content,
+        interpretation,
+        reason,
+        weight,
+        tags,
+        traits,
+        relates_to,
         user_id,
         aiik_id,
         room_id,
         embedding,
-        created_at: new Date().toISOString(),
       })
       .select()
       .single<FractalNode>();
