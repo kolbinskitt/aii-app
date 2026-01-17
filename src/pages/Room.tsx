@@ -55,6 +55,7 @@ export default function Room() {
       const aiikResponse = await fetchAiikResponse(
         userMsg,
         chosenAiik.aiiki,
+        room.id,
         accessToken,
       );
 

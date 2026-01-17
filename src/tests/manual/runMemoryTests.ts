@@ -21,6 +21,7 @@ export async function runMemoryTests(accessToken: string) {
         const result = await fetchAiikResponse(
           testCase.input,
           testAiik,
+          '',
           accessToken,
         );
 

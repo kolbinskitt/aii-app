@@ -328,3 +328,13 @@ export type MemoryFragment = {
   traits?: string[]; // cechy: np. "reflective", "vulnerable", "pattern", "relational"
   relates_to?: string[]; // ID innych memory, z którymi ta jest powiązana (np. echo wcześniejszej sytuacji)
 };
+
+export type MemoryItem = {
+  type: FractalNodeType;
+  content: string;
+  interpretation: string;
+  reason: string;
+  weight: number;
+  tags: string[];
+  traits: string[];
+};

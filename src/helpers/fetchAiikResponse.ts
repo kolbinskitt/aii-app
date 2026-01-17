@@ -1,10 +1,12 @@
 import { Aiik, MemoryFragment } from '@/types';
 import { api } from '@/lib/api';
 import { getAIMessageSystemPrompt } from './getAIMessageSystemPrompt';
+import { generateMemoryMessageForLLM } from '@/utils/generateMemoryMessageForLLM';
 
 export async function fetchAiikResponse(
   prompt: string,
   aiik: Aiik,
+  roomId: string,
   accessToken?: string,
 ): Promise<{
   message: string;
@@ -31,6 +33,23 @@ export async function fetchAiikResponse(
       content: prompt,
     };
 
+    const relevantMemory = await api('get-relevant-memory', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        userMessage: prompt,
+        aiikId: aiik.id,
+        roomId,
+      }),
+    });
+
+    const { memory } = await relevantMemory.json();
+    const assistantMessage = generateMemoryMessageForLLM(memory);
+    console.log({ prompt, assistantMessage, memory });
+
     const res = await api('gpt-proxy', {
       method: 'POST',
       headers: {
@@ -38,7 +57,11 @@ export async function fetchAiikResponse(
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
-        messages: [systemMessage, userMessage],
+        messages: [
+          systemMessage,
+          userMessage,
+          ...(assistantMessage ? [assistantMessage] : []),
+        ],
         purpose: 'aiik-message',
       }),
     });
