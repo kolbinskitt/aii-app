@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllRooms } from '../db/rooms';
+import { getAllRooms } from '@/helpers/getAllRooms';
 import { Room } from '../types';
 import { Link } from 'react-router-dom';
 import CreateRoomModal from '../components/CreateRoomModal';

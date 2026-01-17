@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import { getRoomById, addMessageToRoom } from '@/db/rooms';
+import { addMessageToRoom } from '@/helpers/addMessageToRoom';
+import { getRoomById } from '@/helpers/getRoomById';
 import type { RoomWithMessages, Aiik } from '@/types';
 import useUser from '@/hooks/useUser';
 import { useAccessToken } from '@/hooks/useAccessToken';

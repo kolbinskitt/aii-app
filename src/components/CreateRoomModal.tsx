@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { createRoom } from '../db/rooms';
-import useGlobalAiiki from '../db/aiiki';
-import { Aiik } from '../types';
-import useUser from '../hooks/useUser';
-import { useAccessToken } from '../hooks/useAccessToken';
+import { createRoom } from '@/helpers/createRoom';
+import useGlobalAiiki from '@/db/aiiki';
+import { Aiik } from '@/types';
+import useUser from '@/hooks/useUser';
+import { useAccessToken } from '@/hooks/useAccessToken';
 import { Popup, Button, Input, Checkbox } from './ui';
 import { useTranslation } from 'react-i18next';
 

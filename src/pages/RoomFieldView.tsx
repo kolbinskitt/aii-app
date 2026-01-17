@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getRoomById } from '../db/rooms';
+import { getRoomById } from '@/helpers/getRoomById';
 import { RoomWithMessages } from '../types';
 import RelatizonChart from '../components/RelatizonChart';
 import useUser from '../hooks/useUser';
