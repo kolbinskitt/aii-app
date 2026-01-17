@@ -13,7 +13,7 @@ import {
   MessageArea,
 } from '@/components/ui/room/RoomComponents';
 import { fetchAiikResponse } from '@/helpers/fetchAiikResponse';
-import { runMemoryTests } from '@/tests/manual/runMemoryTests';
+// import { runMemoryTests } from '@/tests/manual/runMemoryTests';
 
 export default function Room() {
   const { t } = useTranslation();
@@ -133,11 +133,11 @@ export default function Room() {
     };
   }, [id]);
 
-  const handleTest = async () => {
-    if (accessToken) {
-      await runMemoryTests(accessToken);
-    }
-  };
+  // const handleTest = async () => {
+  //   if (accessToken) {
+  //     await runMemoryTests(accessToken);
+  //   }
+  // };
 
   if (!room) {
     return <div className="p-6">Nie znaleziono pokoju.</div>;
@@ -145,9 +145,9 @@ export default function Room() {
 
   return (
     <div className="relative w-full">
-      <button onClick={handleTest} style={{ backgroundColor: 'white' }}>
+      {/* <button onClick={handleTest} style={{ backgroundColor: 'white' }}>
         TEST
-      </button>
+      </button> */}
       <MessageArea room={room}>
         {aiikThinking &&
           Object.values(thinkingAiiki).map(aiik => (
