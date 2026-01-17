@@ -274,7 +274,7 @@ export type FractalNodeType =
 export type SaveFractalNodeArgs = {
   accessToken: string;
   type: FractalNodeType;
-  content: string | Record<string, unknown>;
+  content: string | RelatiZON;
   interpretation?: string;
   reason?: string;
   weight?: number;
