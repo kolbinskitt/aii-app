@@ -7,6 +7,7 @@ import { RoomWithMessages, Role } from '@/types';
 import { Button, Tile, Input } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { CopyToClipboard } from '@/components/CopyToClipboard';
 
 function TopTile({ room }: { room: RoomWithMessages | null }) {
   const { t } = useTranslation();
@@ -79,10 +80,12 @@ export function Message({
             marginBottom: marginV,
             borderRadius,
             maxHeight,
+            border: '1px solid #888',
           }}
         />
       )}
       {children}
+      {typeof children === 'string' && <CopyToClipboard text={children} />}
     </div>
   );
 }
