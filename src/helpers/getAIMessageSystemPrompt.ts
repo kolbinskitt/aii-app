@@ -28,7 +28,8 @@ const responseJsonFormat = `
   "response_could_be_better": {
     "value": boolean,
     "reason": string
-  }
+  },
+  "not_enought_data": boolean
 }
 \`\`\`
 
@@ -221,6 +222,23 @@ Zawiera ocenę, czy Twoja odpowiedź mogłaby być lepsza:
 
 `;
 
+const notEnoughtData = `
+### 💬 Pole \`not_enought_data\` (WYMAGANE)
+Jeśli uważasz, że nie masz wystarczająco danych kontekstowych w assistant promptcie, by sensownie odpowiedzieć na wiadomość użytkownika – zwróć \`true\`.
+
+📎 Przykłady:
+– Użytkownik pisze: *"Podsumuj rozmowę z wczoraj o świadomości drzew."*, a nie masz w assistant promptcie żadnych informacji na ten temat.
+– Użytkownik pisze: *"Kontynuuj to, co mówiłem wcześniej o tym, że nie chcę żyć."*, a nie masz wcześniejszej wypowiedzi na ten temat.
+– Użytkownik odnosi się do wcześniejszej interakcji (czasowo lub tematycznie), a kontekst dostępny w promptcie nie zawiera tej historii.
+
+Zawsze zwracaj wartość \`true\` lub \`false\`.
+
+- \`true\` → Gdy uważasz, że **brakuje Ci informacji**, by odpowiedzieć dobrze. Nie próbuj zgadywać. Nie twórz odpowiedzi na podstawie ogólników. Twoja odpowiedź miałaby niską jakość – dlatego zgłaszasz, że potrzebujesz więcej danych.
+- \`false\` → Gdy uważasz, że **masz wystarczająco danych**, by odpowiedzieć trafnie. Nie musisz mieć całego kontekstu – wystarczy, że rozumiesz, czego dotyczy wiadomość i potrafisz odpowiedzieć sensownie.
+
+🔐 Pamiętaj: \`true\` NIE oznacza, że nie odpowiadasz. Po prostu informujesz, że przydałby się pełniejszy kontekst.
+`;
+
 export const getAIMessageSystemPrompt = (
   aiik: Aiik,
   tags: MemoryFragment[],
@@ -231,6 +249,7 @@ ${responseJsonFormat}
 ${memoryFragment(tags, traits)}
 ${aiikMemory}
 ${responseCouldBeBetter}
+${notEnoughtData}
 Nazwa Aiika: ${aiik.name}  
 Opis Aiika: ${aiik.description}  
 Osobowość Aiika: ${JSON.stringify(aiik.conzon)}
