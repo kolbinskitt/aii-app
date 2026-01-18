@@ -107,6 +107,34 @@ W takim przypadku dodaj go jako jedno precyzyjne słowo:
 \`\`\`
 `;
 
+const relatesToSection = `
+#### 🔹 \`relates_to\` (WYMAGANE)  
+Lista opisowych fraz (stringów), które najlepiej oddają **tematyczny zakres** danej wypowiedzi.  
+– To **kategorie znaczeniowe**, które umożliwiają systemowi rozpoznawanie kontekstu w przyszłości.  
+– Używaj krótkich fraz w języku angielskim, np. \`"father loss"\`, \`"existential doubt"\`, \`"trees consciousness"\`  
+– Frazy **nie muszą odpowiadać dosłownie treści** wypowiedzi, lecz **jej głębszemu znaczeniu lub kontekstowi**.
+
+📌 **Musisz zwrócić minimalnie 1 frazę i maksymalnie 10 fraz.**  
+Jeśli nie jesteś pewien – **postaraj się oszacować najbardziej prawdopodobny temat**.
+
+🔺 Prawidłowo wypełnione \`relates_to\` są **kluczowe** dla działania systemu zbudowanego na **tematycznym rezonansie pamięciowym**.  
+Ich brak lub pustka może poważnie ograniczyć zdolność AI do odnajdywania wcześniejszych kontekstów i rezonujących wspomnień.
+
+📎 Przykłady:
+\`\`\`json
+["father loss", "grief processing"]
+\`\`\`
+\`\`\`json
+["existential doubt", "meaning of life"]
+\`\`\`
+\`\`\`json
+["trees consciousness", "nonhuman awareness"]
+\`\`\`
+\`\`\`json
+["identity shift", "personal change"]
+\`\`\`
+`;
+
 const memoryFragment = (tags: MemoryFragment[], traits: MemoryFragment[]) => `
 ### 🧠 Instrukcja tworzenia \`MemoryFragment\`
 
@@ -168,11 +196,7 @@ Liczba z zakresu **0.0 – 1.0**, określająca wagę tej pamięci.
 
 ${tagsSection(tags)}
 ${traitsSection(traits)}
-#### 🔹 \`relates_to\` (WYMAGANE)  
-Lista identyfikatorów innych pamięci, z którymi ten fragment rezonuje.  
-– **Na obecnym etapie zawsze zwracaj pustą tablicę**: \`[]\`
-
----
+${relatesToSection}
 `;
 
 const aiikMemory = `
