@@ -92,7 +92,10 @@ Liczba z zakresu **0.0 – 1.0**, określająca wagę tej pamięci.
 – 0.8–1.0 → bardzo ważne, rdzeniowe dla relacji lub tożsamości
 
 #### 🔹 \`tags\` (WYMAGANE)  
-Do **3 ogólnych pojęć**, każde jako \`WeightedValue\`.  
+To **tematy i pola znaczenia** wypowiedzi.  
+Nie opisują tonu, ale **czego dotyczy treść**.  
+– Jeśli wypowiedź porusza emocjonalny temat (np. śmierć, bliskość, trauma, pytanie egzystencjalne) — zawsze dodaj \`tags\`.  
+– Nadaj wagę w przedziale 0.6–1.0 dla silnych tematów.  
 – Przykłady:
 \`\`\`json
 [{ "value": "trust", "weight": 0.8 }]
@@ -101,18 +104,21 @@ Do **3 ogólnych pojęć**, każde jako \`WeightedValue\`.
 [{ "value": "grief", "weight": 0.9 }, { "value": "loss", "weight": 0.7 }]
 \`\`\`
 \`\`\`json
-[{ "value": "identity", "weight": 0.85 }]
+[{ "value": "identity", "weight": 0.2 }]
 \`\`\`
-– Jeśli brak → **pusta tablica** \`[]\`
+– Jeśli brak wyraźnego tematu — użyj pustej tablicy \`[]\`
 
 #### 🔹 \`traits\` (WYMAGANE)  
-Do **3 cech tonu / jakości**, nie treści.  
+To **cechy tonu, stylu lub jakości** wypowiedzi.  
+Nie dotyczą tematu, ale tego **jak coś zostało powiedziane**. 
+– Jeśli wypowiedź jest emocjonalna, szczera lub empatyczna — zawsze dodaj \`traits\`.  
+– Nadaj wagę zgodnie z intensywnością tonu (np. 0.7–0.9 dla silnych jakości). 
 – Przykłady:
 \`\`\`json
 [{ "value": "reflective", "weight": 0.7 }]
 \`\`\`
 \`\`\`json
-[{ "value": "vulnerable", "weight": 0.6 }]
+[{ "value": "vulnerable", "weight": 0.25 }]
 \`\`\`
 \`\`\`json
 [{ "value": "relational", "weight": 0.65 }, { "value": "empathy", "weight": 0.9 }]
