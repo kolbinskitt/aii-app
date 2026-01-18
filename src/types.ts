@@ -40,7 +40,7 @@ export type RoomAiikiRelatizon = {
 
 export type RoomWithMessages = Room & {
   room_aiiki: {
-    aiiki: Aiik;
+    aiiki_with_conzon: Aiik;
     room_aiiki_relatizon: RoomAiikiRelatizon[];
   }[];
   messages_with_aiik: Message[];

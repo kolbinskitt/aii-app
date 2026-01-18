@@ -24,7 +24,7 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
         <div>
           {t('chat.aiiki_near_campfire')}:{' '}
           <span className="text-neutral-600">
-            {room.room_aiiki?.map(a => a.aiiki.name).join(', ')}
+            {room.room_aiiki?.map(a => a.aiiki_with_conzon.name).join(', ')}
           </span>
         </div>
         <Link

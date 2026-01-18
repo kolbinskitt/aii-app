@@ -21,12 +21,15 @@ export default function RoomFieldView() {
   const allRelatizons = room.room_aiiki.flatMap(rai =>
     rai.room_aiiki_relatizon.map(rel => ({
       ...rel,
-      aiik_id: rai.aiiki.id,
+      aiik_id: rai.aiiki_with_conzon.id,
     })),
   );
 
   const aiikiMap = Object.fromEntries(
-    room.room_aiiki.map(rai => [rai.aiiki.id, rai.aiiki.name]),
+    room.room_aiiki.map(rai => [
+      rai.aiiki_with_conzon.id,
+      rai.aiiki_with_conzon.name,
+    ]),
   );
 
   return (
@@ -59,7 +62,9 @@ export default function RoomFieldView() {
 
           return (
             <div key={i}>
-              <h2 className="text-xl text-rose-400 mb-2">{rai.aiiki.name}</h2>
+              <h2 className="text-xl text-rose-400 mb-2">
+                {rai.aiiki_with_conzon.name}
+              </h2>
               <div className="text-sm grid grid-cols-2 gap-y-1 gap-x-4">
                 <div>
                   🤝 bond_depth:{' '}

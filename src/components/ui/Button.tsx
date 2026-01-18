@@ -24,7 +24,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseClasses =
-    'inline-flex items-center justify-center gap-2 font-medium transition-all duration-150 rounded-md';
+    'inline-flex items-center justify-center gap-2 font-medium transition-all duration-150 rounded-md box-border';
 
   const sizeClasses: Record<ButtonSize, string> = {
     small: 'px-2 py-2 text-sm',
@@ -34,12 +34,13 @@ export default function Button({
 
   const typeClasses: Record<ButtonKind, string> = {
     default: 'bg-white text-black border border-black hover:bg-gray-100',
-    submit: 'bg-green-600 text-white hover:bg-green-500 border-none',
-    danger: 'bg-red-600 text-white hover:bg-red-700 border-none',
+    submit:
+      'bg-green-600 text-white hover:bg-green-500 border border-green-600',
+    danger: 'bg-red-600 text-white hover:bg-red-700 border border-red-600',
     primary:
-      'bg-blue-600 hover:bg-blue-700 text-white shadow hover:brightness-110 border-none',
+      'bg-blue-600 hover:bg-blue-700 text-white shadow hover:brightness-110 border border-blue-600',
     ghost:
-      'bg-transparent text-current border-none hover:bg-zinc-100 hover:text-black',
+      'bg-transparent text-current border border-transparent hover:bg-zinc-100 hover:text-black',
   };
 
   const disabledClasses = 'opacity-50 cursor-not-allowed pointer-events-none';

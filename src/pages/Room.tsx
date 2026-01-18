@@ -48,13 +48,13 @@ export default function Room() {
 
       setThinkingAiiki(prev => ({
         ...prev,
-        [chosenAiik.aiiki.id]: chosenAiik.aiiki,
+        [chosenAiik.aiiki_with_conzon.id]: chosenAiik.aiiki_with_conzon,
       }));
 
       // 3️⃣ Pobierz odpowiedź AI
       const aiikResponse = await fetchAiikResponse(
         userMsg,
-        chosenAiik.aiiki,
+        chosenAiik.aiiki_with_conzon,
         room.id,
         accessToken,
       );
@@ -82,9 +82,9 @@ export default function Room() {
           aiikResponse,
           'aiik',
           user.user?.id,
-          chosenAiik.aiiki.id,
-          chosenAiik.aiiki.name,
-          chosenAiik.aiiki.avatar_url,
+          chosenAiik.aiiki_with_conzon.id,
+          chosenAiik.aiiki_with_conzon.name,
+          chosenAiik.aiiki_with_conzon.avatar_url,
         );
 
         // 6️⃣ Odśwież pokój po odpowiedzi aiika
@@ -93,7 +93,7 @@ export default function Room() {
 
         setThinkingAiiki(prev => {
           const updated = { ...prev };
-          delete updated[chosenAiik.aiiki.id];
+          delete updated[chosenAiik.aiiki_with_conzon.id];
           return updated;
         });
       }

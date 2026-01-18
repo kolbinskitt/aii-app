@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 import { RoomAiikiRelatizon, RechartsCustomTooltipProps } from '@/types';
 import { useState, useMemo } from 'react';
-import clsx from 'clsx';
+import { Button } from './ui';
 
 type Props = {
   data: RoomAiikiRelatizon[];
@@ -21,31 +21,44 @@ type Props = {
 
 export default function RelatizonChart({ data, aiikiMap, userId }: Props) {
   const aiikMeta = useMemo(() => {
-    const tabs: { id: string; label: string }[] = [];
+    const tabs: { id: string; label: string; isUser: boolean }[] = [];
     const seenAiikIds = new Set<string>();
 
     const selfEntry = data.find(d => d.user_id === userId);
     const selfAiikId = selfEntry?.user_id;
 
     if (selfAiikId) {
-      tabs.push({ id: selfAiikId, label: 'Ty' });
+      tabs.push({ id: selfAiikId, label: 'Ty', isUser: true });
       seenAiikIds.add(selfAiikId);
     }
 
     for (const d of data) {
       if (d.aiik_id === selfAiikId) continue;
       if (seenAiikIds.has(d.aiik_id)) continue;
-      tabs.push({ id: d.aiik_id, label: aiikiMap[d.aiik_id] || 'Nieznany' });
+      tabs.push({
+        id: d.aiik_id,
+        label: aiikiMap[d.aiik_id] || 'Nieznany',
+        isUser: false,
+      });
       seenAiikIds.add(d.aiik_id);
     }
 
     return tabs;
   }, [data, aiikiMap, userId]);
 
-  const [activeAiikId, setActiveAiikId] = useState<string>(aiikMeta[0]?.id);
+  const [activeTab, setActiveTab] = useState<{
+    id: string;
+    isUser: boolean;
+  } | null>(aiikMeta[0] ?? null);
 
   const filteredData = data
-    .filter(r => (r.user_id || r.aiik_id) === activeAiikId)
+    .filter(r => {
+      if (!activeTab) return false;
+
+      return activeTab.isUser
+        ? r.user_id === activeTab.id
+        : r.aiik_id === activeTab.id;
+    })
     .map(r => ({
       name: new Date(r.created_at).toLocaleTimeString(),
       bond_depth: r.relatizon.connection_metrics.bond_depth,
@@ -65,9 +78,10 @@ export default function RelatizonChart({ data, aiikiMap, userId }: Props) {
     if (!active || !payload || !payload.length) return null;
 
     const point = payload[0].payload;
-    const aiikiName = point.user_id
+
+    const aiikiName = activeTab?.isUser
       ? 'Ty'
-      : aiikiMap[point.aiik_id] ?? 'Nieznany';
+      : (aiikiMap[point.aiik_id] ?? 'Nieznany');
 
     const tensionDesc = {
       soft: 'łagodna cisza',
@@ -106,18 +120,13 @@ export default function RelatizonChart({ data, aiikiMap, userId }: Props) {
     <div className="w-full mt-6 space-y-4">
       <div className="flex space-x-2 border-b border-neutral-700 pb-2">
         {aiikMeta.map(tab => (
-          <button
+          <Button
             key={tab.id}
-            onClick={() => setActiveAiikId(tab.id)}
-            className={clsx(
-              'px-3 py-1 rounded-full text-sm transition',
-              activeAiikId === tab.id
-                ? 'bg-white text-black font-bold'
-                : 'text-gray-400 hover:text-white',
-            )}
+            onClick={() => setActiveTab(tab)}
+            kind={activeTab?.id === tab.id ? 'primary' : 'default'}
           >
             {tab.label}
-          </button>
+          </Button>
         ))}
       </div>
       <ResponsiveContainer width="100%" height={400}>

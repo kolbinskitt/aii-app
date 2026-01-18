@@ -12,7 +12,7 @@ export async function getRoomById(
       messages_with_aiik(*),
       room_aiiki(
         *,
-        aiiki(*),
+        aiiki_with_conzon(*),
         room_aiiki_relatizon(*)
       )
     `,
