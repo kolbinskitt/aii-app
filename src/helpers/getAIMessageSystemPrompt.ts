@@ -264,7 +264,15 @@ Zawsze zwracaj wartość \`true\` lub \`false\`.
 const messagesSection = (messages: Messages) => `
 💬 Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem:\n\n${messages
   .map(m => `👤 Użytkownik:\n${m.user}\n🤖 Aiik:\n${m.aiik}`)
-  .join('\n\n')}`;
+  .join('\n\n')}
+  
+### 🧩 Dziedziczenie tematów (relates_to)
+– Jeśli aktualna wypowiedź użytkownika lub reakcja Aiika **nawiązuje do jednego z tematów (\`relates_to\`) z ostatnich wiadomości** – możesz **przenieść odpowiednie wartości do nowego wpisu pamięci (MemoryFragment) \`user_memory\` lub \`aiik_memory\`**.
+– Nie kopiuj ich automatycznie — wybieraj tylko te, które rzeczywiście **pasują do bieżącego kontekstu**.
+– To pomaga zachować spójność tematów i śledzenie dłuższych wątków.
+
+📌 Jeśli temat się zmienił, **nie przenoś** wcześniejszych \`relates_to\`.
+`;
 
 export const getAIMessageSystemPrompt = (
   aiik: Aiik,
