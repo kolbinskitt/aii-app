@@ -263,7 +263,7 @@ Zawsze zwracaj wartość \`true\` lub \`false\`.
 
 const messagesSection = (messages: Messages) => `
 💬 Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem:\n\n${messages
-  .map(m => `👤 Użytkownik: ${m.user}\n🤖 Aiik: ${m.aiik}`)
+  .map(m => `👤 Użytkownik:\n${m.user}\n🤖 Aiik:\n${m.aiik}`)
   .join('\n\n')}`;
 
 export const getAIMessageSystemPrompt = (
