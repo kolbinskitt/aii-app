@@ -48,7 +48,6 @@ export async function fetchAiikResponse(
 
     const { memory } = await relevantMemory.json();
     const assistantMessage = generateMemoryMessageForLLM(memory);
-    console.log({ prompt, assistantMessage, memory });
 
     const res = await api('gpt-proxy', {
       method: 'POST',

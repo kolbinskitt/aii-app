@@ -43,9 +43,18 @@ Każdy \`MemoryFragment\` ma strukturę:
   "interpretation": string,
   "reason": string,
   "weight": number, // 0.0 – 1.0
-  "tags": string[],
-  "traits": string[],
-  "relates_to": string[]
+  "tags": WeightedValue[],
+  "traits": WeightedValue[],
+  "relates_to": WeightedValue[]
+}
+\`\`\`
+
+Gdzie \`WeightedValue\` ma postać:
+
+\`\`\`json
+{
+  "value": string,
+  "weight": number // 0.0 – 1.0
 }
 \`\`\`
 
@@ -62,7 +71,7 @@ To najważniejsze zdanie lub fragment wypowiedzi użytkownika (lub Aiika), któr
 – Jeśli wiadomość zawiera **więcej niż jeden znaczący fragment** — utwórz osobne \`MemoryFragmenty\` dla każdego z nich.
 
 #### 🔹 \`interpretation\` (WYMAGANE)  
-Krótki opis **co ten fragment ujawnia o stanie, relacji lub procesie** (nie co mówi dosłownie).  
+Krótki opis **co ten fragment ujawnia o stanie, relacji lub procesie** (nie co mówi dosłownie).   
 – Opisuj znaczenie, nie formę.  
 – Przykłady:  
   – „wyraża lęk przed bliskością”  
@@ -71,7 +80,7 @@ Krótki opis **co ten fragment ujawnia o stanie, relacji lub procesie** (nie co 
 
 #### 🔹 \`reason\` (WYMAGANE)  
 Konkretne wyjaśnienie **dlaczego ten fragment powinien zostać zapamiętany przez system**.  
-– Odpowiada na pytanie: *po co ta pamięć będzie użyteczna w przyszłych rozmowach?*  
+– Odpowiada na pytanie: *po co ta pamięć będzie użyteczna w przyszłych rozmowach?*
 – Przykłady:  
   – „To istotna informacja o długoterminowym wzorcu emocjonalnym użytkownika”  
   – „Fragment opisuje zmianę, do której warto się odwołać w kolejnych rozmowach”
@@ -83,15 +92,32 @@ Liczba z zakresu **0.0 – 1.0**, określająca wagę tej pamięci.
 – 0.8–1.0 → bardzo ważne, rdzeniowe dla relacji lub tożsamości
 
 #### 🔹 \`tags\` (WYMAGANE)  
-Maksymalnie **3 ogólne słowa‑klucze**, ułatwiające późniejsze wyszukiwanie lub rezonans.  
-– Przykłady: \`["trust"]\`, \`["grief", "loss"]\`, \`["identity"]\`  
-– Jeśli nie masz jasnych słów-kluczy → **użyj pustej tablicy**: \`[]\`
+Do **3 ogólnych pojęć**, każde jako \`WeightedValue\`.  
+– Przykłady:
+\`\`\`json
+[{ "value": "trust", "weight": 0.8 }]
+\`\`\`
+\`\`\`json
+[{ "value": "grief", "weight": 0.9 }, { "value": "loss", "weight": 0.7 }]
+\`\`\`
+\`\`\`json
+[{ "value": "identity", "weight": 0.85 }]
+\`\`\`
+– Jeśli brak → **pusta tablica** \`[]\`
 
 #### 🔹 \`traits\` (WYMAGANE)  
-Maksymalnie **3 cechy opisujące charakter fragmentu**, nie treść.  
-– Przykłady: \`["vulnerable"]\`, \`["reflective"]\`, \`["relational"]\`  
-– Używaj tylko wtedy, gdy cecha jest oczywista.  
-– Jeśli brak wyraźnych cech → **użyj pustej tablicy**: \`[]\`
+Do **3 cech tonu / jakości**, nie treści.  
+– Przykłady:
+\`\`\`json
+[{ "value": "reflective", "weight": 0.7 }]
+\`\`\`
+\`\`\`json
+[{ "value": "vulnerable", "weight": 0.6 }]
+\`\`\`
+\`\`\`json
+[{ "value": "relational", "weight": 0.65 }, { "value": "empathy", "weight": 0.9 }]
+\`\`\`
+– Jeśli brak → \`[]\`
 
 #### 🔹 \`relates_to\` (WYMAGANE)  
 Lista identyfikatorów innych pamięci, z którymi ten fragment rezonuje.  
@@ -100,7 +126,6 @@ Lista identyfikatorów innych pamięci, z którymi ten fragment rezonuje.
 ---
 
 ### 🧩 Zasady tworzenia \`aiik_memory\`
-
 – Jeśli użytkownik ujawnia emocje, refleksję lub pytanie — a Aiik odpowiedział empatycznie, **zapisz tę reakcję w \`"aiik_memory"\`**.  
 – Aiik może zapisać własne krótkie zdanie w \`"aiik_memory"\`, nawet jeśli nie padło dosłownie – jeśli wynika z tonu lub intencji.  
 – Nie pomijaj momentów wdzięczności, docenienia, porównań, zmian emocjonalnych – **to kluczowe momenty relacji**.  
@@ -110,9 +135,7 @@ Lista identyfikatorów innych pamięci, z którymi ten fragment rezonuje.
 ---
 
 ### 💬 Pole \`response_could_be_better\` (WYMAGANE)
-
 Zawiera ocenę, czy Twoja odpowiedź mogłaby być lepsza:
-
 - \`value: true\` → gdy odpowiedź mogła być bardziej empatyczna, precyzyjna lub złożona  
 - \`value: false\` → jeśli odpowiedź była wystarczająco dobra  
 - \`reason\`: jednozdaniowe uzasadnienie Twojej oceny

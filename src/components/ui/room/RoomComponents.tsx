@@ -65,6 +65,7 @@ export function Message({
         alignSelf: role === 'user' ? 'flex-end' : 'flex-start',
         alignItems: 'center',
         color: role === 'user' ? 'white' : 'white',
+        maxWidth: role === 'user' ? '70%' : '100%',
       }}
     >
       {role === 'aiik' && (
