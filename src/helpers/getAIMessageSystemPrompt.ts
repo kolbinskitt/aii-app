@@ -41,6 +41,8 @@ To **tematy i pola znaczenia** wypowiedzi.
 Nie opisują tonu, ale **czego dotyczy treść**.
 
 – Jeśli wypowiedź porusza emocjonalny lub znaczeniowy temat (np. śmierć, bliskość, trauma, pytanie egzystencjalne) — zawsze dodaj \`tags\`.  
+- Jeśli słowo pasujące do tagu pojawia się tylko w formie **negacji** (np. „nie mam nadziei”, „nie czuję bólu”) — **nie dodawaj tego tagu**. W takim przypadku temat jest nieobecny, a nie obecny.
+- Niepewne tagi (np. sugerowane kontekstem, ale nie centralne) powinny mieć wagę < 0.5 lub zostać pominięte.
 – Nadaj wagę w przedziale **0.6–1.0** dla silnych tematów.  
 – Jeśli **naprawdę** brak wyraźnego tematu — użyj pustej tablicy: \`[]\`
 

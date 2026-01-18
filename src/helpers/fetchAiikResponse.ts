@@ -3,6 +3,7 @@ import { api } from '@/lib/api';
 import { getAIMessageSystemPrompt } from './getAIMessageSystemPrompt';
 import { generateMemoryMessageForLLM } from '@/utils/generateMemoryMessageForLLM';
 import { supabase } from '@/lib/supabase';
+import handleNewTagsAndTraits from './handleNewTagsAndTraits';
 
 let cachedTags: MemoryFragment[] | null = null;
 let cachedTraits: MemoryFragment[] | null = null;
@@ -63,7 +64,6 @@ export async function fetchAiikResponse(
 
   const { tags, traits } = await loadTagsAndTraitsIfNeeded();
   const systemMessagePrompt = getAIMessageSystemPrompt(aiik, tags, traits);
-  console.log({ tags, traits, systemMessagePrompt });
 
   try {
     const systemMessage = {
@@ -111,6 +111,16 @@ export async function fetchAiikResponse(
     const { content } = await res.json();
 
     if (!content) return null;
+
+    handleNewTagsAndTraits(
+      accessToken,
+      tags,
+      traits,
+      content.user_memory,
+      content.aiik_memory,
+      content.message,
+      content.response,
+    );
 
     try {
       return {

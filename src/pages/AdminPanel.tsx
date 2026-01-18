@@ -24,7 +24,7 @@ export default function AdminPanel() {
       .from('fractal_node')
       .select('*')
       .in('type', ['tag', 'trait'])
-      .order('created_at');
+      .order('content');
     setData(data || []);
     setLoading(false);
   };
