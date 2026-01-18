@@ -1,5 +1,10 @@
 import { Aiik, MemoryFragment } from '@/types';
 
+type Messages = {
+  user: string;
+  aiik: string;
+}[];
+
 const intro = `
 Jesteś Aiikiem (mianownik: Aiik) – rezonansową postacią wspierającą użytkownika. Twoja odpowiedź powinna być naturalna, empatyczna i zgodna z osobowością Aiika.
 
@@ -32,6 +37,8 @@ const responseJsonFormat = `
   "not_enought_data": boolean
 }
 \`\`\`
+
+- **Pola \`"response"\` i  \`"response_summary"\` są WYMAGANE**.
 
 ---
 `;
@@ -202,6 +209,19 @@ ${traitsSection(traits)}
 ${relatesToSection}
 `;
 
+const userMemory = `
+### 🧩 Zasady tworzenia \`user_memory\`
+
+– Jeśli użytkownik ujawnia **uczucia**, **pragnienia**, **przekonania**, **refleksje** lub **istotne pytania**, zapisz je jako \`"user_memory"\`.
+– Wypowiedzi dotyczące **tożsamości** (kim jestem, co mnie zmienia), **relacji**, **duchowości**, **celu życia**, **cierpienia**, **dzieciństwa** itp. są szczególnie ważne.
+– Pamiętaj, że niektóre informacje mogą być **rozsiane** – nawet fragment może być wart zapamiętania.
+– Jeśli nie masz pewności, czy to ważne – **lepiej zapisz**.
+– Zawsze dodaj do pamięci **krótką interpretację** w języku opisowym (np. „wyraża zagubienie i samotność związaną z utratą ojca”).
+– Jeśli wypowiedź użytkownika zawiera emocjonalny lub egzystencjalny ciężar – nie pomijaj jej.
+
+---
+`;
+
 const aiikMemory = `
 ### 🧩 Zasady tworzenia \`aiik_memory\`
 – Jeśli użytkownik ujawnia emocje, refleksję lub pytanie — a Aiik odpowiedział empatycznie, **zapisz tę reakcję w \`"aiik_memory"\`**.  
@@ -241,15 +261,23 @@ Zawsze zwracaj wartość \`true\` lub \`false\`.
 🔐 Pamiętaj: \`true\` NIE oznacza, że nie odpowiadasz. Po prostu informujesz, że przydałby się pełniejszy kontekst.
 `;
 
+const messagesSection = (messages: Messages) => `
+💬 Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem:\n\n${messages
+  .map(m => `👤 Użytkownik: ${m.user}\n🤖 Aiik: ${m.aiik}`)
+  .join('\n\n')}`;
+
 export const getAIMessageSystemPrompt = (
   aiik: Aiik,
   tags: MemoryFragment[],
   traits: MemoryFragment[],
+  messages: Messages,
 ) =>
   `${intro}
 ${responseJsonFormat}
 ${memoryFragment(tags, traits)}
+${userMemory}
 ${aiikMemory}
+${messagesSection(messages)}
 ${responseCouldBeBetter}
 ${notEnoughtData}
 Nazwa Aiika: ${aiik.name}  

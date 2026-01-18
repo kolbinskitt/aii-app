@@ -1,24 +1,19 @@
 import { MemoryItem } from '@/types';
 
+const getFacts = (memory: MemoryItem[], type: 'user_memory' | 'aiik_memory') =>
+  memory
+    .filter(m => m.type === type)
+    .map(
+      m =>
+        `– ${m.content.replace(/^"+|"+$/g, '')} (np. ${m.interpretation.toLowerCase()})`,
+    )
+    .join('\n');
+
 export function generateMemoryMessageForLLM(memory: MemoryItem[]) {
   if (!memory?.length) return;
 
-  const userFacts = memory
-    .filter(m => m.type === 'user_memory')
-    .map(
-      m =>
-        `– ${m.content.replace(/^"+|"+$/g, '')} (np. ${m.interpretation.toLowerCase()})`,
-    )
-    .join('\n');
-
-  const aiikFacts = memory
-    .filter(m => m.type === 'aiik_memory')
-    .map(
-      m =>
-        `– ${m.content.replace(/^"+|"+$/g, '')} (np. ${m.interpretation.toLowerCase()})`,
-    )
-    .join('\n');
-
+  const userFacts = getFacts(memory, 'user_memory');
+  const aiikFacts = getFacts(memory, 'aiik_memory');
   const summaryParts: string[] = [];
 
   if (userFacts) {

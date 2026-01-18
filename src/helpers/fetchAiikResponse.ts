@@ -63,19 +63,8 @@ export async function fetchAiikResponse(
   }
 
   const { tags, traits } = await loadTagsAndTraitsIfNeeded();
-  const systemMessagePrompt = getAIMessageSystemPrompt(aiik, tags, traits);
 
   try {
-    const systemMessage = {
-      role: 'system' as const,
-      content: systemMessagePrompt,
-    };
-
-    const userMessage = {
-      role: 'user' as const,
-      content: prompt,
-    };
-
     const relevantMemory = await api('get-relevant-memory', {
       method: 'POST',
       headers: {
@@ -86,10 +75,25 @@ export async function fetchAiikResponse(
         userMessage: prompt,
         aiikId: aiik.id,
         roomId,
+        lastMessagesAmount: 10,
       }),
     });
 
-    const { memory } = await relevantMemory.json();
+    const { memory, messages } = await relevantMemory.json();
+    const systemMessagePrompt = getAIMessageSystemPrompt(
+      aiik,
+      tags,
+      traits,
+      messages,
+    );
+    const systemMessage = {
+      role: 'system' as const,
+      content: systemMessagePrompt,
+    };
+    const userMessage = {
+      role: 'user' as const,
+      content: prompt,
+    };
     const assistantMessage = generateMemoryMessageForLLM(memory);
 
     const res = await api('gpt-proxy', {
