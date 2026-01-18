@@ -19,6 +19,7 @@ import IconButton from './IconButton';
 import Icon from './Icon';
 import { Card, CardContent } from './Card';
 import { Table } from './Table';
+import { Tabs } from './Tabs';
 
 export {
   Button,
@@ -43,4 +44,5 @@ export {
   Card,
   CardContent,
   Table,
+  Tabs,
 };

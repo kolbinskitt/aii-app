@@ -2,7 +2,7 @@ import { PropsWithChildren, ComponentProps } from 'react';
 import { Card as AntCard } from 'antd';
 
 export function Card(props: ComponentProps<typeof AntCard>) {
-  return <AntCard {...props} className="rounded-md shadow-md" />;
+  return <AntCard {...props} className="w-full rounded-md shadow-md" />;
 }
 
 export function CardContent({

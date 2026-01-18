@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Rooms from './pages/Rooms';
 import Room from './pages/Room';
 import Login from './pages/Login';
+import AdminPanel from './pages/AdminPanel';
 import AuthGuard from './components/AuthGuard';
 import RoomFieldView from './pages/RoomFieldView';
 import ErrorPage from './pages/ErrorPage';
@@ -91,6 +92,17 @@ export const router = createHashRouter([
                   <Rooms />
                 </LeftSidebar>
                 <Aiiki />
+              </Grid>
+            ),
+          },
+          {
+            path: 'admin-panel',
+            element: (
+              <Grid>
+                <LeftSidebar>
+                  <Rooms />
+                </LeftSidebar>
+                <AdminPanel />
               </Grid>
             ),
           },

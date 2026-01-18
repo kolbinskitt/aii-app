@@ -83,6 +83,14 @@ export function UserMenu() {
         )}
         {open && (
           <div className="absolute right-0 mt-2 w-40 bg-white shadow-xl rounded-lg z-50 overflow-hidden">
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => navigate('/admin-panel')}
+                className="block w-full text-left text-black hover:bg-gray-100 px-4 py-2"
+              >
+                Administracja
+              </button>
+            )}
             <button
               onClick={handleLogout}
               className="block w-full text-left text-black hover:bg-gray-100 px-4 py-2"

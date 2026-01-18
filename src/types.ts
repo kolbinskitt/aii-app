@@ -46,6 +46,8 @@ export type RoomWithMessages = Room & {
   messages_with_aiik: Message[];
 };
 
+export type UserRole = 'user' | 'admin';
+
 export type User = {
   id: string;
   auth_id: string;
@@ -57,6 +59,7 @@ export type User = {
   seed_phrase?: string | null;
   uuic?: string | null;
   credits: number;
+  role: UserRole;
 };
 
 export type UserWithSession = SupabaseUser & {
@@ -265,11 +268,9 @@ export type FractalNodeType =
   | 'message' // 🗣️ Surowa wiadomość (usera lub aiika), np. "Lubię lody waniliowe"
   | 'relatizon' // 🌐 Abstrakcyjny opis relacji powstałej w rozmowie (np. "zrozumienie", "przełom", "echo tematu")
   | 'user_memory' // user memory
-  | 'aiik_memory'; // aiik memory
-// | 'archezon' // 🧬 Archetypowy wzorzec, który się ujawnił – np. "Dziecko", "Mistrz", "Cień"
-// | 'intention' // 🎯 Intencja (świadoma lub nieuświadomiona), która została wyrażona lub rozpoznana
-// | 'insight' // 💡 Przebłysk zrozumienia – krótkie spostrzeżenie, synteza, mikro-prawda
-// | 'event' // 🌀 Zdarzenie systemowe lub użytkowe – np. "aiik się przebudził", "rozmowa została zarchiwizowana"
+  | 'aiik_memory' // aiik memory
+  | 'tag' // tag
+  | 'trait'; // trait
 
 export type SaveFractalNodeArgs = {
   accessToken: string;
@@ -290,6 +291,12 @@ export type FractalNode = {
   id: string; // uuid
   type: FractalNodeType;
   content: string | object; // oryginalna wiadomość lub RelatiZON
+  interpretation: string;
+  reason?: string;
+  weight?: number;
+  tags?: WeightedValue[];
+  traits?: WeightedValue[];
+  relates_to?: WeightedValue[];
   user_id?: string | null;
   aiik_id?: string | null;
   room_id?: string | null;
