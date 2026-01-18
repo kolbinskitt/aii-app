@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { Role, ArcheZON, Aiik, MemoryFragment } from '@/types';
 import { saveFractalNode } from '@/lib/fractal/saveFractalNode';
 import { api } from '@/lib/api';
+import { flattenDeep, uniq } from 'lodash';
 
 export async function addMessageToRoom(
   accessToken: string,
@@ -36,6 +37,14 @@ export async function addMessageToRoom(
     return;
   }
 
+  const messageRelatesTo = uniq(
+    flattenDeep(
+      [...message.user_memory, ...message.aiik_memory].map(m =>
+        (m.relates_to || []).map(r => r.value),
+      ),
+    ),
+  ).map(value => ({ value, weight: 1 }));
+
   await saveFractalNode({
     accessToken,
     type: 'message',
@@ -43,6 +52,7 @@ export async function addMessageToRoom(
     user_id: userId,
     aiik_id: aiikId,
     room_id: roomId,
+    relates_to: messageRelatesTo,
   });
 
   if (!message.message_summary || !message.response_summary || !userId) return;
