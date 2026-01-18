@@ -98,8 +98,22 @@ export default function AdminPanel() {
     { title: 'Type', dataIndex: 'type' },
     { title: 'Content', dataIndex: 'content' },
     { title: 'Interpretation', dataIndex: 'interpretation' },
-    { title: 'Reason', dataIndex: 'reason' },
-    { title: 'Weight', dataIndex: 'weight' },
+    {
+      title: 'Examples',
+      render: (_, record) =>
+        Array.isArray(record.tags) ? (
+          <ul>
+            {record.tags.map(t => (
+              <li key={t.value}>{t.value}</li>
+            ))}
+          </ul>
+        ) : (
+          ''
+        ),
+      onCell: () => ({
+        style: { minWidth: 500 },
+      }),
+    },
   ];
 
   useEffect(() => {
