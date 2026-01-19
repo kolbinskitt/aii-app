@@ -53,7 +53,21 @@ export async function getRelevantMessagesFromTopics(
 
     if (!matchedFractalIds.length) return '';
 
-    // 4. Get related messages from fractal_node
+    // 4. Fetch aiik names (cache per request)
+    const { data: aiiks, error: aiikError } = await supabase
+      .from('aiiki')
+      .select('id, name');
+
+    if (aiikError) {
+      console.error('Failed to fetch aiik names:', aiikError);
+    }
+
+    const aiikNameMap = new Map<string, string>();
+    (aiiks ?? []).forEach((a: any) => {
+      aiikNameMap.set(a.id, a.name);
+    });
+
+    // 5. Get related messages from fractal_node
     const { data: messages, error: msgError } = await supabase
       .from('fractal_node')
       .select('*')
@@ -68,7 +82,7 @@ export async function getRelevantMessagesFromTopics(
       return '';
     }
 
-    return transformRelatedMessages(messages, relatesTo);
+    return transformRelatedMessages(messages, relatesTo, aiikNameMap);
   } catch (err) {
     console.error('getRelevantMessagesFromTopics error:', err);
     return '';

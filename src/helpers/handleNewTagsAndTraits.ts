@@ -37,7 +37,7 @@ export default async function handleNewTagsAndTraits(
   if (newTags.size > 0 || newTraits.size > 0) {
     const newTagsString = [...newTags].join(', ') || 'brak';
     const newTraitsString = [...newTraits].join(', ') || 'brak';
-    console.log({ newTagsString, newTraitsString });
+
     await api('send-email', {
       method: 'POST',
       headers: {

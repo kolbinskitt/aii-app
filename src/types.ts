@@ -344,3 +344,11 @@ export type MemoryFragment = {
 export type MemoryItem = MemoryFragment & {
   type: FractalNodeType;
 };
+
+export type UserAiikiMessage = {
+  user: string;
+  aiiki: {
+    name: string;
+    message: string;
+  }[];
+};

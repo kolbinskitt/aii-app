@@ -4,6 +4,7 @@ import { transformUserAiikMessages } from './transformUserAiikMessages';
 export function transformRelatedMessages(
   messages: FractalNode[],
   relatesTo: WeightedValue[],
+  aiikNameMap: Map<string, string>,
 ) {
   if (messages.length === 0) return '';
 
@@ -15,12 +16,14 @@ export function transformRelatedMessages(
 
       if (relatedMsgs.length === 0) return '';
 
-      const transformedUserAiikMessages =
-        transformUserAiikMessages(relatedMsgs);
+      const transformedUserAiikMessages = transformUserAiikMessages(
+        relatedMsgs,
+        aiikNameMap,
+      );
       return transformedUserAiikMessages === ''
         ? ''
         : `
-Rozmowa użytkownika z Aiikiem dla "relates_to" = "${value}":
+Rozmowa użytkownika z Aiikami dla "relates_to" = "${value}":
 ${transformedUserAiikMessages}
 `.trim();
     })
