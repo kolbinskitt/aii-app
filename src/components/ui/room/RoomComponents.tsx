@@ -57,7 +57,7 @@ export function Message({
   return (
     <div
       className={`!p-2 !pl-4 !pr-4 font-system rounded-md ${
-        role === 'user' ? 'bg-blue-700' : ''
+        role === 'user' ? 'bg-blue-600' : ''
       }`}
       style={{
         display: 'flex',
