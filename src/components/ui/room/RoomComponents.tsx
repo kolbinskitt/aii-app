@@ -50,7 +50,6 @@ export function Message({
   aiikAvatar,
 }: PropsWithChildren<{ role: Role; aiikAvatar: string }>) {
   const marginH = -12;
-  const marginV = -4;
   const borderRadius = '0.5rem';
   const width = 40;
   const maxHeight = 60;
@@ -64,9 +63,10 @@ export function Message({
         display: 'flex',
         gap: 8,
         alignSelf: role === 'user' ? 'flex-end' : 'flex-start',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         color: role === 'user' ? 'white' : 'white',
         maxWidth: role === 'user' ? '70%' : '100%',
+        whiteSpace: 'pre-line',
       }}
     >
       {role === 'aiik' && (
@@ -75,9 +75,7 @@ export function Message({
           width={width}
           className="object-cover"
           style={{
-            marginTop: marginV,
             marginLeft: marginH,
-            marginBottom: marginV,
             borderRadius,
             maxHeight,
             border: '1px solid #888',

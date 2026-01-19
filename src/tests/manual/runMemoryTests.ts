@@ -20,6 +20,7 @@ export async function runMemoryTests(accessToken: string) {
       memoryTestCases.map(async testCase => {
         const result = await fetchAiikResponse(
           testCase.input,
+          '',
           testAiik,
           '',
           accessToken,

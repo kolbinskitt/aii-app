@@ -4,9 +4,13 @@ import { getAIMessageSystemPrompt } from './getAIMessageSystemPrompt';
 import { generateMemoryMessageForLLM } from '@/utils/generateMemoryMessageForLLM';
 import { loadTagsAndTraitsIfNeeded } from './loadTagsAndTraitsIfNeeded';
 import handleNewTagsAndTraits from './handleNewTagsAndTraits';
+import { getRelevantMessagesFromTopics } from './getRelevantMessagesFromTopics';
+import { getRelatesToFromMemory } from './getRelatesToFromMemory';
+import { LAST_MESSAGES_FOR_SYSTEM_PROMPT } from '@/consts';
 
 export async function fetchAiikResponse(
   prompt: string,
+  userId: string,
   aiik: Aiik,
   roomId: string,
   accessToken?: string,
@@ -37,7 +41,7 @@ export async function fetchAiikResponse(
         userMessage: prompt,
         aiikId: aiik.id,
         roomId,
-        lastMessagesAmount: 10,
+        lastMessagesAmount: LAST_MESSAGES_FOR_SYSTEM_PROMPT,
       }),
     });
 
@@ -88,6 +92,91 @@ export async function fetchAiikResponse(
       content.response,
     );
 
+    if (content.not_enought_data) {
+      const relatedMessages = await getRelevantMessagesFromTopics(
+        accessToken,
+        userId,
+        getRelatesToFromMemory([
+          ...content.user_memory,
+          ...content.aiik_memory,
+        ]),
+      );
+      const relevantMemory = await api('get-relevant-memory', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          userMessage: prompt,
+          aiikId: aiik.id,
+          roomId,
+          lastMessagesAmount: LAST_MESSAGES_FOR_SYSTEM_PROMPT,
+        }),
+      });
+      const { memory, messages } = await relevantMemory.json();
+      const systemMessagePrompt = getAIMessageSystemPrompt(
+        aiik,
+        tags,
+        traits,
+        messages,
+        relatedMessages,
+      );
+      const systemMessage = {
+        role: 'system' as const,
+        content: systemMessagePrompt,
+      };
+      const userMessage = {
+        role: 'user' as const,
+        content: prompt,
+      };
+      const assistantMessage = generateMemoryMessageForLLM(memory);
+      const res = await api('gpt-proxy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          messages: [
+            systemMessage,
+            userMessage,
+            ...(assistantMessage ? [assistantMessage] : []),
+          ],
+          purpose: 'aiik-message',
+        }),
+      });
+
+      const { content: secondCallContent } = await res.json();
+
+      if (!secondCallContent) return null;
+
+      handleNewTagsAndTraits(
+        accessToken,
+        tags,
+        traits,
+        secondCallContent.user_memory,
+        secondCallContent.aiik_memory,
+        secondCallContent.message,
+        secondCallContent.response,
+      );
+
+      try {
+        return {
+          message: secondCallContent.message,
+          response: secondCallContent.response,
+          message_summary: secondCallContent.message_summary,
+          response_summary: secondCallContent.response_summary,
+          user_memory: secondCallContent.user_memory ?? [],
+          aiik_memory: secondCallContent.aiik_memory ?? [],
+          model: secondCallContent.model,
+        };
+      } catch (err) {
+        console.error('Parse JSON error', err, { content });
+        return null;
+      }
+    }
+
     try {
       return {
         message: content.message,
@@ -99,7 +188,7 @@ export async function fetchAiikResponse(
         model: content.model,
       };
     } catch (err) {
-      console.log('Parse JSON error', err, { content });
+      console.error('Parse JSON error', err, { content });
       return null;
     }
   } catch (err) {

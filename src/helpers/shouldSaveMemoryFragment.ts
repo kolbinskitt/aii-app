@@ -1,8 +1,7 @@
 import { MemoryFragment } from '@/types';
 import { supabase } from '@/lib/supabase';
 import { generateEmbedding } from './generateEmbedding';
-
-const MATCH_THRESHOLD = 0.985; // bardzo wysokie
+import { SHOUL_SAVE_MEMORY_FRAGMENT_MATCH_THRESHOLD } from '@/consts';
 
 export async function shouldSaveMemoryFragment(
   accessToken: string,
@@ -14,7 +13,7 @@ export async function shouldSaveMemoryFragment(
   const embedding = await generateEmbedding(accessToken, fragment.content);
   const { data: matches } = await supabase.rpc('match_fractal_memory', {
     query_embedding: embedding,
-    match_threshold: MATCH_THRESHOLD,
+    match_threshold: SHOUL_SAVE_MEMORY_FRAGMENT_MATCH_THRESHOLD,
     match_count: 1,
     user_id: userId,
     aiik_id: aiikId,

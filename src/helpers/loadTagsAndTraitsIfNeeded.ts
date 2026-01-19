@@ -1,10 +1,10 @@
 import { MemoryFragment } from '@/types';
 import { supabase } from '@/lib/supabase';
+import { TAGS_AND_TRAITS_CACHE_TTL_MS } from '@/consts';
 
 let cachedTags: MemoryFragment[] | null = null;
 let cachedTraits: MemoryFragment[] | null = null;
 let lastFetchedAt: number | null = null;
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minut
 
 export async function loadTagsAndTraitsIfNeeded(): Promise<{
   tags: MemoryFragment[];
@@ -15,7 +15,7 @@ export async function loadTagsAndTraitsIfNeeded(): Promise<{
     cachedTags !== null &&
     cachedTraits !== null &&
     lastFetchedAt !== null &&
-    now - lastFetchedAt < CACHE_TTL_MS
+    now - lastFetchedAt < TAGS_AND_TRAITS_CACHE_TTL_MS
   ) {
     return { tags: cachedTags, traits: cachedTraits };
   }

@@ -27,13 +27,14 @@ export default function Room() {
   const accessToken = useAccessToken();
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(true);
+  const userId = user.user?.id;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [room?.messages_with_aiik]);
 
   async function handleSend() {
-    if (!id || message.trim() === '' || !room) return;
+    if (!userId || !id || message.trim() === '' || !room) return;
 
     const userMsg = message.trim();
 
@@ -56,6 +57,7 @@ export default function Room() {
       // 3️⃣ Pobierz odpowiedź AI
       const aiikResponse = await fetchAiikResponse(
         userMsg,
+        userId,
         chosenAiik.aiiki_with_conzon,
         room.id,
         accessToken,
@@ -74,7 +76,7 @@ export default function Room() {
             aiik_memory: [],
           },
           'user',
-          user.user?.id,
+          userId,
         );
 
         // 5️⃣ Zapisz odpowiedź aiika z aiik_id
@@ -83,7 +85,7 @@ export default function Room() {
           id,
           aiikResponse,
           'aiik',
-          user.user?.id,
+          userId,
           chosenAiik.aiiki_with_conzon.id,
           chosenAiik.aiiki_with_conzon.name,
           chosenAiik.aiiki_with_conzon.avatar_url,

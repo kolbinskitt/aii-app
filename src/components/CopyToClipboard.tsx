@@ -7,6 +7,7 @@ export function CopyToClipboard({ text }: { text: string }) {
       aria-label="Copy to clipboard"
       icon={<Icon name="CopyIcon" size="sm" />}
       onClick={() => copyToClipboard(text)}
+      style={{ margin: -8 }}
     />
   );
 }

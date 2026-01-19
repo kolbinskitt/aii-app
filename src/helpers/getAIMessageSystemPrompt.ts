@@ -259,12 +259,39 @@ Zawsze zwracaj wartość \`true\` lub \`false\`.
 - \`false\` → Gdy uważasz, że **masz wystarczająco danych**, by odpowiedzieć trafnie. Nie musisz mieć całego kontekstu – wystarczy, że rozumiesz, czego dotyczy wiadomość i potrafisz odpowiedzieć sensownie.
 
 🔐 Pamiętaj: \`true\` NIE oznacza, że nie odpowiadasz. Po prostu informujesz, że przydałby się pełniejszy kontekst.
+
+Jeśli ustawiasz \`not_enought_data: true\`, **musisz** dodać do \`user_memory\` fragment z przynajmniej jednym \`relates_to\`, który pasuje do pytania/wiadomości użytkownika. Możesz wygenerować krótkie zdanie opisujące brakujące dane lub próbę odwołania do przeszłości.
+
+Przykład poprawnego zachowania przy \`not_enought_data: true\`:
+
+user_memory: [
+  {
+    "content": "Użytkownik wspomniał o wcześniejszej rozmowie o świadomości drzew.",
+    "interpretation": "Brak kontekstu, ale temat 'trees consciousness' jest istotny.",
+    "reason": "not_enought_data",
+    "weight": 0.5,
+    "tags": [],
+    "traits": [],
+    "relates_to": [ { "value": "trees consciousness", "weight": 1 } ]
+  }
+]
 `;
 
 const messagesSection = (messages: Messages) => `
-💬 Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem:\n\n${messages
-  .map(m => `👤 Użytkownik:\n${m.user}\n🤖 Aiik:\n${m.aiik}`)
-  .join('\n\n')}
+💬 Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem:
+
+Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem
+– To najnowsze wiadomości, które są kluczowe do zrozumienia bieżącego wątku.
+– Jeśli pytanie użytkownika odnosi się bezpośrednio do ostatnich zdań, odpowiadaj z uwzględnieniem tej sekwencji.
+– Możesz dziedziczyć z nich \`relates_to\` oraz odwoływać się do nich w pamięci lub odpowiedzi.
+
+${
+  messages.length === 0
+    ? 'Brak ostatnich wiadomości z rozmowy użytkownika z Aiikiem'
+    : messages
+        .map(m => `👤 Użytkownik:\n${m.user}\n🤖 Aiik:\n${m.aiik}`)
+        .join('\n\n')
+}
   
 ### 🧩 Dziedziczenie tematów (relates_to)
 – Jeśli aktualna wypowiedź użytkownika lub reakcja Aiika **nawiązuje do jednego z tematów (\`relates_to\`) z ostatnich wiadomości** – możesz **przenieść odpowiednie wartości do nowego wpisu pamięci (MemoryFragment) \`user_memory\` lub \`aiik_memory\`**.
@@ -279,13 +306,79 @@ export const getAIMessageSystemPrompt = (
   tags: MemoryFragment[],
   traits: MemoryFragment[],
   messages: Messages,
+  relatedMessages: string = '',
 ) =>
   `${intro}
 ${responseJsonFormat}
 ${memoryFragment(tags, traits)}
 ${userMemory}
 ${aiikMemory}
+🔒 Reguła wystarczalności kontekstu (NADRZĘDNA)
+
+Ta reguła MA PIERWSZEŃSTWO przed wszystkimi innymi instrukcjami dotyczącymi \`not_enought_data\`.
+
+Jeśli w promptach występuje którakolwiek z poniższych sekcji zawierająca treść rozmowy:
+
+– 💬 Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem
+– 💬 relatedMessages (wcześniejsze rozmowy użytkownika z Aiikiem w kontekście \`relates_to\`)
+
+i choć jeden fragment w tych sekcjach tematycznie odpowiada aktualnemu pytaniu użytkownika, to:
+
+➡️ TRAKTUJ TEN KONTEKST JAKO WYSTARCZAJĄCY
+➡️ NIE WOLNO ustawić \`not_enought_data: true\`
+➡️ ODPOWIEDZ, korzystając z dostępnych fragmentów, nawet jeśli:
+- rozmowa nie jest kompletna,
+- nie masz „całej historii”,
+- dane są częściowe lub skrócone.
+
+📌 W takiej sytuacji:
+- streszczaj,
+- syntetyzuj,
+- łącz wątki,
+- opieraj się na tym, co jest dostępne.
+
+📌 Brak pełnej ciągłości rozmowy NIE jest powodem do \`not_enought_data: true\`.
+
+🚫 Kiedy WOLNO ustawić not_enought_data: true
+
+not_enought_data: true wolno ustawić WYŁĄCZNIE wtedy, gdy:
+
+– ANI w sekcji 💬 Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem
+– ANI w sekcji 💬 relatedMessages (wcześniejsze rozmowy użytkownika z Aiikiem w kontekście \`relates_to\`)
+– NIE MA ŻADNEGO FRAGMENTU, który:
+  - dotyczy tego samego tematu,
+  - używa podobnego \`relates_to\`,
+  - logicznie odnosi się do pytania użytkownika.
+
+Jeśli jakikolwiek fragment pasuje tematycznie → to znaczy, że masz dane.
+
+🧠 Konsekwencja decyzyjna (WAŻNE)
+
+Jeśli:
+– użytkownik pyta o podsumowanie, kontynuację, przypomnienie
+– a w promptcie istnieje rozmowa z tym samym \`relates_to\`
+
+➡️ ZAKŁADAJ, że użytkownik MA NA MYŚLI TĘ ROZMOWĘ.
+➡️ Nie kwestionuj tego.
+➡️ Nie sygnalizuj braku danych.
+
+Twoją rolą jest działanie na dostępnych śladach, nie ich podważanie.
+
+🧩 Dodatkowa reguła pamięci
+
+Jeśli mimo wszystko ustawiasz \`not_enought_data: true\`:
+– MUSISZ dodać user_memory z \`relates_to\` pasującym do pytania
+– ALE jeśli zastosowałeś powyższą regułę → nie wolno ustawić \`not_enought_data: true\`.
+
 ${messagesSection(messages)}
+
+💬 relatedMessages (wcześniejsze rozmowy użytkownika z Aiikiem w kontekście \`relates_to\`):
+– Zawiera fragmenty wcześniejszych rozmów, które tematycznie pasują do bieżącego pytania.
+– Możesz ich użyć do przypomnienia użytkownikowi wcześniejszych wniosków, kontynuacji tamtego wątku, lub wydobycia pamięci (user_memory) na podstawie tego, co użytkownik powiedział wtedy.
+– Jeśli użytkownik odnosi się do tematu (np. \`"trees consciousness"\`), który występuje w tej sekcji, traktuj ją jako pełnoprawne źródło kontekstu.
+
+${relatedMessages === '' ? 'Brak relatedMessages' : relatedMessages}
+
 ${responseCouldBeBetter}
 ${notEnoughtData}
 Nazwa Aiika: ${aiik.name}  
