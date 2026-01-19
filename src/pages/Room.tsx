@@ -13,6 +13,7 @@ import {
   MessageArea,
 } from '@/components/ui/room/RoomComponents';
 import { fetchAiikResponse } from '@/helpers/fetchAiikResponse';
+import { Card, LoaderFullScreen } from '@/components/ui';
 // import { runMemoryTests } from '@/tests/manual/runMemoryTests';
 
 export default function Room() {
@@ -25,6 +26,7 @@ export default function Room() {
   const user = useUser();
   const accessToken = useAccessToken();
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -108,6 +110,7 @@ export default function Room() {
     // 1️⃣ Fetch initial room
     getRoomById(id).then(data => {
       setRoom(data as RoomWithMessages);
+      setLoading(false);
     });
 
     // 2️⃣ Subskrybuj wiadomości
@@ -139,8 +142,12 @@ export default function Room() {
   //   }
   // };
 
-  if (!room) {
-    return <div className="p-6">Nie znaleziono pokoju.</div>;
+  if (loading) {
+    return <LoaderFullScreen />;
+  }
+
+  if (!loading && !room) {
+    return <Card>Nie znaleziono pokoju.</Card>;
   }
 
   return (
