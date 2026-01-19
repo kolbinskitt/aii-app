@@ -85,7 +85,6 @@ export function Message({
         />
       )}
       {children}
-      {typeof children === 'string' && <CopyToClipboard text={children} />}
     </div>
   );
 }
@@ -113,7 +112,7 @@ export function MessageArea({
             role={msg.role}
             aiikAvatar={msg.aiik_avatar_url}
           >
-            {msg.text}
+            {msg.text} <CopyToClipboard text={msg.text} />
           </Message>
         ))}
       {children}
