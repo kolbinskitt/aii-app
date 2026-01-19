@@ -48,7 +48,8 @@ export function Message({
   children,
   role,
   aiikAvatar,
-}: PropsWithChildren<{ role: Role; aiikAvatar: string }>) {
+  aiikName,
+}: PropsWithChildren<{ role: Role; aiikAvatar: string; aiikName: string }>) {
   const marginH = -12;
   const borderRadius = '0.5rem';
   const width = 40;
@@ -82,6 +83,7 @@ export function Message({
           }}
         />
       )}
+      {role === 'aiik' && `${aiikName}: `}
       {children}
     </div>
   );
@@ -109,6 +111,7 @@ export function MessageArea({
             key={msg.id}
             role={msg.role}
             aiikAvatar={msg.aiik_avatar_url}
+            aiikName={msg.aiik_name}
           >
             {msg.text} <CopyToClipboard text={msg.text} />
           </Message>

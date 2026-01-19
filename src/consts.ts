@@ -4,3 +4,5 @@ export const MAX_LAST_RELATED_MESSAGES = 20;
 export const TAGS_AND_TRAITS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minut
 export const SHOUL_SAVE_MEMORY_FRAGMENT_MATCH_THRESHOLD = 0.985; // bardzo wysokie
 export const LAST_MESSAGES_FOR_SYSTEM_PROMPT = 20;
+export const AIIK_RESPONSE_SPEAK_THRESHOLD = 0.6;
+export const MAX_AIIKI_RESPONSES_PER_WAVE = 2;

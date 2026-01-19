@@ -1,4 +1,4 @@
-import { Aiik, MemoryFragment } from '@/types';
+import { Aiik, LLMResponse } from '@/types';
 import { api } from '@/lib/api';
 import { getAIMessageSystemPrompt } from './getAIMessageSystemPrompt';
 import { generateMemoryMessageForLLM } from '@/utils/generateMemoryMessageForLLM';
@@ -14,15 +14,7 @@ export async function fetchAiikResponse(
   aiik: Aiik,
   roomId: string,
   accessToken?: string,
-): Promise<{
-  message: string;
-  response: string;
-  message_summary: string;
-  response_summary: string;
-  user_memory: MemoryFragment[];
-  aiik_memory: MemoryFragment[];
-  model: string;
-} | null> {
+): Promise<LLMResponse | null> {
   if (!accessToken) {
     console.error('❌ Brak access token (fetchAiikResponse)');
     return null;
@@ -170,6 +162,8 @@ export async function fetchAiikResponse(
           user_memory: secondCallContent.user_memory ?? [],
           aiik_memory: secondCallContent.aiik_memory ?? [],
           model: secondCallContent.model,
+          not_enought_data: secondCallContent.not_enought_data,
+          internal_reaction: secondCallContent.internal_reaction,
         };
       } catch (err) {
         console.error('Parse JSON error', err, { content });
@@ -186,6 +180,8 @@ export async function fetchAiikResponse(
         user_memory: content.user_memory ?? [],
         aiik_memory: content.aiik_memory ?? [],
         model: content.model,
+        not_enought_data: content.not_enought_data,
+        internal_reaction: content.internal_reaction,
       };
     } catch (err) {
       console.error('Parse JSON error', err, { content });

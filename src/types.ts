@@ -352,3 +352,49 @@ export type UserAiikiMessage = {
     message: string;
   }[];
 };
+
+export type InternalReactionIntent =
+  | 'add'
+  | 'clarify'
+  | 'challenge'
+  | 'ask'
+  | 'hold';
+
+export interface InternalReaction {
+  shouldSpeak: boolean;
+  confidence: number; // 0.0 – 1.0
+  intent: InternalReactionIntent;
+  reason: string;
+}
+
+export interface ParsedMessage {
+  message: string;
+  response: string;
+  message_summary: string;
+  response_summary: string;
+  user_memory: MemoryFragment[];
+  aiik_memory: MemoryFragment[];
+  not_enought_data: boolean;
+  internal_reaction: InternalReaction;
+}
+
+export type LLMResponse = ParsedMessage & {
+  model: string;
+};
+
+export type SpeakCandidate = {
+  aiik: Aiik;
+  result: ParsedMessage & {
+    internal_reaction: {
+      shouldSpeak: boolean;
+      confidence: number;
+      intent: InternalReactionIntent;
+      reason: string;
+    };
+  };
+};
+
+export type AiikReaction = {
+  aiik: Aiik;
+  result: ParsedMessage | null;
+};
