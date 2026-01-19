@@ -1,6 +1,6 @@
 import { MemoryFragment } from '@/types';
-import { api } from '@/lib/api';
 import { supabase } from '@/lib/supabase';
+import { generateEmbedding } from './generateEmbedding';
 
 const MATCH_THRESHOLD = 0.985; // bardzo wysokie
 
@@ -11,22 +11,7 @@ export async function shouldSaveMemoryFragment(
   roomId?: string,
   aiikId?: string,
 ): Promise<boolean> {
-  const embeddingRes = await api('generate-embedding', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({ text: fragment.content }),
-  });
-
-  if (!embeddingRes.ok) throw new Error('Failed to generate embedding');
-
-  const { embedding } = (await embeddingRes.json()) as {
-    embedding: number[];
-  };
-  if (!Array.isArray(embedding)) throw new Error('Invalid embedding format');
-
+  const embedding = await generateEmbedding(accessToken, fragment.content);
   const { data: matches } = await supabase.rpc('match_fractal_memory', {
     query_embedding: embedding,
     match_threshold: MATCH_THRESHOLD,

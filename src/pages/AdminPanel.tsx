@@ -5,8 +5,8 @@ import { ColumnsType } from 'antd/es/table';
 import { FractalNode } from '@/types';
 import useUser from '@/hooks/useUser';
 import { supabase } from '@/lib/supabase';
-import { api } from '@/lib/api';
 import { useAccessToken } from '@/hooks/useAccessToken';
+import { generateEmbedding } from '@/helpers/generateEmbedding';
 
 export default function AdminPanel() {
   const { user } = useUser();
@@ -50,6 +50,8 @@ export default function AdminPanel() {
 
   const saveJson = async () => {
     try {
+      if (!accessToken) throw new Error('Brak accessToken');
+
       setSaving(true);
       const parsed: FractalNode[] = JSON.parse(jsonInput);
 
@@ -60,20 +62,10 @@ export default function AdminPanel() {
 
       await Promise.all(
         parsed.map(async item => {
-          const embeddingRes = await api('generate-embedding', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({ text: item.content }),
-          });
-
-          if (!embeddingRes.ok)
-            throw new Error(`Embedding failed for: ${item.content}`);
-
-          const { embedding } = await embeddingRes.json();
-
+          const embedding = await generateEmbedding(
+            accessToken,
+            item.content as string,
+          );
           const { error } = await supabase.from('fractal_node').insert({
             ...item,
             embedding,

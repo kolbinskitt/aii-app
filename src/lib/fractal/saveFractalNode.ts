@@ -5,8 +5,8 @@ import {
   FractalNode,
   FractalLink,
 } from '@/types';
-import { api } from '@/lib/api';
 import { shouldSaveMemoryFragment } from '@/helpers/shouldSaveMemoryFragment';
+import { generateEmbedding } from '@/helpers/generateEmbedding';
 
 export async function saveFractalNode({
   accessToken,
@@ -45,23 +45,7 @@ export async function saveFractalNode({
     ) {
       const text =
         typeof content === 'string' ? content : JSON.stringify(content);
-
-      const embeddingRes = await api('generate-embedding', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ text }),
-      });
-
-      if (!embeddingRes.ok) throw new Error('Failed to generate embedding');
-
-      const { embedding } = (await embeddingRes.json()) as {
-        embedding: number[];
-      };
-      if (!Array.isArray(embedding))
-        throw new Error('Invalid embedding format');
+      const embedding = await generateEmbedding(accessToken, text);
 
       // 2. Zapisz fractal_node
       const { data, error } = await supabase
@@ -196,6 +180,24 @@ export async function saveFractalNode({
             metadata: { context: 'relatizon_of_aiik_message' },
           } as Omit<FractalLink, 'id' | 'created_at'>);
         }
+      }
+
+      // 9. fractal_topic: zapisuj wszystkie relates_to jako tematy
+      if (relates_to?.length) {
+        await Promise.all(
+          relates_to.map(async topic => {
+            const text = topic.value;
+            const embedding = await generateEmbedding(accessToken, text);
+            await supabase.from('fractal_topic').insert({
+              fractal_id: newNodeId,
+              type,
+              value: topic.value,
+              weight: topic.weight,
+              user_id,
+              embedding,
+            });
+          }),
+        );
       }
 
       return data ?? null;

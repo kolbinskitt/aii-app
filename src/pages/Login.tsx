@@ -70,7 +70,6 @@ export default function Login() {
           </p>
           <Button
             onClick={loginWithGoogle}
-            className="bg-black text-white hover:bg-gray-800 px-6 py-3 rounded-full transition flex items-center justify-center space-x-3 mx-auto font-sans"
             kind="primary"
             icon={
               <img
