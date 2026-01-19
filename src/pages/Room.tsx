@@ -1,28 +1,20 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import { addMessageToRoom } from '@/helpers/addMessageToRoom';
 import { getRoomById } from '@/helpers/getRoomById';
-import type { RoomWithMessages, Aiik } from '@/types';
+import type { RoomWithMessages } from '@/types';
 import useUser from '@/hooks/useUser';
 import { useAccessToken } from '@/hooks/useAccessToken';
 import { supabase } from '@/lib/supabase';
-import { useTranslation } from 'react-i18next';
-import {
-  BottomTile,
-  Message,
-  MessageArea,
-} from '@/components/ui/room/RoomComponents';
-import { fetchAiikResponse } from '@/helpers/fetchAiikResponse';
+import { BottomTile, MessageArea } from '@/components/ui/room/RoomComponents';
 import { Card, LoaderFullScreen } from '@/components/ui';
-// import { runMemoryTests } from '@/tests/manual/runMemoryTests';
+import { handleAiikiResponses } from '@/helpers/handleAiikiResponses';
+import { TypingDots } from '@/components/ui';
 
 export default function Room() {
-  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const [room, setRoom] = useState<RoomWithMessages | null>(null);
   const [message, setMessage] = useState('');
-  const [aiikThinking, setAiikThinking] = useState(false);
-  const [thinkingAiiki, setThinkingAiiki] = useState<Record<string, Aiik>>({});
+  const [aiikiThinking, setAiikiThinking] = useState(false);
   const user = useUser();
   const accessToken = useAccessToken();
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -32,95 +24,6 @@ export default function Room() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [room?.messages_with_aiik]);
-
-  async function handleSend() {
-    if (!userId || !id || message.trim() === '' || !room) return;
-
-    const userMsg = message.trim();
-
-    // 2️⃣ Odśwież pokój (żeby UI był responsywny)
-    const roomById = await getRoomById(id);
-    const updatedRoom = roomById as RoomWithMessages;
-    setRoom({
-      ...updatedRoom,
-      messages_with_aiik: [
-        ...updatedRoom.messages_with_aiik,
-        {
-          id: '',
-          room_id: id,
-          text: userMsg,
-          role: 'user',
-          created_at: Date.now(),
-          aiik_avatar_url: '',
-          aiik_id: '',
-          aiik_name: '',
-        },
-      ],
-    });
-    setMessage('');
-    setAiikThinking(true);
-
-    if (room.room_aiiki && room.room_aiiki.length > 0) {
-      // 4️⃣ Wybierz aiika (na razie losowo)
-      const chosenAiik =
-        room.room_aiiki[Math.floor(Math.random() * room.room_aiiki.length)];
-
-      setThinkingAiiki(prev => ({
-        ...prev,
-        [chosenAiik.aiiki_with_conzon.id]: chosenAiik.aiiki_with_conzon,
-      }));
-
-      // 3️⃣ Pobierz odpowiedź AI
-      const aiikResponse = await fetchAiikResponse(
-        userMsg,
-        userId,
-        chosenAiik.aiiki_with_conzon,
-        room.id,
-        accessToken,
-      );
-
-      if (aiikResponse) {
-        // 1️⃣ Zapisz wiadomość usera
-        await addMessageToRoom(
-          accessToken!,
-          id,
-          {
-            response: userMsg,
-            message_summary: aiikResponse.message_summary,
-            response_summary: aiikResponse.response_summary,
-            user_memory: aiikResponse.user_memory,
-            aiik_memory: [],
-          },
-          'user',
-          userId,
-        );
-
-        // 5️⃣ Zapisz odpowiedź aiika z aiik_id
-        await addMessageToRoom(
-          accessToken!,
-          id,
-          aiikResponse,
-          'aiik',
-          userId,
-          chosenAiik.aiiki_with_conzon.id,
-          chosenAiik.aiiki_with_conzon.name,
-          chosenAiik.aiiki_with_conzon.avatar_url,
-        );
-
-        setThinkingAiiki(prev => {
-          const updated = { ...prev };
-          delete updated[chosenAiik.aiiki_with_conzon.id];
-          return updated;
-        });
-
-        // 6️⃣ Odśwież pokój po odpowiedzi aiika
-        const refreshedRoom = await getRoomById(id);
-        setRoom(refreshedRoom as RoomWithMessages);
-      }
-    }
-
-    setAiikThinking(false);
-  }
 
   useEffect(() => {
     if (!id) return;
@@ -154,11 +57,45 @@ export default function Room() {
     };
   }, [id]);
 
-  // const handleTest = async () => {
-  //   if (accessToken) {
-  //     await runMemoryTests(accessToken);
-  //   }
-  // };
+  async function handleSend() {
+    if (!accessToken) {
+      console.error('Brak accessToken');
+      return;
+    }
+
+    if (!userId || !id || message.trim() === '' || !room) return;
+
+    setAiikiThinking(true);
+    const userMsg = message.trim();
+    setMessage('');
+    setRoom({
+      ...room,
+      messages_with_aiik: [
+        ...room.messages_with_aiik,
+        {
+          id: '',
+          room_id: id,
+          text: userMsg,
+          role: 'user',
+          created_at: Date.now(),
+          aiik_avatar_url: '',
+          aiik_id: '',
+          aiik_name: '',
+        },
+      ],
+    });
+
+    if (room.room_aiiki && room.room_aiiki.length > 0) {
+      await handleAiikiResponses(
+        accessToken,
+        room.room_aiiki.map(({ aiiki_with_conzon }) => aiiki_with_conzon),
+        userMsg,
+        userId,
+        id,
+      );
+      setAiikiThinking(false);
+    }
+  }
 
   if (loading) {
     return <LoaderFullScreen />;
@@ -170,16 +107,8 @@ export default function Room() {
 
   return (
     <div className="relative w-full">
-      {/* <button onClick={handleTest} style={{ backgroundColor: 'white' }}>
-        TEST
-      </button> */}
       <MessageArea room={room}>
-        {aiikThinking &&
-          Object.values(thinkingAiiki).map(aiik => (
-            <Message key={aiik.id} aiikAvatar={aiik.avatar_url} role="aiik">
-              {aiik.name} {t('chat.writing')}...
-            </Message>
-          ))}
+        {aiikiThinking && <TypingDots />}
         <div ref={bottomRef} />
       </MessageArea>
       <BottomTile

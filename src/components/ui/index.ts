@@ -20,6 +20,7 @@ import Icon from './Icon';
 import { Card, CardContent } from './Card';
 import { Table } from './Table';
 import { Tabs } from './Tabs';
+import { TypingDots } from './TypingDots';
 
 export {
   Button,
@@ -45,4 +46,5 @@ export {
   CardContent,
   Table,
   Tabs,
+  TypingDots,
 };
