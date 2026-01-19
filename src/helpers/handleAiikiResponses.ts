@@ -12,7 +12,7 @@ export async function handleAiikiResponses(
   // 4️⃣ Wybierz aiika (na razie losowo)
   const chosenAiik = aiiki[Math.floor(Math.random() * aiiki.length)];
 
-  // 3️⃣ Pobierz odpowiedź AI
+  // 3️⃣ Pobierz odpowiedź Aiika
   const aiikResponse = await fetchAiikResponse(
     userMsg,
     userId,
@@ -37,7 +37,7 @@ export async function handleAiikiResponses(
       userId,
     );
 
-    // 5️⃣ Zapisz odpowiedź aiika z aiik_id
+    // 5️⃣ Zapisz odpowiedź Aiika
     await addMessageToRoom(
       accessToken!,
       roomId,
