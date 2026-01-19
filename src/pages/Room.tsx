@@ -39,8 +39,24 @@ export default function Room() {
     const userMsg = message.trim();
 
     // 2️⃣ Odśwież pokój (żeby UI był responsywny)
-    const updatedRoom = await getRoomById(id);
-    setRoom(updatedRoom as RoomWithMessages);
+    const roomById = await getRoomById(id);
+    const updatedRoom = roomById as RoomWithMessages;
+    setRoom({
+      ...updatedRoom,
+      messages_with_aiik: [
+        ...updatedRoom.messages_with_aiik,
+        {
+          id: '',
+          room_id: id,
+          text: userMsg,
+          role: 'user',
+          created_at: Date.now(),
+          aiik_avatar_url: '',
+          aiik_id: '',
+          aiik_name: '',
+        },
+      ],
+    });
     setMessage('');
     setAiikThinking(true);
 
@@ -91,15 +107,15 @@ export default function Room() {
           chosenAiik.aiiki_with_conzon.avatar_url,
         );
 
-        // 6️⃣ Odśwież pokój po odpowiedzi aiika
-        const refreshedRoom = await getRoomById(id);
-        setRoom(refreshedRoom as RoomWithMessages);
-
         setThinkingAiiki(prev => {
           const updated = { ...prev };
           delete updated[chosenAiik.aiiki_with_conzon.id];
           return updated;
         });
+
+        // 6️⃣ Odśwież pokój po odpowiedzi aiika
+        const refreshedRoom = await getRoomById(id);
+        setRoom(refreshedRoom as RoomWithMessages);
       }
     }
 
@@ -164,6 +180,7 @@ export default function Room() {
               {aiik.name} {t('chat.writing')}...
             </Message>
           ))}
+        <div ref={bottomRef} />
       </MessageArea>
       <BottomTile
         value={message}
