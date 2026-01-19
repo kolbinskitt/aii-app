@@ -2,8 +2,8 @@ import { Aiik, SpeakCandidate, AiikReaction } from '@/types';
 import { fetchAiikResponse } from '@/helpers/fetchAiikResponse';
 import { addMessageToRoom } from '@/helpers/addMessageToRoom';
 import {
-  AIIK_RESPONSE_SPEAK_THRESHOLD,
   MAX_AIIKI_RESPONSES_PER_WAVE,
+  AIIK_RESPONSE_INTENT_THRESHOLD,
 } from '@/consts';
 
 function isSpeakCandidate(r: AiikReaction): r is SpeakCandidate {
@@ -13,7 +13,7 @@ function isSpeakCandidate(r: AiikReaction): r is SpeakCandidate {
     !!ir &&
     ir.shouldSpeak === true &&
     typeof ir.confidence === 'number' &&
-    ir.confidence >= AIIK_RESPONSE_SPEAK_THRESHOLD
+    ir.confidence >= AIIK_RESPONSE_INTENT_THRESHOLD[ir.intent]
   );
 }
 
