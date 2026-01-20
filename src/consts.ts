@@ -10,5 +10,5 @@ export const AIIK_RESPONSE_INTENT_THRESHOLD: Record<string, number> = {
   clarify: 0.65,
   challenge: 0.75,
   ask: 0.7,
-  hold: 1.0, // nigdy nie przechodzi
+  hold: 1.0,
 };
