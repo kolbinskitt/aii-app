@@ -21,8 +21,6 @@ export default function Room() {
   const [loading, setLoading] = useState(true);
   const userId = user.user?.id;
 
-  console.log({ room });
-
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [room?.messages_with_aiik]);

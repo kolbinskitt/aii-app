@@ -354,7 +354,7 @@ Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem
 
 ${
   messages.length === 0
-    ? 'Brak ostatnich wiadomości z rozmowy użytkownika z Aiikiem'
+    ? 'Brak ostatnich wiadomości z rozmowy użytkownika z Aiikiem lub Aiikami'
     : messages
         .map(
           m =>
@@ -453,5 +453,5 @@ ${responseCouldBeBetter}
 ${notEnoughtData}
 ${internalReaction}  
 
-Twoja osobowość jako Aiika: ${JSON.stringify(aiik.conzon)}
+Twoja osobowość jako Aiika: ${JSON.stringify(aiik.conzon, null, 2)}
 `.trim();
