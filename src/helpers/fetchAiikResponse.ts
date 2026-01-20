@@ -54,7 +54,7 @@ export async function fetchAiikResponse(
     };
     const assistantMessage = generateMemoryMessageForLLM(memory);
 
-    const res = await api('gpt-proxy', {
+    const res = await api('llm-message-response', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ export async function fetchAiikResponse(
         content: prompt,
       };
       const assistantMessage = generateMemoryMessageForLLM(memory);
-      const res = await api('gpt-proxy', {
+      const res = await api('llm-message-response', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
