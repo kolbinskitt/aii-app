@@ -134,21 +134,12 @@ export function BottomTile({
 }) {
   const { t } = useTranslation();
   return (
-    <Tile
-      className="fixed z-100"
-      styles={{
-        bottom: 14,
-        right: 8,
-        left: 328,
-      }}
-    >
+    <Tile className="sticky bottom-0 z-100">
       <div className="flex gap-2">
         <Input
           type="text"
           value={value}
           onChange={onChange}
-          // className="flex-1 px-4 py-2 border border-neutral-300 rounded-md bg-white
-          // focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm font-system"
           placeholder={t('chat.write_something')}
           onKeyDown={onKeyDown}
         />
