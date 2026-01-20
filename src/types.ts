@@ -303,6 +303,7 @@ export type FractalNode = {
   room_id?: string | null;
   embedding: number[];
   created_at: string; // Znacznik czasu utworzenia rekordu (ISO timestamp)
+  said: boolean;
 };
 
 export type FractalLinkRelationType =
@@ -349,8 +350,10 @@ export type MemoryItem = MemoryFragment & {
 export type UserAiikiMessage = {
   user: string;
   aiiki: {
+    id: string;
     name: string;
     message: string;
+    said: boolean;
   }[];
 };
 

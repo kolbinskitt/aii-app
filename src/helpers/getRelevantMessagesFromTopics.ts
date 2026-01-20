@@ -12,6 +12,7 @@ export async function getRelevantMessagesFromTopics(
   accessToken: string,
   userId: string,
   relatesTo: WeightedValue[],
+  aiikId: string,
 ): Promise<string> {
   if (relatesTo.length === 0) return '';
 
@@ -82,7 +83,7 @@ export async function getRelevantMessagesFromTopics(
       return '';
     }
 
-    return transformRelatedMessages(messages, relatesTo, aiikNameMap);
+    return transformRelatedMessages(messages, relatesTo, aiikNameMap, aiikId);
   } catch (err) {
     console.error('getRelevantMessagesFromTopics error:', err);
     return '';

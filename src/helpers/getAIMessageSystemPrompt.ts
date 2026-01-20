@@ -344,7 +344,7 @@ Mówienie jest decyzją.
 Cisza jest pełnoprawnym stanem.
 `;
 
-const messagesSection = (messages: UserAiikiMessage[]) => `
+const messagesSection = (messages: UserAiikiMessage[], aiikId: string) => `
 💬 Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem:
 
 Oto kilka ostatnich wiadomości z rozmowy użytkownika z Aiikiem
@@ -358,7 +358,7 @@ ${
     : messages
         .map(
           m =>
-            `👤 Użytkownik:\n${m.user}\n${m.aiiki.map(({ name, message }) => `🤖 Aiik ${name}:\n${message}`)}`,
+            `👤 Użytkownik:\n${m.user}\n${m.aiiki.filter(({ id, said }) => said || id === aiikId).map(({ name, message, said }) => `🤖 Aiik ${name} ${said ? 'powiedział' : 'pomyślał, ale nie powiedział'}:\n${message}`)}`,
         )
         .join('\n\n')
 }
@@ -440,7 +440,7 @@ Jeśli mimo wszystko ustawiasz \`not_enought_data: true\`:
 – MUSISZ dodać user_memory z \`relates_to\` pasującym do pytania
 – ALE jeśli zastosowałeś powyższą regułę → nie wolno ustawić \`not_enought_data: true\`.
 
-${messagesSection(messages)}
+${messagesSection(messages, aiik.id)}
 
 💬 relatedMessages (wcześniejsze rozmowy użytkownika z Aiikiem w kontekście \`relates_to\`):
 – Zawiera fragmenty wcześniejszych rozmów, które tematycznie pasują do bieżącego pytania.

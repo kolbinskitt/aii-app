@@ -5,6 +5,7 @@ export function transformRelatedMessages(
   messages: FractalNode[],
   relatesTo: WeightedValue[],
   aiikNameMap: Map<string, string>,
+  aiikId: string,
 ) {
   if (messages.length === 0) return '';
 
@@ -19,6 +20,7 @@ export function transformRelatedMessages(
       const transformedUserAiikMessages = transformUserAiikMessages(
         relatedMsgs,
         aiikNameMap,
+        aiikId,
       );
       return transformedUserAiikMessages === ''
         ? ''

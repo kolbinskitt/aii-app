@@ -92,6 +92,7 @@ export async function fetchAiikResponse(
           ...content.user_memory,
           ...content.aiik_memory,
         ]),
+        aiik.id,
       );
       const relevantMemory = await api('get-relevant-memory', {
         method: 'POST',
