@@ -367,7 +367,7 @@ export interface InternalReaction {
   reason: string;
 }
 
-export interface ParsedMessage {
+export interface LLMMessageResponseParsedMessage {
   message: string;
   response: string;
   message_summary: string;
@@ -378,13 +378,13 @@ export interface ParsedMessage {
   internal_reaction: InternalReaction;
 }
 
-export type LLMResponse = ParsedMessage & {
+export type LLMResponse = LLMMessageResponseParsedMessage & {
   model: string;
 };
 
 export type SpeakCandidate = {
   aiik: Aiik;
-  result: ParsedMessage & {
+  result: LLMMessageResponseParsedMessage & {
     internal_reaction: {
       shouldSpeak: boolean;
       confidence: number;
@@ -396,5 +396,5 @@ export type SpeakCandidate = {
 
 export type AiikReaction = {
   aiik: Aiik;
-  result: ParsedMessage | null;
+  result: LLMMessageResponseParsedMessage | null;
 };

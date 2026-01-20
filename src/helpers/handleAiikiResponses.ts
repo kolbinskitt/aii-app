@@ -5,6 +5,7 @@ import {
   MAX_AIIKI_RESPONSES_PER_WAVE,
   AIIK_RESPONSE_INTENT_THRESHOLD,
 } from '@/consts';
+import { fetchResponsesRedundancyCheck } from './fetchResponsesRedundancyCheck';
 
 function isSpeakCandidate(r: AiikReaction): r is SpeakCandidate {
   const ir = r.result?.internal_reaction;
@@ -24,7 +25,7 @@ export async function handleAiikiResponses(
   userId: string,
   roomId: string,
 ) {
-  // 1️⃣ ZAPISZ WIADOMOŚĆ USERA (zawsze)
+  // ZAPISZ WIADOMOŚĆ USERA (zawsze)
   await addMessageToRoom(
     accessToken,
     roomId,
@@ -39,7 +40,7 @@ export async function handleAiikiResponses(
     userId,
   );
 
-  // 2️⃣ WSZYSCY AIKI REAGUJĄ WEWNĘTRZNIE
+  // WSZYSCY AIKI REAGUJĄ WEWNĘTRZNIE
   const reactions: AiikReaction[] = await Promise.all(
     aiiki.map(async aiik => {
       const result = await fetchAiikResponse(
@@ -54,7 +55,7 @@ export async function handleAiikiResponses(
     }),
   );
 
-  // 3️⃣ WYBIERZ AIKI, KTÓRE POWINNY MÓWIĆ
+  // WYBIERZ AIKI, KTÓRE POWINNY MÓWIĆ
   const candidates = reactions
     .filter(isSpeakCandidate)
     .sort(
@@ -64,7 +65,17 @@ export async function handleAiikiResponses(
     )
     .slice(0, MAX_AIIKI_RESPONSES_PER_WAVE);
 
-  // 4️⃣ PUBLIKACJA ODPOWIEDZI (max 1 na aiika na falę)
+  // WYBIERZ TYLKO NIEREDUNDANTNE ODPOWIEDZI AIIKÓW
+
+  const uniqueCandidates = await fetchResponsesRedundancyCheck(
+    userMsg,
+    candidates,
+    accessToken,
+  );
+
+  console.log({ uniqueCandidates });
+
+  // PUBLIKACJA ODPOWIEDZI (max 1 na aiika na falę)
   for (const { aiik, result } of candidates) {
     await addMessageToRoom(
       accessToken,

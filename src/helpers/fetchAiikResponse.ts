@@ -166,7 +166,7 @@ export async function fetchAiikResponse(
           internal_reaction: secondCallContent.internal_reaction,
         };
       } catch (err) {
-        console.error('Parse JSON error', err, { content });
+        console.error('Parse JSON error', err, { content: secondCallContent });
         return null;
       }
     }
