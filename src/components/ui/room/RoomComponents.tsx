@@ -12,7 +12,7 @@ import { CopyToClipboard } from '@/components/CopyToClipboard';
 function TopTile({ room }: { room: RoomWithMessages | null }) {
   const { t } = useTranslation();
   return !room ? null : (
-    <Tile className="space-y-1 p-2">
+    <Tile className="space-y-1 p-2 sticky top-0 z-10">
       <h2
         className="text-2xl font-echo text-gray-800 leading-snug font-semibold truncate"
         style={{
