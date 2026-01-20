@@ -1,4 +1,4 @@
-import { Aiik, LLMResponse } from '@/types';
+import { Aiik, LLMMessageResponse } from '@/types';
 import { api } from '@/lib/api';
 import { getAIMessageSystemPrompt } from './getAIMessageSystemPrompt';
 import { generateMemoryMessageForLLM } from '@/utils/generateMemoryMessageForLLM';
@@ -14,7 +14,7 @@ export async function fetchAiikResponse(
   aiik: Aiik,
   roomId: string,
   accessToken?: string,
-): Promise<LLMResponse | null> {
+): Promise<LLMMessageResponse | null> {
   if (!accessToken) {
     console.error('❌ Brak access token (fetchAiikResponse)');
     return null;

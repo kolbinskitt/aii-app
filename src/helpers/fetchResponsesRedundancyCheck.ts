@@ -1,4 +1,4 @@
-import { LLMResponse, SpeakCandidate } from '@/types';
+import { LLMResponsesRedundancyCheck, SpeakCandidate } from '@/types';
 import { api } from '@/lib/api';
 import { getAiMessagesRedundancyCheckSystemPrompt } from './getAiMessagesRedundancyCheckSystemPrompt';
 
@@ -6,7 +6,7 @@ export async function fetchResponsesRedundancyCheck(
   userMsg: string,
   candidates: SpeakCandidate[],
   accessToken?: string,
-): Promise<LLMResponse | null> {
+): Promise<LLMResponsesRedundancyCheck | null> {
   if (!accessToken) {
     console.error('❌ Brak access token (fetchAiikResponse)');
     return null;

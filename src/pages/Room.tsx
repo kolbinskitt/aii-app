@@ -21,6 +21,8 @@ export default function Room() {
   const [loading, setLoading] = useState(true);
   const userId = user.user?.id;
 
+  console.log({ room });
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [room?.messages_with_aiik]);
@@ -78,7 +80,7 @@ export default function Room() {
           text: userMsg,
           role: 'user',
           created_at: Date.now(),
-          aiik_avatar_url: '',
+          avatar_url: '',
           aiik_id: '',
           aiik_name: '',
         },

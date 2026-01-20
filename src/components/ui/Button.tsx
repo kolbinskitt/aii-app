@@ -38,7 +38,7 @@ export default function Button({
       'bg-green-600 text-white hover:bg-green-500 border border-green-600',
     danger: 'bg-red-600 text-white hover:bg-red-700 border border-red-600',
     primary:
-      'bg-blue-600 hover:bg-blue-700 text-white shadow hover:brightness-110 border border-blue-600',
+      'bg-blue-600 hover:bg-blue-800 text-white shadow hover:brightness-110 border border-blue-600',
     ghost:
       'bg-transparent text-current border border-transparent hover:bg-zinc-100 hover:text-black',
   };

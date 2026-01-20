@@ -18,7 +18,7 @@ export type Message = {
   created_at: number;
   aiik_id: string;
   aiik_name: string;
-  aiik_avatar_url: string;
+  avatar_url: string;
 };
 
 export type Aiik = {
@@ -276,6 +276,7 @@ export type SaveFractalNodeArgs = {
   accessToken: string;
   type: FractalNodeType;
   content: string | RelatiZON;
+  said: boolean;
   interpretation?: string;
   reason?: string;
   weight?: number;
@@ -378,9 +379,27 @@ export interface LLMMessageResponseParsedMessage {
   internal_reaction: InternalReaction;
 }
 
-export type LLMResponse = LLMMessageResponseParsedMessage & {
+export type LLMMessageResponse = LLMMessageResponseParsedMessage & {
   model: string;
 };
+
+export interface LLMResponsesRedundancyCheckParsedMessage {
+  keep: string[]; // aiik_id[]
+  drop: string[]; // aiik_id[]
+  reasoning: {
+    aiik_id: string;
+    reason: string;
+  }[];
+  response_could_be_better: {
+    value: boolean;
+    reason: string;
+  };
+}
+
+export type LLMResponsesRedundancyCheck =
+  LLMResponsesRedundancyCheckParsedMessage & {
+    model: string;
+  };
 
 export type SpeakCandidate = {
   aiik: Aiik;

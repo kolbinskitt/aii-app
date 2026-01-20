@@ -9,7 +9,7 @@ export async function getRoomById(
     .select(
       `
       *,
-      messages_with_aiik(*),
+      messages_with_aiik:messages_with_aiik(said, *),
       room_aiiki(
         *,
         aiiki_with_conzon(*),
@@ -18,6 +18,7 @@ export async function getRoomById(
     `,
     )
     .eq('id', id)
+    .eq('messages_with_aiik.said', true)
     .maybeSingle();
 
   if (error) throw error;

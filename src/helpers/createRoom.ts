@@ -97,6 +97,7 @@ export async function createRoom(
       type: 'relatizon',
       room_id: roomData.id,
       user_id: userId,
+      said: true,
     });
   }
 

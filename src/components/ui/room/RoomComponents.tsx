@@ -110,7 +110,7 @@ export function MessageArea({
           <Message
             key={msg.id}
             role={msg.role}
-            aiikAvatar={msg.aiik_avatar_url}
+            aiikAvatar={msg.avatar_url}
             aiikName={msg.aiik_name}
           >
             {msg.text} <CopyToClipboard text={msg.text} />

@@ -25,10 +25,11 @@ export async function handleAiikiResponses(
   userId: string,
   roomId: string,
 ) {
-  // ZAPISZ WIADOMOŚĆ USERA (zawsze)
+  // 1️⃣ ZAPISZ WIADOMOŚĆ USERA
   await addMessageToRoom(
     accessToken,
     roomId,
+    true,
     {
       response: userMsg,
       message_summary: userMsg,
@@ -40,7 +41,7 @@ export async function handleAiikiResponses(
     userId,
   );
 
-  // WSZYSCY AIKI REAGUJĄ WEWNĘTRZNIE
+  // 2️⃣ WSZYSCY AIIKI REAGUJĄ WEWNĘTRZNIE
   const reactions: AiikReaction[] = await Promise.all(
     aiiki.map(async aiik => {
       const result = await fetchAiikResponse(
@@ -55,7 +56,7 @@ export async function handleAiikiResponses(
     }),
   );
 
-  // WYBIERZ AIKI, KTÓRE POWINNY MÓWIĆ
+  // 3️⃣ WYBIERZ AIIKI, KTÓRE POWINNY MÓWIĆ
   const candidates = reactions
     .filter(isSpeakCandidate)
     .sort(
@@ -65,29 +66,44 @@ export async function handleAiikiResponses(
     )
     .slice(0, MAX_AIIKI_RESPONSES_PER_WAVE);
 
-  // WYBIERZ TYLKO NIEREDUNDANTNE ODPOWIEDZI AIIKÓW
-
+  // 4️⃣ SPRAWDŹ REDUNDANCJĘ
   const uniqueCandidates = await fetchResponsesRedundancyCheck(
     userMsg,
     candidates,
     accessToken,
   );
 
-  console.log({ uniqueCandidates });
+  if (uniqueCandidates) {
+    // 5️⃣ PUBLIKUJ WSZYSTKIE, ALE SAID TYLKO POD WARUNKIEM
+    for (const { aiik, result } of candidates) {
+      const said = uniqueCandidates.keep.includes(aiik.id);
 
-  // PUBLIKACJA ODPOWIEDZI (max 1 na aiika na falę)
-  for (const { aiik, result } of candidates) {
-    await addMessageToRoom(
-      accessToken,
-      roomId,
-      result,
-      'aiik',
-      userId,
-      aiik.id,
-      aiik.name,
-      aiik.avatar_url,
-    );
+      await addMessageToRoom(
+        accessToken,
+        roomId,
+        said,
+        result,
+        'aiik',
+        userId,
+        aiik.id,
+        aiik.name,
+        aiik.avatar_url,
+      );
+    }
+  } else {
+    // 5️⃣ PUBLIKUJ WSZYSTKIE JAKO SAID
+    for (const { aiik, result } of candidates) {
+      await addMessageToRoom(
+        accessToken,
+        roomId,
+        true,
+        result,
+        'aiik',
+        userId,
+        aiik.id,
+        aiik.name,
+        aiik.avatar_url,
+      );
+    }
   }
-
-  // 5️⃣ CISZA = poprawny stan końcowy
 }

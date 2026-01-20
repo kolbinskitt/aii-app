@@ -12,6 +12,7 @@ export async function saveFractalNode({
   accessToken,
   type,
   content,
+  said,
   interpretation,
   reason,
   weight,
@@ -53,6 +54,7 @@ export async function saveFractalNode({
         .insert({
           type,
           content,
+          said,
           interpretation,
           reason,
           weight,

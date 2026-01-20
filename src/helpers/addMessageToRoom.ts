@@ -7,6 +7,7 @@ import { getRelatesToFromMemory } from './getRelatesToFromMemory';
 export async function addMessageToRoom(
   accessToken: string,
   roomId: string,
+  said: boolean,
   message: {
     response: string;
     message_summary: string;
@@ -29,6 +30,7 @@ export async function addMessageToRoom(
       aiik_id: aiikId ?? null,
       user_id: userId ?? null,
       avatar_url: aiikAvatarUrl,
+      said,
     },
   ]);
 
@@ -46,6 +48,7 @@ export async function addMessageToRoom(
     accessToken,
     type: 'message',
     content: message.response,
+    said,
     user_id: userId,
     aiik_id: aiikId,
     room_id: roomId,
@@ -79,6 +82,7 @@ export async function addMessageToRoom(
       accessToken,
       type: fragment.type,
       content: fragment.content,
+      said: true,
       interpretation: fragment.interpretation,
       reason: fragment.reason,
       weight: fragment.weight,
@@ -170,6 +174,7 @@ export async function addMessageToRoom(
     await saveFractalNode({
       accessToken,
       content: baseRelatizon,
+      said: true,
       type: 'relatizon',
       aiik_id: role === 'aiik' ? aiik.id : undefined,
       user_id: userId,
