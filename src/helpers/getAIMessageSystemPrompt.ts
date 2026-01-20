@@ -59,7 +59,7 @@ ${tags
   .join('')}
 📌 **Nowy tag** możesz zwrócić **tylko jeśli żaden z powyższych nie pasuje**.  
 W takim przypadku dodaj go jako **jedno precyzyjne, ale generyczne słowo** (np. \`curiosity\`, \`grief\`, \`consciousness\`, \`belonging\`, \`doubt\`) opisujące główny temat wiadomości użytkownika.  
-⛔ Unikaj słów zbyt specyficznych lub kontekstowych (np. \`trees consciousness\`, \`ai anxiety\`, \`war memories\`).  
+⛔ Nie używaj słów zbyt specyficznych lub kontekstowych, **to musi być jedno generyczne słowo** (np. \`trees consciousness\` - powinno być \`consciousness\`, \`ai anxiety\` - powinno być \`anxiety\`, \`war memories\` - powinno być \`memories\`).
 ✅ Zamiast tego wybierz uogólniony koncept, który **mógłby się powtarzać w wielu różnych kontekstach**.
 \`\`\`json
 [{ "value": "nowy_tag", "weight": 0.8 }]

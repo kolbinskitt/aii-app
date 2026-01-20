@@ -13,17 +13,9 @@ export async function fetchResponsesRedundancyCheck(
   }
 
   try {
-    const systemMessagePrompt = getAiMessagesRedundancyCheckSystemPrompt(
-      userMsg,
-      candidates,
-    );
-    const systemMessage = {
-      role: 'system' as const,
-      content: systemMessagePrompt,
-    };
-    const userMessage = {
+    const userPrompt = {
       role: 'user' as const,
-      content: prompt,
+      content: getAiMessagesRedundancyCheckSystemPrompt(userMsg, candidates),
     };
 
     const res = await api('llm-responses-redundancy-check', {
@@ -33,7 +25,7 @@ export async function fetchResponsesRedundancyCheck(
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
-        messages: [systemMessage, userMessage],
+        messages: [userPrompt],
       }),
     });
 
@@ -42,14 +34,6 @@ export async function fetchResponsesRedundancyCheck(
     if (!content) return null;
 
     if (content.not_enought_data) {
-      const systemMessage = {
-        role: 'system' as const,
-        content: systemMessagePrompt,
-      };
-      const userMessage = {
-        role: 'user' as const,
-        content: prompt,
-      };
       const res = await api('llm-responses-redundancy-check', {
         method: 'POST',
         headers: {
@@ -57,7 +41,7 @@ export async function fetchResponsesRedundancyCheck(
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          messages: [systemMessage, userMessage],
+          messages: [userPrompt],
         }),
       });
 
