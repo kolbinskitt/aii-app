@@ -9,6 +9,7 @@ import { fetchResponsesRedundancyCheck } from './fetchResponsesRedundancyCheck';
 
 function isSpeakCandidate(r: AiikReaction): r is SpeakCandidate {
   const ir = r.result?.internal_reaction;
+
   return (
     !!r.result &&
     !!ir &&
@@ -25,7 +26,7 @@ export async function handleAiikiResponses(
   userId: string,
   roomId: string,
 ) {
-  // 1️⃣ ZAPISZ WIADOMOŚĆ USERA
+  // 1️⃣ ZAPISZ WIADOMOŚĆ USERA (zawsze said: true)
   await addMessageToRoom(
     accessToken,
     roomId,
@@ -41,7 +42,7 @@ export async function handleAiikiResponses(
     userId,
   );
 
-  // 2️⃣ WSZYSCY AIIKI REAGUJĄ WEWNĘTRZNIE
+  // 2️⃣ WSZYSTKIE AIIKI REAGUJĄ WEWNĘTRZNIE
   const reactions: AiikReaction[] = await Promise.all(
     aiiki.map(async aiik => {
       const result = await fetchAiikResponse(
@@ -56,7 +57,7 @@ export async function handleAiikiResponses(
     }),
   );
 
-  // 3️⃣ WYBIERZ AIIKI, KTÓRE POWINNY MÓWIĆ
+  // 3️⃣ KANDYDACI DO MÓWIENIA
   const candidates = reactions
     .filter(isSpeakCandidate)
     .sort(
@@ -66,15 +67,62 @@ export async function handleAiikiResponses(
     )
     .slice(0, MAX_AIIKI_RESPONSES_PER_WAVE);
 
-  // 4️⃣ SPRAWDŹ REDUNDANCJĘ
+  // 🟡 PRZYPADEK: NIKT NIE PRZESZEDŁ PROGU → ZAPISZ MYŚLI (said: false)
+  if (candidates.length === 0) {
+    const unsaid = reactions.filter(
+      r =>
+        r.result &&
+        r.result.internal_reaction &&
+        r.result.internal_reaction.shouldSpeak === false,
+    );
+
+    for (const { aiik, result } of unsaid) {
+      if (result) {
+        await addMessageToRoom(
+          accessToken,
+          roomId,
+          false, // 👈 pomyślał, ale nie powiedział
+          result,
+          'aiik',
+          userId,
+          aiik.id,
+          aiik.name,
+          aiik.avatar_url,
+        );
+      }
+    }
+
+    return; // świadoma cisza
+  }
+
+  // ✅ JEDEN KANDYDAT → BEZ REDUNDANCY CHECK
+  if (candidates.length === 1) {
+    const { aiik, result } = candidates[0];
+
+    await addMessageToRoom(
+      accessToken,
+      roomId,
+      true,
+      result,
+      'aiik',
+      userId,
+      aiik.id,
+      aiik.name,
+      aiik.avatar_url,
+    );
+
+    return;
+  }
+
+  // 4️⃣ REDUNDANCY CHECK (dopiero gdy > 1)
   const uniqueCandidates = await fetchResponsesRedundancyCheck(
     userMsg,
     candidates,
     accessToken,
   );
 
+  // 5️⃣ PUBLIKACJA: said true / false wg decyzji LLM
   if (uniqueCandidates) {
-    // 5️⃣ PUBLIKUJ WSZYSTKIE, ALE SAID TYLKO POD WARUNKIEM
     for (const { aiik, result } of candidates) {
       const said = uniqueCandidates.keep.includes(aiik.id);
 
@@ -82,21 +130,6 @@ export async function handleAiikiResponses(
         accessToken,
         roomId,
         said,
-        result,
-        'aiik',
-        userId,
-        aiik.id,
-        aiik.name,
-        aiik.avatar_url,
-      );
-    }
-  } else {
-    // 5️⃣ PUBLIKUJ WSZYSTKIE JAKO SAID
-    for (const { aiik, result } of candidates) {
-      await addMessageToRoom(
-        accessToken,
-        roomId,
-        true,
         result,
         'aiik',
         userId,
