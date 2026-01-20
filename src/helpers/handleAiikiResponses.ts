@@ -87,7 +87,6 @@ export async function handleAiikiResponses(
           userId,
           aiik.id,
           aiik.name,
-          aiik.avatar_url,
         );
       }
     }
@@ -108,7 +107,6 @@ export async function handleAiikiResponses(
       userId,
       aiik.id,
       aiik.name,
-      aiik.avatar_url,
     );
 
     return;
@@ -135,7 +133,6 @@ export async function handleAiikiResponses(
         userId,
         aiik.id,
         aiik.name,
-        aiik.avatar_url,
       );
     }
   }

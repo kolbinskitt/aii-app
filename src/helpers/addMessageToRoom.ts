@@ -19,26 +19,7 @@ export async function addMessageToRoom(
   userId?: string,
   aiikId?: string,
   aiikName?: string,
-  aiikAvatarUrl?: string,
 ) {
-  // 1️⃣ Zapisz wiadomość
-  const { error: messageError } = await supabase.from('messages').insert([
-    {
-      room_id: roomId,
-      text: message.response,
-      role,
-      aiik_id: aiikId ?? null,
-      user_id: userId ?? null,
-      avatar_url: aiikAvatarUrl,
-      said,
-    },
-  ]);
-
-  if (messageError) {
-    console.error('❌ Error adding message: ', messageError);
-    return;
-  }
-
   const messageRelatesTo = getRelatesToFromMemory([
     ...message.user_memory,
     ...message.aiik_memory,

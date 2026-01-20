@@ -23,7 +23,7 @@ export default function Room() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [room?.messages_with_aiik]);
+  }, [room?.messages]);
 
   useEffect(() => {
     if (!id) return;
@@ -36,18 +36,24 @@ export default function Room() {
 
     // 2️⃣ Subskrybuj wiadomości
     const channel = supabase
-      .channel(`room-${id}-messages`)
+      .channel(`room-${id}-fractal-node-messages`)
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
-          table: 'messages',
+          table: 'fractal_node',
           filter: `room_id=eq.${id}`,
         },
-        async () => {
-          const updated = await getRoomById(id);
-          setRoom(updated as RoomWithMessages);
+        async payload => {
+          const newRow = payload.new;
+          const isMessage = newRow?.type === 'message';
+          const isSaid = newRow?.said === true;
+
+          if (isMessage && isSaid) {
+            const updated = await getRoomById(id);
+            setRoom(updated as RoomWithMessages);
+          }
         },
       )
       .subscribe();
@@ -70,17 +76,12 @@ export default function Room() {
     setMessage('');
     setRoom({
       ...room,
-      messages_with_aiik: [
-        ...room.messages_with_aiik,
+      messages: [
+        ...room.messages,
         {
           id: '',
-          room_id: id,
-          text: userMsg,
-          role: 'user',
-          created_at: Date.now(),
-          avatar_url: '',
+          content: userMsg,
           aiik_id: '',
-          aiik_name: '',
         },
       ],
     });

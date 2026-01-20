@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
-import { RoomWithMessages, Message } from '@/types';
+import { RoomWithMessages } from '@/types';
+import { sortByCreatedAt } from './sortByCreatedAt';
 
 export async function getRoomById(
   id: string,
@@ -8,26 +9,24 @@ export async function getRoomById(
     .from('rooms')
     .select(
       `
+    *,
+    messages:fractal_node(id, aiik_id, content, said),
+    room_aiiki(
       *,
-      messages_with_aiik:messages_with_aiik(said, *),
-      room_aiiki(
-        *,
-        aiiki_with_conzon(*),
-        room_aiiki_relatizon(*)
-      )
-    `,
+      aiiki_with_conzon(*),
+      room_aiiki_relatizon(*)
+    )
+  `,
     )
     .eq('id', id)
-    .eq('messages_with_aiik.said', true)
+    .eq('messages.type', 'message')
+    .eq('messages.said', true)
     .maybeSingle();
 
   if (error) throw error;
 
-  if (data?.messages_with_aiik) {
-    data.messages_with_aiik.sort(
-      (a: Message, b: Message) =>
-        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
-    );
+  if (data?.messages) {
+    data.messages.sort(sortByCreatedAt);
   }
 
   return data;

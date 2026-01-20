@@ -8,11 +8,12 @@ import { Button, Tile, Input } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CopyToClipboard } from '@/components/CopyToClipboard';
+import { useAiiki } from '@/hooks/useAiiki';
 
 function TopTile({ room }: { room: RoomWithMessages | null }) {
   const { t } = useTranslation();
   return !room ? null : (
-    <Tile className="space-y-1 p-2 sticky top-0 z-10">
+    <Tile className="space-y-1 p-2 sticky top-0">
       <h2
         className="text-2xl font-echo text-gray-800 leading-snug font-semibold truncate"
         style={{
@@ -35,7 +36,7 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
           {t('chat.see_field')}
         </Link>
       </div>
-      {room.messages_with_aiik.length === 0 && (
+      {room.messages.length === 0 && (
         <div className="text-sm text-muted-foreground">
           {t('chat.no_stories')}
         </div>
@@ -47,9 +48,13 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
 export function Message({
   children,
   role,
-  aiikAvatar,
   aiikName,
-}: PropsWithChildren<{ role: Role; aiikAvatar: string; aiikName: string }>) {
+  aiikAvatar,
+}: PropsWithChildren<{
+  role: Role;
+  aiikName?: string;
+  aiikAvatar?: string;
+}>) {
   const marginH = -12;
   const borderRadius = '0.5rem';
   const width = 40;
@@ -93,6 +98,7 @@ export function MessageArea({
   room,
   children,
 }: PropsWithChildren<{ room: RoomWithMessages | null }>) {
+  const { getAiikById } = useAiiki();
   return !room ? null : (
     <div
       style={{
@@ -105,15 +111,15 @@ export function MessageArea({
       }}
     >
       <TopTile room={room} />
-      {room.messages_with_aiik.length > 0 &&
-        room.messages_with_aiik.map(msg => (
+      {room.messages.length > 0 &&
+        room.messages.map(msg => (
           <Message
             key={msg.id}
-            role={msg.role}
-            aiikAvatar={msg.avatar_url}
-            aiikName={msg.aiik_name}
+            role={!msg.aiik_id ? 'user' : 'aiik'}
+            aiikAvatar={getAiikById(msg.aiik_id)?.avatar_url}
+            aiikName={getAiikById(msg.aiik_id)?.name}
           >
-            {msg.text} <CopyToClipboard text={msg.text} />
+            {msg.content} <CopyToClipboard text={msg.content} />
           </Message>
         ))}
       {children}
