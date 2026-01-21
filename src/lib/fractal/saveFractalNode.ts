@@ -23,6 +23,7 @@ export async function saveFractalNode({
   aiik_id,
   room_id,
   said_reason,
+  content_summary,
 }: SaveFractalNodeArgs) {
   try {
     // Embedding
@@ -67,6 +68,7 @@ export async function saveFractalNode({
           room_id,
           embedding,
           said_reason,
+          content_summary,
         })
         .select()
         .single<FractalNode>();

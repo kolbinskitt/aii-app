@@ -33,8 +33,8 @@ export async function handleAiikiResponses(
     true,
     {
       response: userMsg,
-      message_summary: userMsg,
-      response_summary: userMsg,
+      message_summary: '',
+      response_summary: '',
       user_memory: [],
       aiik_memory: [],
     },

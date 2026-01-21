@@ -280,6 +280,7 @@ export type SaveFractalNodeArgs = {
   aiik_id?: string;
   room_id?: string;
   said_reason?: string;
+  content_summary?: string;
 };
 
 export type FractalNode = {

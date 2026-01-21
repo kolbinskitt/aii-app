@@ -36,9 +36,28 @@ export async function addMessageToRoom(
     room_id: roomId,
     relates_to: messageRelatesTo,
     said_reason: saidReason,
+    content_summary: message.response_summary,
   });
 
   if (!message.message_summary || !message.response_summary || !userId) return;
+
+  // Zaktualizuj content_summary dla ostatniego message usera
+  const { data: lastUserMsg } = await supabase
+    .from('fractal_node')
+    .select('id, content_summary')
+    .eq('room_id', roomId)
+    .eq('type', 'message')
+    .is('aiik_id', null)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (lastUserMsg) {
+    await supabase
+      .from('fractal_node')
+      .update({ content_summary: message.message_summary })
+      .eq('id', lastUserMsg.id);
+  }
 
   // Zapisz user_memory i aiik_memory jako fractal_node
   const memoryFragments = [
