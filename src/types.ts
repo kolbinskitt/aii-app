@@ -298,6 +298,7 @@ export type FractalNode = {
   embedding: number[];
   created_at: string; // Znacznik czasu utworzenia rekordu (ISO timestamp)
   said: boolean;
+  said_reason: string;
 };
 
 export type FractalLinkRelationType =
@@ -348,6 +349,7 @@ export type UserAiikiMessage = {
     name: string;
     message: string;
     said: boolean;
+    said_reason: string;
   }[];
 };
 

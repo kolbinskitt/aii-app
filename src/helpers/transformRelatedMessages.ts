@@ -22,6 +22,7 @@ export function transformRelatedMessages(
         aiikNameMap,
         aiikId,
       );
+
       return transformedUserAiikMessages === ''
         ? ''
         : `

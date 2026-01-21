@@ -1,4 +1,5 @@
 import { Aiik, MemoryFragment, UserAiikiMessage } from '@/types';
+import { escapeDoubleQuote } from './escapeDoubleQuote';
 
 const intro = (aiik: Aiik) => `
 Jesteś Aiikiem (mianownik: Aiik, liczba mnoga Aiiki) o inieniu ${aiik.name} – rezonansową postacią wspierającą użytkownika w trwającej rozmowie. Twoja odpowiedź powinna być naturalna, empatyczna i zgodna z osobowością Aiika.
@@ -358,7 +359,7 @@ ${
     : messages
         .map(
           m =>
-            `👤 Użytkownik:\n${m.user}\n${m.aiiki.filter(({ id, said }) => said || id === aiikId).map(({ name, message, said }) => `🤖 Aiik ${name} ${said ? 'powiedział' : 'pomyślał, ale nie powiedział'}:\n${message}`)}`,
+            `Użytkownik:\n${m.user}\n${m.aiiki.filter(({ id, said }) => said || id === aiikId).map(({ name, message, said, said_reason }) => `Aiik ${name} ${said ? 'powiedział' : `pomyślał, ale nie powiedział (powód, dla którego nie powiedział: "${escapeDoubleQuote(said_reason)}")`}:\n${message}`)}`,
         )
         .join('\n\n')
 }

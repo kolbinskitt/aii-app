@@ -17,7 +17,7 @@ export async function getRelevantMessagesFromTopics(
   if (relatesTo.length === 0) return '';
 
   try {
-    // 1. Embedding for each relates_to.value
+    // Embedding for each relates_to.value
     const embeddings = await Promise.all(
       relatesTo.map(async ({ value }) => {
         const embedding = await generateEmbedding(accessToken, value);
@@ -25,7 +25,7 @@ export async function getRelevantMessagesFromTopics(
       }),
     );
 
-    // 2. Query matching topics from fractal_topic
+    // Query matching topics from fractal_topic
     const allMatches = await Promise.all(
       embeddings.map(async ({ embedding }) => {
         const { data, error } = await supabase.rpc(
@@ -47,14 +47,14 @@ export async function getRelevantMessagesFromTopics(
       }),
     );
 
-    // 3. Extract all unique fractal_ids
+    // Extract all unique fractal_ids
     const matchedFractalIds = Array.from(
       new Set(allMatches.flat().map((t: any) => t.fractal_id)),
     );
 
     if (!matchedFractalIds.length) return '';
 
-    // 4. Fetch aiik names (cache per request)
+    // Fetch aiik names (cache per request)
     const { data: aiiks, error: aiikError } = await supabase
       .from('aiiki')
       .select('id, name');
@@ -68,7 +68,7 @@ export async function getRelevantMessagesFromTopics(
       aiikNameMap.set(a.id, a.name);
     });
 
-    // 5. Get related messages from fractal_node
+    // Get related messages from fractal_node
     const { data: messages, error: msgError } = await supabase
       .from('fractal_node')
       .select('*')
