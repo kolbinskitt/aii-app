@@ -279,6 +279,7 @@ export type SaveFractalNodeArgs = {
   user_id?: string;
   aiik_id?: string;
   room_id?: string;
+  said_reason?: string;
 };
 
 export type FractalNode = {

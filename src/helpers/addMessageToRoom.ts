@@ -19,6 +19,7 @@ export async function addMessageToRoom(
   userId?: string,
   aiikId?: string,
   aiikName?: string,
+  saidReason?: string,
 ) {
   const messageRelatesTo = getRelatesToFromMemory([
     ...message.user_memory,
@@ -34,11 +35,12 @@ export async function addMessageToRoom(
     aiik_id: aiikId,
     room_id: roomId,
     relates_to: messageRelatesTo,
+    said_reason: saidReason,
   });
 
   if (!message.message_summary || !message.response_summary || !userId) return;
 
-  // 2️⃣ Zapisz user_memory i aiik_memory jako fractal_node
+  // Zapisz user_memory i aiik_memory jako fractal_node
   const memoryFragments = [
     ...(role === 'user'
       ? message.user_memory.map(mem => ({
@@ -76,7 +78,7 @@ export async function addMessageToRoom(
     });
   }
 
-  // 3️⃣ Pobierz wszystkie aiiki w pokoju
+  // Pobierz wszystkie aiiki w pokoju
   const { data: roomAiiki, error: roomAiikiError } = (await supabase
     .from('room_aiiki')
     .select('aiiki_with_conzon(id, name, conzon, description)')
@@ -89,7 +91,7 @@ export async function addMessageToRoom(
 
   const aiiki: Aiik[] = roomAiiki.map(r => r.aiiki_with_conzon).filter(Boolean);
 
-  // 4️⃣ Pobierz conZON usera
+  // Pobierz conZON usera
   const { data: userConZONData } = await supabase
     .from('user_with_conzon')
     .select('conzon')
@@ -100,7 +102,7 @@ export async function addMessageToRoom(
 
   const userConZON: ArcheZON = userConZONData?.conzon || {};
 
-  // pobierz kontekst z pokoju
+  // Pobierz kontekst z pokoju
   const { data: roomMetaData } = await supabase
     .from('rooms')
     .select('meta')
@@ -129,7 +131,7 @@ export async function addMessageToRoom(
   });
   const { relatizon: baseRelatizon } = await res.json();
 
-  // 6️⃣ Aktualizacja per-aiik
+  // Aktualizacja per-aiik
   for (const aiik of aiiki) {
     const { data: link } = await supabase
       .from('room_aiiki')
@@ -163,7 +165,7 @@ export async function addMessageToRoom(
     });
   }
 
-  // 7️⃣ meta.context
+  // meta.context
   const { data: roomData } = await supabase
     .from('rooms')
     .select('meta')

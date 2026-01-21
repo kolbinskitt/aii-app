@@ -22,9 +22,10 @@ export async function saveFractalNode({
   user_id,
   aiik_id,
   room_id,
+  said_reason,
 }: SaveFractalNodeArgs) {
   try {
-    // 1. Embedding
+    // Embedding
     if (
       ['message', 'relatizon'].includes(type) ||
       (['user_memory', 'aiik_memory'].includes(type) &&
@@ -48,7 +49,7 @@ export async function saveFractalNode({
         typeof content === 'string' ? content : JSON.stringify(content);
       const embedding = await generateEmbedding(accessToken, text);
 
-      // 2. Zapisz fractal_node
+      // Zapisz fractal_node
       const { data, error } = await supabase
         .from('fractal_node')
         .insert({
@@ -65,6 +66,7 @@ export async function saveFractalNode({
           aiik_id,
           room_id,
           embedding,
+          said_reason,
         })
         .select()
         .single<FractalNode>();
@@ -73,7 +75,7 @@ export async function saveFractalNode({
 
       const newNodeId = data.id;
 
-      // 3. Szukamy poprzedniego node'a w tym pokoju
+      // Szukamy poprzedniego node'a w tym pokoju
       const { data: previousNodes } = await supabase
         .from('fractal_node')
         .select('id')
@@ -84,7 +86,7 @@ export async function saveFractalNode({
 
       const previousNodeId = previousNodes?.[0]?.id ?? null;
 
-      // 4. fractal_link: relatizon tworzy pokój
+      // fractal_link: relatizon tworzy pokój
       const isRoomCreationRelatizon =
         type === 'relatizon' &&
         (content as unknown as RelatiZON).interaction_event.message_event
@@ -104,7 +106,7 @@ export async function saveFractalNode({
         } as Omit<FractalLink, 'id' | 'created_at'>);
       }
 
-      // 5. fractal_link: message usera
+      // fractal_link: message usera
       if (type === 'message' && !aiik_id) {
         await supabase.from('fractal_link').insert({
           from_node: previousNodeId,
@@ -115,7 +117,7 @@ export async function saveFractalNode({
         } as Omit<FractalLink, 'id' | 'created_at'>);
       }
 
-      // 6. fractal_link: relatizon po userze
+      // fractal_link: relatizon po userze
       if (
         type === 'relatizon' &&
         (content as unknown as RelatiZON).interaction_event.message_event
@@ -144,7 +146,7 @@ export async function saveFractalNode({
         }
       }
 
-      // 7. fractal_link: message aiika
+      // fractal_link: message aiika
       if (type === 'message' && aiik_id) {
         await supabase.from('fractal_link').insert({
           from_node: previousNodeId,
@@ -155,7 +157,7 @@ export async function saveFractalNode({
         } as Omit<FractalLink, 'id' | 'created_at'>);
       }
 
-      // 8. fractal_link: relatizon po aiiku
+      // fractal_link: relatizon po aiiku
       if (
         type === 'relatizon' &&
         (content as unknown as RelatiZON).interaction_event.message_event
@@ -184,7 +186,7 @@ export async function saveFractalNode({
         }
       }
 
-      // 9. fractal_topic: zapisuj wszystkie relates_to jako tematy
+      // fractal_topic: zapisuj wszystkie relates_to jako tematy
       if (relates_to?.length) {
         await Promise.all(
           relates_to.map(async topic => {

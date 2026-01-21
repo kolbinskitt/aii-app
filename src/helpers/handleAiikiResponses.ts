@@ -26,7 +26,7 @@ export async function handleAiikiResponses(
   userId: string,
   roomId: string,
 ) {
-  // 1️⃣ ZAPISZ WIADOMOŚĆ USERA (zawsze said: true)
+  // ZAPISZ WIADOMOŚĆ USERA (zawsze said: true)
   await addMessageToRoom(
     accessToken,
     roomId,
@@ -42,7 +42,7 @@ export async function handleAiikiResponses(
     userId,
   );
 
-  // 2️⃣ WSZYSTKIE AIIKI REAGUJĄ WEWNĘTRZNIE
+  // WSZYSTKIE AIIKI REAGUJĄ WEWNĘTRZNIE
   const reactions: AiikReaction[] = await Promise.all(
     aiiki.map(async aiik => {
       const result = await fetchAiikResponse(
@@ -57,7 +57,7 @@ export async function handleAiikiResponses(
     }),
   );
 
-  // 3️⃣ KANDYDACI DO MÓWIENIA
+  // KANDYDACI DO MÓWIENIA
   const candidates = reactions
     .filter(isSpeakCandidate)
     .sort(
@@ -67,7 +67,7 @@ export async function handleAiikiResponses(
     )
     .slice(0, MAX_AIIKI_RESPONSES_PER_WAVE);
 
-  // 🟡 PRZYPADEK: NIKT NIE PRZESZEDŁ PROGU → ZAPISZ MYŚLI (said: false)
+  // PRZYPADEK: NIKT NIE PRZESZEDŁ PROGU → ZAPISZ MYŚLI (said: false)
   if (candidates.length === 0) {
     const unsaid = reactions.filter(
       r =>
@@ -87,6 +87,7 @@ export async function handleAiikiResponses(
           userId,
           aiik.id,
           aiik.name,
+          result.internal_reaction.reason,
         );
       }
     }
@@ -94,7 +95,7 @@ export async function handleAiikiResponses(
     return; // świadoma cisza
   }
 
-  // ✅ JEDEN KANDYDAT → BEZ REDUNDANCY CHECK
+  // JEDEN KANDYDAT → BEZ REDUNDANCY CHECK
   if (candidates.length === 1) {
     const { aiik, result } = candidates[0];
 
@@ -107,19 +108,20 @@ export async function handleAiikiResponses(
       userId,
       aiik.id,
       aiik.name,
+      result.internal_reaction.reason,
     );
 
     return;
   }
 
-  // 4️⃣ REDUNDANCY CHECK (dopiero gdy > 1)
+  // REDUNDANCY CHECK (dopiero gdy > 1)
   const uniqueCandidates = await fetchResponsesRedundancyCheck(
     userMsg,
     candidates,
     accessToken,
   );
 
-  // 5️⃣ PUBLIKACJA: said true / false wg decyzji LLM
+  // PUBLIKACJA: said true / false wg decyzji LLM
   if (uniqueCandidates) {
     for (const { aiik, result } of candidates) {
       const said = uniqueCandidates.keep.includes(aiik.id);
@@ -133,6 +135,8 @@ export async function handleAiikiResponses(
         userId,
         aiik.id,
         aiik.name,
+        uniqueCandidates.reasoning.find(({ aiik_id }) => aiik_id === aiik.id)
+          ?.reason,
       );
     }
   }

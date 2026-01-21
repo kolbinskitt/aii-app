@@ -10,7 +10,7 @@ export async function getRoomById(
     .select(
       `
     *,
-    messages:fractal_node(id, aiik_id, content, said),
+    messages:fractal_node(id, aiik_id, content, said, created_at),
     room_aiiki(
       *,
       aiiki_with_conzon(*),

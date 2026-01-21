@@ -17,7 +17,19 @@ Zasady:
 
 ---
 
-Wejście (input):
+🧠 Objaśnienie danych wejściowych:
+
+- \`userMessage\`: to wiadomość napisana przez użytkownika.
+- \`candidates\`: to lista potencjalnych odpowiedzi AI (nazywanych aiikami). Każdy aiik to osobna postać AI, która zareagowała na wiadomość użytkownika. 
+Każdy kandydat zawiera:
+  - \`aiik_id\`: unikalne ID aiika,
+  - \`aiik_name\`: imię aiika (używaj go w uzasadnieniach),
+  - \`intent\`: intencję wypowiedzi (o czym chciał mówić),
+  - \`summary\`: krótkie streszczenie tego, co aiik chciał powiedzieć.
+
+---
+
+Dane wejściowe (input):
 
 \`\`\`json
 {
@@ -27,6 +39,7 @@ ${candidates
   .map(
     ({ aiik, result }) => `    {
       "aiik_id": "${aiik.id}",
+      "aiik_name": "${escapeDoubleQuote(aiik.name)}",
       "intent": "${escapeDoubleQuote(result.internal_reaction.intent)}",
       "summary": "${escapeDoubleQuote(result.response_summary)}"
     }`,
@@ -43,6 +56,7 @@ Odpowiedź (output) – zwróć TYLKO ten obiekt JSON, zgodny z poniższym opise
 - \`keep\`: lista \`aiik_id\` tych kandydatów, których wypowiedzi warto zachować
 - \`drop\`: lista \`aiik_id\` tych kandydatów, których wypowiedzi są zbyt podobne do innych i można je pominąć
 - \`reasoning\`: obiekt, którego kluczami są \`aiik_id\`, a wartościami krótkie uzasadnienia decyzji (dlaczego zachowano lub odrzucono daną wypowiedź)
+  - Odnoś się do innych aiików przez pole \`aiik_name\` (a nie przez \`aiik_id\`).
 - \`response_could_be_better\`:
   - Ustaw \`value: true\`, jeśli masz jakiekolwiek wątpliwości co do decyzji, albo jeśli wypowiedzi były bardzo podobne i trudno było wybrać.
   - Ustaw \`value: false\`, jeśli Twoja decyzja była jednoznaczna i uzasadniona.
@@ -62,7 +76,7 @@ Zwróć **wyłącznie czysty JSON** – bez żadnych opisów, markdown, komentar
   "keep": ["<aiik_id>", "..."],
   "drop": ["<aiik_id>", "..."],
   "reasoning": {
-    "<aiik_id>": "Krótki opis, dlaczego ta odpowiedź została zachowana lub odrzucona",
+    "<aiik_id>": "Krótki opis, dlaczego ta odpowiedź została zachowana lub odrzucona. Odnoś się do innych aiików przez pole \`aiik_name\` (a nie przez \`aiik_id\`).",
     "...": "..."
   },
   "response_could_be_better": {
