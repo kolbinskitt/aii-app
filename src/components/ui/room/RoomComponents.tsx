@@ -4,9 +4,10 @@ import {
   MouseEventHandler,
   useCallback,
   useState,
+  useEffect,
 } from 'react';
 import { RoomWithMessages, Role } from '@/types';
-import { Button, Tile, Input, Label, Switch } from '@/components/ui';
+import { Button, Tile, Input, Switch } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CopyToClipboard } from '@/components/CopyToClipboard';
@@ -17,25 +18,52 @@ function AutoFollowUpSwitch({ room }: { room: RoomWithMessages }) {
   const [loading, setLoading] = useState(false);
   const [enabled, setEnabled] = useState(room.auto_follow_up_enabled);
 
+  // 🔄 zapis do DB
   const handleToggleAutoFollowUp = useCallback(
-    async (newValue: boolean) => {
+    async (auto_follow_up_enabled: boolean) => {
       setLoading(true);
-      setEnabled(newValue);
+      setEnabled(auto_follow_up_enabled);
+
       const { error } = await supabase
         .from('rooms')
-        .update({ auto_follow_up_enabled: newValue })
+        .update({ auto_follow_up_enabled })
         .eq('id', room.id);
 
       if (error) {
         console.error('❌ Błąd przy zapisie auto_follow_up_enabled:', error);
-        // Cofnij przełączenie jeśli błąd
-        setEnabled(!newValue);
+        // rollback
+        setEnabled(!auto_follow_up_enabled);
       }
 
       setLoading(false);
     },
     [room.id],
   );
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`room-${room.id}-auto-follow-up`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'rooms',
+          filter: `id=eq.${room.id}`,
+        },
+        payload => {
+          const nextValue = payload.new?.auto_follow_up_enabled;
+          if (typeof nextValue === 'boolean') {
+            setEnabled(nextValue);
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [room.id]);
 
   return (
     <Switch
