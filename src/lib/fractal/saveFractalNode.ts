@@ -200,6 +200,54 @@ export async function saveFractalNode({
               user_id,
               embedding,
             });
+
+            // Jeśli to odpowiedź AI, przypisz też temat do ostatniej wiadomości usera
+            if (aiik_id && type === 'message') {
+              const { data: userMsg } = await supabase
+                .from('fractal_node')
+                .select('id')
+                .eq('room_id', room_id)
+                .eq('type', 'message')
+                .is('aiik_id', null)
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+              const userMsgId = userMsg?.[0]?.id;
+
+              if (userMsgId) {
+                // Aktualizuj również pole relates_to w fractal_node wiadomości usera
+                const { data: userMsgFull } = await supabase
+                  .from('fractal_node')
+                  .select('id, relates_to')
+                  .eq('id', userMsgId)
+                  .single();
+
+                const existingTopics = userMsgFull?.relates_to ?? [];
+                const topicExists = existingTopics.some(
+                  (t: { value: string }) => t.value === topic.value,
+                );
+
+                if (!topicExists) {
+                  const updatedTopics = [
+                    ...existingTopics,
+                    { value: topic.value, weight: topic.weight },
+                  ];
+                  await supabase
+                    .from('fractal_node')
+                    .update({ relates_to: updatedTopics })
+                    .eq('id', userMsgId);
+                }
+
+                await supabase.from('fractal_topic').insert({
+                  fractal_id: userMsgId,
+                  type: 'message',
+                  value: topic.value,
+                  weight: topic.weight,
+                  user_id,
+                  embedding,
+                });
+              }
+            }
           }),
         );
       }
