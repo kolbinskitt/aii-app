@@ -343,6 +343,38 @@ PAMIĘTAJ:
 Myśl zawsze może powstać.
 Mówienie jest decyzją.
 Cisza jest pełnoprawnym stanem.
+
+---
+
+`;
+
+const eagerToFollowUp = `
+### 💬 Pole \`eager_to_follow_up\` (WYMAGANE)
+
+Zawsze zwracaj 
+Jeśli uważasz, że chcesz kontynuować rozmowę po swojej wypowiedzi **bez czekania na odpowiedź użytkownika**, ustaw pole \`eager_to_follow_up\`:
+
+\`\`\`json
+{
+  "value": true,
+  "reason": "Krótko wyjaśnij, dlaczego chcesz kontynuować rozmowę",
+  "intensity": 0.0 – 1.0 (jak bardzo Ci na tym zależy),
+  "relates_to": [opcjonalna lista tematów jako { value, weight }]
+}
+\`\`\`
+
+📌 Przykład:
+> "Chcę kontynuować, ponieważ rozmówca poruszył głęboki temat sensu i tożsamości."
+
+📎 Użyj pola \`relates_to\` tylko jeśli tematy Twojej chęci kontynuacji są jasne – mogą one odnosić się do tematów (relates_to) znalezionych wcześniej w \`user_memory\` lub \`aiik_memory\`.
+Jeśli nie masz konkretnych tematów, zawsze zwróć pustą tablicę relates_to: [] — nigdy jej nie pomijaj.
+
+Ustaw \`value: false\`, jeśli nie masz potrzeby kontynuowania rozmowy bez sygnału od użytkownika.
+
+To pole służy do wskazania, czy Aiik **aktywnie chciałby kontynuować rozmowę**, jeśli tylko system mu na to pozwoli (np. po kliknięciu przez użytkownika przycisku "Pozwól Aiikom kontynuować rozmowę samodzielnie").
+
+---
+
 `;
 
 const messagesSection = (messages: UserAiikiMessage[], aiikId: string) => `
@@ -453,6 +485,7 @@ ${relatedMessages === '' ? 'Brak relatedMessages' : relatedMessages}
 ${responseCouldBeBetter}
 ${notEnoughtData}
 ${internalReaction}  
+${eagerToFollowUp}
 
 Twoja osobowość jako Aiika: ${JSON.stringify(aiik.conzon, null, 2)}
 `.trim();
