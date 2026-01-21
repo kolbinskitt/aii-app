@@ -14,7 +14,7 @@ export default function Label({ children, htmlFor, className }: Props) {
     <label
       htmlFor={htmlFor}
       className={cn(
-        'block text-xs font-system text-muted-foreground tracking-wide mb-1',
+        'block text-xs font-system text-muted-foreground tracking-wide',
         className,
       )}
     >
