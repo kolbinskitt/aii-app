@@ -59,7 +59,7 @@ ${tags
   )
   .join('')}
 📌 **Nowy tag** możesz zwrócić **tylko jeśli żaden z powyższych nie pasuje**.  
-W takim przypadku dodaj go jako **jedno precyzyjne, ale generyczne słowo** (np. \`curiosity\`, \`grief\`, \`consciousness\`, \`belonging\`, \`doubt\`) opisujące główny temat wiadomości użytkownika.  
+W takim przypadku dodaj go jako **jedno precyzyjne, ale generyczne słowo** (np. \`curiosity\`, \`grief\`, \`consciousness\`, \`belonging\`, \`doubt\`) opisujące główny temat wiadomości użytkownika - nowy tag **nie może być więcej, niż jednym słowem**.
 ⛔ Nie używaj słów zbyt specyficznych lub kontekstowych, **to musi być jedno generyczne słowo** (np. \`trees consciousness\` - powinno być \`consciousness\`, \`ai anxiety\` - powinno być \`anxiety\`, \`war memories\` - powinno być \`memories\`).
 ✅ Zamiast tego wybierz uogólniony koncept, który **mógłby się powtarzać w wielu różnych kontekstach**.
 \`\`\`json
@@ -96,7 +96,7 @@ ${traits
 `,
   )
   .join('')}
-📌 **Nowy trait** możesz zwrócić **tylko jeśli żaden z powyższych nie pasuje**.  
+📌 **Nowy trait** możesz zwrócić **tylko jeśli żaden z powyższych nie pasuje** - nowy trait **nie może być więcej, niż jednym słowem**..  
 W takim przypadku dodaj go jako jedno precyzyjne słowo:
 \`\`\`json
 [{ "value": "nowy_trait", "weight": 0.75 }]
