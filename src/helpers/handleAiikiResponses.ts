@@ -1,4 +1,4 @@
-import { Aiik, SpeakCandidate, AiikReaction } from '@/types';
+import { Aiik, SpeakCandidate, AiikReaction, LLMResult } from '@/types';
 import { fetchAiikResponse } from '@/helpers/fetchAiikResponse';
 import { addMessageToRoom } from '@/helpers/addMessageToRoom';
 import {
@@ -111,7 +111,7 @@ export async function handleAiikiResponses(
       result.internal_reaction.reason,
     );
 
-    return;
+    return [result];
   }
 
   // REDUNDANCY CHECK (dopiero gdy > 1)
@@ -123,8 +123,11 @@ export async function handleAiikiResponses(
 
   // PUBLIKACJA: said true / false wg decyzji LLM
   if (uniqueCandidates) {
+    const results: LLMResult[] = [];
     for (const { aiik, result } of candidates) {
       const said = uniqueCandidates.keep.includes(aiik.id);
+
+      if (said) results.push(result);
 
       await addMessageToRoom(
         accessToken,
@@ -139,5 +142,7 @@ export async function handleAiikiResponses(
           ?.reason,
       );
     }
+
+    return results;
   }
 }

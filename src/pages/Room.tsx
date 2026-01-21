@@ -87,7 +87,7 @@ export default function Room() {
     });
 
     if (room.room_aiiki && room.room_aiiki.length > 0) {
-      await handleAiikiResponses(
+      const aiikiResponses = await handleAiikiResponses(
         accessToken,
         room.room_aiiki.map(({ aiiki_with_conzon }) => aiiki_with_conzon),
         userMsg,
@@ -95,6 +95,7 @@ export default function Room() {
         id,
       );
       setAiikiThinking(false);
+      console.log({ aiikiResponses });
     }
   }
 

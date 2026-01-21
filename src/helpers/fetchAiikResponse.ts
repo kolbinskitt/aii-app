@@ -165,6 +165,7 @@ export async function fetchAiikResponse(
           model: secondCallContent.model,
           not_enought_data: secondCallContent.not_enought_data,
           internal_reaction: secondCallContent.internal_reaction,
+          eager_to_follow_up: secondCallContent.eager_to_follow_up,
         };
       } catch (err) {
         console.error('Parse JSON error', err, { content: secondCallContent });
@@ -183,6 +184,7 @@ export async function fetchAiikResponse(
         model: content.model,
         not_enought_data: content.not_enought_data,
         internal_reaction: content.internal_reaction,
+        eager_to_follow_up: content.eager_to_follow_up,
       };
     } catch (err) {
       console.error('Parse JSON error', err, { content });

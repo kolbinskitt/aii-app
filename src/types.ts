@@ -378,6 +378,7 @@ export interface LLMMessageResponseParsedMessage {
   aiik_memory: MemoryFragment[];
   not_enought_data: boolean;
   internal_reaction: InternalReaction;
+  eager_to_follow_up: EagerToFollowUp;
 }
 
 export type LLMMessageResponse = LLMMessageResponseParsedMessage & {
@@ -402,16 +403,21 @@ export type LLMResponsesRedundancyCheck =
     model: string;
   };
 
+export type EagerToFollowUp = {
+  value: boolean;
+  reason: string;
+  intensity: number; // 0.0 – 1.0 jak bardzo mu zależy
+  relates_to?: WeightedValue[]; // (opcjonalne) np. "trust", "meaning", "identity"
+};
+
+export type LLMResult = LLMMessageResponseParsedMessage & {
+  internal_reaction: InternalReaction;
+  eager_to_follow_up: EagerToFollowUp;
+};
+
 export type SpeakCandidate = {
   aiik: Aiik;
-  result: LLMMessageResponseParsedMessage & {
-    internal_reaction: {
-      shouldSpeak: boolean;
-      confidence: number;
-      intent: InternalReactionIntent;
-      reason: string;
-    };
-  };
+  result: LLMResult;
 };
 
 export type AiikReaction = {
