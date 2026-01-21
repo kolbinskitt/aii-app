@@ -25,6 +25,7 @@ export default function CognitionSection({ value, onChange }: Props) {
     <>
       <Section>Poznanie</Section>
       <Switch
+        id="stream_self"
         label="Stream self"
         checked={value.stream_self || false}
         onChange={v => update({ stream_self: v })}

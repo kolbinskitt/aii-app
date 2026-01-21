@@ -8,6 +8,7 @@ export type Room = {
   name: string;
   slug: string;
   created_at: number;
+  auto_follow_up_enabled: boolean;
 };
 
 export type Aiik = {

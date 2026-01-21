@@ -26,6 +26,7 @@ export default function StyleSection({ value, onChange }: Props) {
       <Section>Styl</Section>
 
       <Switch
+        id="emoji"
         label="Emoji"
         checked={value.emoji}
         onChange={v => onChange({ ...value, emoji: v })}

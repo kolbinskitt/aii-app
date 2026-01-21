@@ -2,26 +2,69 @@ import {
   PropsWithChildren,
   KeyboardEventHandler,
   MouseEventHandler,
+  useCallback,
+  useState,
 } from 'react';
 import { RoomWithMessages, Role } from '@/types';
-import { Button, Tile, Input } from '@/components/ui';
+import { Button, Tile, Input, Label, Switch } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CopyToClipboard } from '@/components/CopyToClipboard';
 import { useAiiki } from '@/hooks/useAiiki';
+import { supabase } from '@/lib/supabase';
+
+function AutoFollowUpSwitch({ room }: { room: RoomWithMessages }) {
+  const [loading, setLoading] = useState(false);
+  const [enabled, setEnabled] = useState(room.auto_follow_up_enabled);
+
+  const handleToggleAutoFollowUp = useCallback(
+    async (newValue: boolean) => {
+      setLoading(true);
+      setEnabled(newValue);
+      const { error } = await supabase
+        .from('rooms')
+        .update({ auto_follow_up_enabled: newValue })
+        .eq('id', room.id);
+
+      if (error) {
+        console.error('❌ Błąd przy zapisie auto_follow_up_enabled:', error);
+        // Cofnij przełączenie jeśli błąd
+        setEnabled(!newValue);
+      }
+
+      setLoading(false);
+    },
+    [room.id],
+  );
+
+  return (
+    <Switch
+      id="auto-follow-switch"
+      checked={enabled}
+      onChange={handleToggleAutoFollowUp}
+      disabled={loading}
+      loading={loading}
+      label="Pozwól Aiikom kontynuować rozmowę samodzielnie"
+    />
+  );
+}
 
 function TopTile({ room }: { room: RoomWithMessages | null }) {
   const { t } = useTranslation();
+
   return !room ? null : (
     <Tile className="space-y-1 p-2 sticky top-0">
-      <h2
-        className="text-2xl font-echo text-gray-800 leading-snug font-semibold truncate"
-        style={{
-          maxWidth: 'calc(100vw - 500px)',
-        }}
-      >
-        {room.name || '🌀'}
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2
+          className="text-2xl font-echo text-gray-800 leading-snug font-semibold truncate"
+          style={{
+            maxWidth: 'calc(100vw - 500px)',
+          }}
+        >
+          {room.name || '🌀'}
+        </h2>
+        <AutoFollowUpSwitch room={room} />
+      </div>
       <div className="flex w-full justify-between items-start text-xs text-neutral-500 tracking-wide">
         <div>
           {t('chat.aiiki_near_campfire')}:{' '}
