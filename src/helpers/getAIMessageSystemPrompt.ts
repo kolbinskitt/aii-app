@@ -230,17 +230,6 @@ const aiikMemory = `
 ---
 `;
 
-const responseCouldBeBetter = `
-### 💬 Pole \`response_could_be_better\` (WYMAGANE)
-Zawiera ocenę, czy Twoja odpowiedź mogłaby być lepsza:
-- \`value: true\` → gdy odpowiedź mogła być bardziej empatyczna, precyzyjna lub złożona  
-- \`value: false\` → jeśli odpowiedź była wystarczająco dobra  
-- \`reason\`: jednozdaniowe uzasadnienie Twojej oceny
-
----
-
-`;
-
 const notEnoughtData = `
 ### 💬 Pole \`not_enought_data\` (WYMAGANE)
 Jeśli uważasz, że nie masz wystarczająco danych kontekstowych w assistant promptcie, by sensownie odpowiedzieć na wiadomość użytkownika – zwróć \`true\`.
@@ -482,7 +471,6 @@ ${messagesSection(messages, aiik.id)}
 
 ${relatedMessages === '' ? 'Brak relatedMessages' : relatedMessages}
 
-${responseCouldBeBetter}
 ${notEnoughtData}
 ${internalReaction}  
 ${eagerToFollowUp}

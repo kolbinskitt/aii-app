@@ -4,10 +4,12 @@ import { saveFractalNode } from '@/lib/fractal/saveFractalNode';
 import { api } from '@/lib/api';
 import { getRelatesToFromMemory } from './getRelatesToFromMemory';
 
-export async function addMessageToRoom(
+async function handleData(
   accessToken: string,
+  userId: string,
   roomId: string,
-  said: boolean,
+  messageSummary: string,
+  role: Role,
   message: {
     response: string;
     message_summary: string;
@@ -15,32 +17,9 @@ export async function addMessageToRoom(
     user_memory: MemoryFragment[];
     aiik_memory: MemoryFragment[];
   },
-  role: Role,
-  userId?: string,
   aiikId?: string,
   aiikName?: string,
-  saidReason?: string,
 ) {
-  const messageRelatesTo = getRelatesToFromMemory([
-    ...message.user_memory,
-    ...message.aiik_memory,
-  ]);
-
-  await saveFractalNode({
-    accessToken,
-    type: 'message',
-    content: message.response,
-    said,
-    user_id: userId,
-    aiik_id: aiikId,
-    room_id: roomId,
-    relates_to: messageRelatesTo,
-    said_reason: saidReason,
-    content_summary: message.response_summary,
-  });
-
-  if (!message.message_summary || !message.response_summary || !userId) return;
-
   // Zaktualizuj content_summary dla ostatniego message usera
   const { data: lastUserMsg } = await supabase
     .from('fractal_node')
@@ -55,7 +34,7 @@ export async function addMessageToRoom(
   if (lastUserMsg) {
     await supabase
       .from('fractal_node')
-      .update({ content_summary: message.message_summary })
+      .update({ content_summary: messageSummary })
       .eq('id', lastUserMsg.id);
   }
 
@@ -208,4 +187,51 @@ export async function addMessageToRoom(
       },
     })
     .eq('id', roomId);
+}
+
+export async function addMessageToRoom(
+  accessToken: string,
+  roomId: string,
+  said: boolean,
+  message: {
+    response: string;
+    message_summary: string;
+    response_summary: string;
+    user_memory: MemoryFragment[];
+    aiik_memory: MemoryFragment[];
+  },
+  role: Role,
+  userId?: string,
+  aiikId?: string,
+  aiikName?: string,
+  saidReason?: string,
+) {
+  await saveFractalNode({
+    accessToken,
+    type: 'message',
+    content: message.response,
+    said,
+    user_id: userId,
+    aiik_id: aiikId,
+    room_id: roomId,
+    relates_to: getRelatesToFromMemory([
+      ...message.user_memory,
+      ...message.aiik_memory,
+    ]),
+    said_reason: saidReason,
+    content_summary: message.response_summary,
+  });
+
+  if (!message.message_summary || !message.response_summary || !userId) return;
+
+  handleData(
+    accessToken,
+    userId,
+    roomId,
+    message.message_summary,
+    role,
+    message,
+    aiikId,
+    aiikName,
+  );
 }
