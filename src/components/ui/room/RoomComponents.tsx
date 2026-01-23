@@ -13,6 +13,8 @@ import { Link } from 'react-router-dom';
 import { CopyToClipboard } from '@/components/CopyToClipboard';
 import { useAiiki } from '@/hooks/useAiiki';
 import { supabase } from '@/lib/supabase';
+import { EAGER_TO_FOLLOW_UP_THRESHOLD } from '@/consts';
+import useUser from '@/hooks/useUser';
 
 function AutoFollowUpSwitch({ room }: { room: RoomWithMessages }) {
   const [loading, setLoading] = useState(false);
@@ -230,25 +232,82 @@ export function BottomTile({
 
 export function AskForAutoFollowUp({
   aiikiResponses,
+  roomId,
 }: {
   aiikiResponses: { aiik: Aiik; response: LLMResult }[];
+  roomId: string;
 }) {
-  console.log({ aiikiResponses });
+  const user = useUser();
+  const [eagerToFollowUpShown, setEagerToFollowUpShown] = useState<
+    boolean | undefined
+  >();
+
+  useEffect(() => {
+    setEagerToFollowUpShown(user.user?.eager_to_follow_up_shown);
+  }, [user.user?.eager_to_follow_up_shown]);
+
+  const setEagerToFollowUpShownForUser = async () => {
+    if (user.user) {
+      const { error } = await supabase
+        .from('users')
+        .update({ eager_to_follow_up_shown: true })
+        .eq('id', user.user.id);
+
+      if (error) {
+        console.error(
+          '❌ Błąd przy update users.eager_to_follow_up_shown:',
+          error,
+        );
+      }
+    }
+  };
+
+  const handleYes = async () => {
+    await setEagerToFollowUpShownForUser();
+    await supabase
+      .from('rooms')
+      .update({ auto_follow_up_enabled: true })
+      .eq('id', roomId);
+  };
+
+  const handleNo = async () => {
+    await setEagerToFollowUpShownForUser();
+  };
+
+  const showEagerToFollowUp = aiikiResponses.some(
+    ({ response }) =>
+      response.eager_to_follow_up.value &&
+      response.eager_to_follow_up.intensity >= EAGER_TO_FOLLOW_UP_THRESHOLD,
+  );
+
   return (
-    <div className="flex flex-col">
-      {aiikiResponses.map(({ aiik, response }) => (
-        <Message
-          key={aiik.id}
-          role="aiik"
-          aiikAvatar={aiik.avatar_url}
-          aiikName={aiik.name}
-        >
-          {response.eager_to_follow_up.reason}
-        </Message>
-      ))}
-      <Button kind="primary" style={{ marginLeft: 50 }} size="small">
-        Pozwól Aiikom kontynuować rozmowę samodzielnie
-      </Button>
-    </div>
+    !eagerToFollowUpShown &&
+    showEagerToFollowUp && (
+      <div className="flex flex-col">
+        {aiikiResponses.map(({ aiik, response }) => (
+          <Message
+            key={aiik.id}
+            role="aiik"
+            aiikAvatar={aiik.avatar_url}
+            aiikName={aiik.name}
+          >
+            {response.eager_to_follow_up.reason}
+          </Message>
+        ))}
+        <div className="flex space-x-2">
+          <Button
+            kind="primary"
+            size="small"
+            style={{ marginLeft: 50 }}
+            onClick={handleYes}
+          >
+            Pozwól Aiikom kontynuować rozmowę samodzielnie
+          </Button>
+          <Button kind="submit" size="small" onClick={handleNo}>
+            Nie, dziękuję
+          </Button>
+        </div>
+      </div>
+    )
   );
 }

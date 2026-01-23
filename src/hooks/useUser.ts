@@ -1,5 +1,3 @@
-// src/hooks/useUser.ts
-
 import { useEffect, useState } from 'react';
 import { User } from '../types';
 import { supabase } from '../lib/supabase';
@@ -54,6 +52,33 @@ export default function useUser() {
         .finally(() => setLoading(false));
     }
   }, []);
+
+  // 🧩 SUBSKRYPCJA na `users` (update tylko własnego usera)
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const channel = supabase
+      .channel(`user-updates-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'users',
+          filter: `id=eq.${user.id}`,
+        },
+        payload => {
+          const updated = payload.new as User;
+          setUser(updated);
+          cachedUser = updated; // aktualizuj cache
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
 
   return { user, loading };
 }

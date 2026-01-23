@@ -148,7 +148,10 @@ export default function Room() {
     <div className="relative w-full">
       <MessageArea room={room}>
         {aiikiResponses && (
-          <AskForAutoFollowUp aiikiResponses={aiikiResponses} />
+          <AskForAutoFollowUp
+            aiikiResponses={aiikiResponses}
+            roomId={room?.id!}
+          />
         )}
         {aiikiThinking && <TypingDots />}
         <div ref={bottomRef} />

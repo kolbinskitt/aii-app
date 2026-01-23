@@ -12,3 +12,4 @@ export const AIIK_RESPONSE_INTENT_THRESHOLD: Record<string, number> = {
   ask: 0.7,
   hold: 1.0,
 };
+export const EAGER_TO_FOLLOW_UP_THRESHOLD = 0.5;

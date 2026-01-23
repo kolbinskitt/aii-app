@@ -54,6 +54,7 @@ export type User = {
   uuic?: string | null;
   credits: number;
   role: UserRole;
+  eager_to_follow_up_shown: boolean;
 };
 
 export type UserWithSession = SupabaseUser & {
