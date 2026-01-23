@@ -1,11 +1,15 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { getRoomById } from '@/helpers/getRoomById';
-import type { RoomWithMessages } from '@/types';
+import { RoomWithMessages, Room as RoomProps, LLMResult, Aiik } from '@/types';
 import useUser from '@/hooks/useUser';
 import { useAccessToken } from '@/hooks/useAccessToken';
 import { supabase } from '@/lib/supabase';
-import { BottomTile, MessageArea } from '@/components/ui/room/RoomComponents';
+import {
+  BottomTile,
+  MessageArea,
+  AskForAutoFollowUp,
+} from '@/components/ui/room/RoomComponents';
 import { Card, LoaderFullScreen } from '@/components/ui';
 import { handleAiikiResponses } from '@/helpers/handleAiikiResponses';
 import { TypingDots } from '@/components/ui';
@@ -18,7 +22,10 @@ export default function Room() {
   const user = useUser();
   const accessToken = useAccessToken();
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const [aiikiResponses, setAiikiResponses] =
+    useState<{ aiik: Aiik; response: LLMResult }[]>();
   const [loading, setLoading] = useState(true);
+
   const userId = user.user?.id;
 
   useEffect(() => {
@@ -63,6 +70,36 @@ export default function Room() {
     };
   }, [id]);
 
+  useEffect(() => {
+    if (!id) return;
+
+    const channel = supabase
+      .channel(`room-${id}-realtime`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'rooms',
+          filter: `id=eq.${id}`,
+        },
+        payload => {
+          const newData = payload.new as RoomProps;
+          if (room) {
+            setRoom({
+              ...room,
+              auto_follow_up_enabled: newData.auto_follow_up_enabled,
+            });
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [id, room]);
+
   async function handleSend() {
     if (!accessToken) {
       console.error('Brak accessToken');
@@ -95,7 +132,7 @@ export default function Room() {
         id,
       );
       setAiikiThinking(false);
-      console.log({ aiikiResponses });
+      setAiikiResponses(aiikiResponses);
     }
   }
 
@@ -110,6 +147,9 @@ export default function Room() {
   return (
     <div className="relative w-full">
       <MessageArea room={room}>
+        {aiikiResponses && (
+          <AskForAutoFollowUp aiikiResponses={aiikiResponses} />
+        )}
         {aiikiThinking && <TypingDots />}
         <div ref={bottomRef} />
       </MessageArea>

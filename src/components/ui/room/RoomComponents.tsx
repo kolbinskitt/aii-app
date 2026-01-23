@@ -6,7 +6,7 @@ import {
   useState,
   useEffect,
 } from 'react';
-import { RoomWithMessages, Role } from '@/types';
+import { RoomWithMessages, Role, LLMResult, Aiik } from '@/types';
 import { Button, Tile, Input, Switch } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -140,7 +140,7 @@ export function Message({
         display: 'flex',
         gap: 8,
         alignSelf: role === 'user' ? 'flex-end' : 'flex-start',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         color: role === 'user' ? 'white' : 'white',
         maxWidth: role === 'user' ? '70%' : '100%',
         whiteSpace: 'pre-line',
@@ -225,5 +225,30 @@ export function BottomTile({
         </Button>
       </div>
     </Tile>
+  );
+}
+
+export function AskForAutoFollowUp({
+  aiikiResponses,
+}: {
+  aiikiResponses: { aiik: Aiik; response: LLMResult }[];
+}) {
+  console.log({ aiikiResponses });
+  return (
+    <div className="flex flex-col">
+      {aiikiResponses.map(({ aiik, response }) => (
+        <Message
+          key={aiik.id}
+          role="aiik"
+          aiikAvatar={aiik.avatar_url}
+          aiikName={aiik.name}
+        >
+          {response.eager_to_follow_up.reason}
+        </Message>
+      ))}
+      <Button kind="primary" style={{ marginLeft: 50 }} size="small">
+        Pozwól Aiikom kontynuować rozmowę samodzielnie
+      </Button>
+    </div>
   );
 }

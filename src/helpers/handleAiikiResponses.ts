@@ -111,7 +111,7 @@ export async function handleAiikiResponses(
       result.internal_reaction.reason,
     );
 
-    return [result];
+    return [{ aiik, response: result }];
   }
 
   // REDUNDANCY CHECK (dopiero gdy > 1)
@@ -123,11 +123,11 @@ export async function handleAiikiResponses(
 
   // PUBLIKACJA: said true / false wg decyzji LLM
   if (uniqueCandidates) {
-    const results: LLMResult[] = [];
+    const results: { aiik: Aiik; response: LLMResult }[] = [];
     for (const { aiik, result } of candidates) {
       const said = uniqueCandidates.keep.includes(aiik.id);
 
-      if (said) results.push(result);
+      if (said) results.push({ aiik, response: result });
 
       await addMessageToRoom(
         accessToken,

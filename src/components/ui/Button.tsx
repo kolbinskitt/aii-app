@@ -27,7 +27,7 @@ export default function Button({
     'inline-flex items-center justify-center gap-2 font-medium transition-all duration-150 rounded-md box-border';
 
   const sizeClasses: Record<ButtonSize, string> = {
-    small: 'px-2 py-2 text-sm',
+    small: 'px-2 py-1 text-sm',
     medium: 'px-4 py-2 text-sm',
     large: 'px-6 py-3 text-base',
   };
