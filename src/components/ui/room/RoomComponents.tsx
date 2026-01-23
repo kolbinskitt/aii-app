@@ -248,6 +248,8 @@ export function AskForAutoFollowUp({
 
   const setEagerToFollowUpShownForUser = async () => {
     if (user.user) {
+      setEagerToFollowUpShown(true);
+
       const { error } = await supabase
         .from('users')
         .update({ eager_to_follow_up_shown: true })

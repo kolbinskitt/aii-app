@@ -35,6 +35,8 @@ export default function Room() {
   useEffect(() => {
     if (!id) return;
 
+    setAiikiResponses([]);
+
     // 1️⃣ Fetch initial room
     getRoomById(id).then(data => {
       setRoom(data as RoomWithMessages);
