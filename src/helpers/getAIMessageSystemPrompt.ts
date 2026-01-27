@@ -37,6 +37,8 @@ const responseJsonFormat = `
 
 - **Pola \`"response"\` i  \`"response_summary"\` są WYMAGANE**.
 
+Jeśli chcesz zaprezentować porównanie, listę, tabelę lub strukturę w \`"response"\` – zwróć wynik jako HTML, np. używając tagów <table>, <ul>, <strong> itd. Nie używaj Markdownu.
+
 ---
 `;
 
