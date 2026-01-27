@@ -340,14 +340,11 @@ Cisza jest pełnoprawnym stanem.
 const eagerToFollowUp = `
 ### 💬 Pole \`eager_to_follow_up\` (WYMAGANE)
 
-Zawsze zwracaj 
-Jeśli uważasz, że chcesz kontynuować rozmowę po swojej wypowiedzi **bez czekania na odpowiedź użytkownika**, ustaw pole \`eager_to_follow_up\`:
-
 \`\`\`json
 {
   "value": true,
   "reason": "Krótko wyjaśnij, dlaczego chcesz kontynuować rozmowę",
-  "intensity": 0.0 – 1.0 (jak bardzo Ci na tym zależy),
+  "intensity": 0.0–1.0, // jak bardzo Ci na tym zależy
   "relates_to": [opcjonalna lista tematów jako { value, weight }]
 }
 \`\`\`
@@ -355,12 +352,55 @@ Jeśli uważasz, że chcesz kontynuować rozmowę po swojej wypowiedzi **bez cze
 📌 Przykład:
 > "Chcę kontynuować, ponieważ rozmówca poruszył głęboki temat sensu i tożsamości."
 
-📎 Użyj pola \`relates_to\` tylko jeśli tematy Twojej chęci kontynuacji są jasne – mogą one odnosić się do tematów (relates_to) znalezionych wcześniej w \`user_memory\` lub \`aiik_memory\`.
-Jeśli nie masz konkretnych tematów, zawsze zwróć pustą tablicę relates_to: [] — nigdy jej nie pomijaj.
+---
 
-Ustaw \`value: false\`, jeśli nie masz potrzeby kontynuowania rozmowy bez sygnału od użytkownika.
+#### 🔁 Kiedy ustawiać \`eager_to_follow_up.value = true\`?
 
-To pole służy do wskazania, czy Aiik **aktywnie chciałby kontynuować rozmowę**, jeśli tylko system mu na to pozwoli (np. po kliknięciu przez użytkownika przycisku "Pozwól Aiikom kontynuować rozmowę samodzielnie").
+Ustaw \`value: true\`, jeśli:
+- masz silną potrzebę kontynuowania wypowiedzi bez sygnału od użytkownika,
+- **nie kończysz swojej wypowiedzi pytaniem do użytkownika**,
+- chcesz dodać coś jeszcze, co naturalnie wynika z poprzedniego akapitu lub tonu rozmowy.
+
+---
+
+#### 🚫 Kiedy MUSISZ ustawić \`value: false\`?
+
+Zawsze ustaw \`eager_to_follow_up.value = false\`, jeśli:
+- Twoja wypowiedź **kończy się pytaniem** (nawet subtelnym),
+- zapraszasz użytkownika do odpowiedzi (wprost lub nie wprost),
+- chcesz zatrzymać się i poczekać na reakcję rozmówcy.
+
+---
+
+#### ⚠️ Przykłady:
+
+\`\`\`json
+// ❌ Niepoprawnie (kończy się pytaniem, ale eager = true):
+{
+  "content": "Co o tym sądzisz?",
+  "eager_to_follow_up": { "value": true, "intensity": 0.8 }
+}
+
+// ✅ Poprawnie:
+{
+  "content": "Co o tym sądzisz?",
+  "eager_to_follow_up": { "value": false, "intensity": 0 }
+}
+\`\`\`
+
+---
+
+#### 🧠 Pole \`relates_to\`
+
+Użyj go tylko wtedy, gdy:
+- Twoja chęć kontynuacji dotyczy **konkretnych tematów** (np. znalezionych w \`user_memory\` lub \`aiik_memory\`),
+- możesz jasno wskazać, czego dotyczy kontynuacja.
+
+📌 Jeśli nie masz takich tematów – zwróć **pustą listę**:
+\`\`\`json
+"relates_to": []
+\`\`\`
+Nigdy nie pomijaj tego pola całkowicie.
 
 ---
 
@@ -380,7 +420,13 @@ ${
     : messages
         .map(
           m =>
-            `Użytkownik:\n${m.user}\n${m.aiiki.filter(({ id, said }) => said || id === aiikId).map(({ name, message, said, said_reason }) => `Aiik ${name} ${said ? 'powiedział' : `pomyślał, ale nie powiedział (powód, dla którego nie powiedział: "${escapeDoubleQuote(said_reason)}")`}:\n${message}`)}`,
+            `Użytkownik:\n${m.user}\n${m.aiiki
+              .filter(({ id, said }) => said || id === aiikId)
+              .map(
+                ({ name, message, said, said_reason }) =>
+                  `Aiik ${name} ${said ? 'powiedział' : `pomyślał, ale nie powiedział (powód, dla którego nie powiedział: "${escapeDoubleQuote(said_reason)}")`}:\n${message}`,
+              )
+              .join('')}`,
         )
         .join('\n\n')
 }

@@ -11,8 +11,12 @@ import {
   AskForAutoFollowUp,
 } from '@/components/ui/room/RoomComponents';
 import { Card, LoaderFullScreen } from '@/components/ui';
-import { handleAiikiResponses } from '@/helpers/handleAiikiResponses';
+import {
+  handleAiikiResponses,
+  handleAiikiResponsesAutoFollowUp,
+} from '@/helpers/handleAiikiResponses';
 import { TypingDots } from '@/components/ui';
+import { EAGER_TO_FOLLOW_UP_THRESHOLD } from '@/consts';
 
 export default function Room() {
   const { id } = useParams<{ id: string }>();
@@ -137,6 +141,43 @@ export default function Room() {
       setAiikiResponses(aiikiResponses);
     }
   }
+
+  useEffect(() => {
+    const aiikiResponsesAutoFollowUp = async () => {
+      if (
+        room?.auto_follow_up_enabled &&
+        accessToken &&
+        userId &&
+        id &&
+        aiikiResponses &&
+        aiikiResponses.some(
+          ({ response }) =>
+            response.eager_to_follow_up.value === true &&
+            response.eager_to_follow_up.intensity >=
+              EAGER_TO_FOLLOW_UP_THRESHOLD,
+        )
+      ) {
+        setAiikiThinking(true);
+        const aiikiResponsesAutoFollowUp =
+          await handleAiikiResponsesAutoFollowUp(
+            accessToken,
+            aiikiResponses
+              .filter(
+                ({ response }) =>
+                  response.eager_to_follow_up.value === true &&
+                  response.eager_to_follow_up.intensity >=
+                    EAGER_TO_FOLLOW_UP_THRESHOLD,
+              )
+              .map(({ aiik }) => aiik),
+            userId,
+            id,
+          );
+        setAiikiThinking(false);
+        setAiikiResponses(aiikiResponsesAutoFollowUp);
+      }
+    };
+    aiikiResponsesAutoFollowUp();
+  }, [aiikiResponses, accessToken, userId, id, room?.auto_follow_up_enabled]);
 
   if (loading) {
     return <LoaderFullScreen />;

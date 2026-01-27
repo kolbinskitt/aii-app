@@ -146,3 +146,45 @@ export async function handleAiikiResponses(
     return results;
   }
 }
+
+export async function handleAiikiResponsesAutoFollowUp(
+  accessToken: string,
+  aiiki: Aiik[],
+  userId: string,
+  roomId: string,
+) {
+  const reactions: AiikReaction[] = await Promise.all(
+    aiiki.map(async aiik => {
+      const result = await fetchAiikResponse(
+        'Kontynuuj swoją poprzednią wypowiedź. Nie powtarzaj tego, co już powiedziałeś. Dodaj nową myśl lub refleksję, która wynika z wcześniejszego wątku.',
+        userId,
+        aiik,
+        roomId,
+        accessToken,
+      );
+
+      return { aiik, result };
+    }),
+  );
+
+  const results: { aiik: Aiik; response: LLMResult }[] = [];
+  for (const { aiik, result } of reactions) {
+    if (result) {
+      results.push({ aiik, response: result });
+
+      await addMessageToRoom(
+        accessToken,
+        roomId,
+        true,
+        result,
+        'aiik',
+        userId,
+        aiik.id,
+        aiik.name,
+        result.internal_reaction.reason,
+      );
+    }
+  }
+
+  return results;
+}
