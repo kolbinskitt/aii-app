@@ -3,6 +3,10 @@ import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 
 export type Role = 'user' | 'aiik';
 
+export type RoomVisibility = 'private' | 'public' | 'unlisted';
+
+export type RoomAccessControl = 'open' | 'require_login' | 'invite_only';
+
 export type Room = {
   id: string;
   name: string;
@@ -10,8 +14,8 @@ export type Room = {
   meta: object;
   user_id: string;
   auto_follow_up_enabled: boolean;
-  visibility: 'private' | 'public' | 'unlisted';
-  access_control: 'open' | 'require_login' | 'invite_only';
+  visibility: RoomVisibility;
+  access_control: RoomAccessControl;
   read_only: boolean;
   qr_enabled: boolean;
   description: string;
