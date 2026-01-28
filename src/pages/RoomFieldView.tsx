@@ -35,8 +35,8 @@ export default function RoomFieldView() {
   return (
     <div className="relative w-full space-y-2">
       <Tile>
-        <h1 className="text-2xl font-light font-echo">
-          Pole ogniska "{room.name}"
+        <h1 className="text-2xl font-light font-system mb-0">
+          Ognisko <strong>{room.name}</strong>
         </h1>
       </Tile>
       <Tile>

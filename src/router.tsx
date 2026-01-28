@@ -52,7 +52,7 @@ export const router = createHashRouter([
         ),
         children: [
           {
-            path: 'room/:id/field',
+            path: 'room/:id/settings',
             element: (
               <Grid>
                 <LeftSidebar>

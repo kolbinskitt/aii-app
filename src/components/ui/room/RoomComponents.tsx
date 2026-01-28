@@ -103,10 +103,10 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
           </span>
         </div>
         <Link
-          to={`/room/${room.id}/field`}
+          to={`/room/${room.id}/settings`}
           className="text-blue-500 whitespace-nowrap"
         >
-          {t('chat.see_field')}
+          Ustawienia
         </Link>
       </div>
     </Tile>
