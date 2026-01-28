@@ -86,7 +86,7 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
     <Tile className="space-y-1 p-2 sticky top-0">
       <div className="flex items-center justify-between">
         <h2
-          className="text-2xl font-echo text-gray-800 leading-snug font-semibold truncate mb-0"
+          className="text-2xl font-system text-gray-800 leading-snug font-semibold truncate mb-0"
           style={{
             maxWidth: 'calc(100vw - 500px)',
           }}
