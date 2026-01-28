@@ -94,18 +94,6 @@ export const RoomSettings: FC<Props> = ({ room, onSave }) => {
           value={accessControl}
           onChange={v => setAccessControl(v as RoomAccessControl)}
         />
-        <Switch
-          id="roomReadOnly"
-          label="Tylko do odczytu"
-          checked={readOnly}
-          onChange={setReadOnly}
-        />
-        <Switch
-          id="roomQrEnabled"
-          label="QR kod aktywny"
-          checked={qrEnabled}
-          onChange={setQrEnabled}
-        />
         <MultiSelect
           label="Tagi pokoju"
           mode="tags"
@@ -113,6 +101,20 @@ export const RoomSettings: FC<Props> = ({ room, onSave }) => {
           onChange={setTags}
           placeholder="Dodaj tagi (np. echo, dream, ritual)"
         />
+        <div className="flex gap-10">
+          <Switch
+            id="roomReadOnly"
+            label="Tylko do odczytu"
+            checked={readOnly}
+            onChange={setReadOnly}
+          />
+          <Switch
+            id="roomQrEnabled"
+            label="QR kod aktywny"
+            checked={qrEnabled}
+            onChange={setQrEnabled}
+          />
+        </div>
         <div className="flex justify-between">
           <div />
           <Button onClick={handleSave} className="mt-0" kind="submit">
