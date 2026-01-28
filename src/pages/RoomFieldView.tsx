@@ -4,14 +4,19 @@ import { getRoomById } from '@/helpers/getRoomById';
 import { RoomWithMessages } from '../types';
 import { Icon, Tile } from '../components/ui';
 import { RoomField } from '@/components/ui/room/RoomField';
+import { RoomSettings } from '@/components/ui/room/RoomSettings';
 
 export default function RoomFieldView() {
   const { id } = useParams<{ id: string }>();
   const [room, setRoom] = useState<RoomWithMessages | null>(null);
 
-  useEffect(() => {
+  const loadRoom = () => {
     if (!id) return;
     getRoomById(id).then(data => setRoom(data as RoomWithMessages));
+  };
+
+  useEffect(() => {
+    loadRoom();
   }, [id]);
 
   if (!room) return <div className="p-6">Wczytywanie danych...</div>;
@@ -27,6 +32,7 @@ export default function RoomFieldView() {
           <strong className="font-semibold">{room.name}</strong>
         </h1>
       </Tile>
+      <RoomSettings room={room} onSave={loadRoom} />
       <RoomField room={room} />
     </div>
   );
