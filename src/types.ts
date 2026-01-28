@@ -6,7 +6,6 @@ export type Role = 'user' | 'aiik';
 export type Room = {
   id: string;
   name: string;
-  slug: string;
   created_at: number;
   auto_follow_up_enabled: boolean;
 };

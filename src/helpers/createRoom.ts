@@ -10,11 +10,9 @@ export async function createRoom(
   aiikiIds: string[],
   userId: string,
 ): Promise<Room> {
-  const slug = name.toLowerCase().replace(/\s+/g, '-').slice(0, 50);
-
   const { data: roomData } = await supabase
     .from('rooms')
-    .insert([{ id, name, slug, user_id: userId }])
+    .insert([{ id, name, user_id: userId }])
     .select()
     .single();
 
