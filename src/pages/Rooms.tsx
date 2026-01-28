@@ -5,15 +5,42 @@ import { Link } from 'react-router-dom';
 import CreateRoomModal from '../components/CreateRoomModal';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../components/ui';
+import { supabase } from '@/lib/supabase';
+import useUser from '@/hooks/useUser';
 
 export default function Rooms() {
   const { t } = useTranslation();
+  const user = useUser();
   const [open, setOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
 
   useEffect(() => {
     getAllRooms().then(setRooms);
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel(`rooms-realtime`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'rooms',
+          filter: `user_id=eq.${user.user?.id}`,
+        },
+        () => {
+          getAllRooms().then(setRooms);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   const roomsList =
     rooms.length === 0 ? (
