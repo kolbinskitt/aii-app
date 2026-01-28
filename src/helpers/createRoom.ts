@@ -19,7 +19,6 @@ export async function createRoom(
         name,
         description,
         user_id: userId,
-        tags: [],
       },
     ])
     .select()
