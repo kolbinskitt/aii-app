@@ -7,12 +7,21 @@ export async function createRoom(
   accessToken: string,
   id: string,
   name: string,
+  description: string,
   aiikiIds: string[],
   userId: string,
 ): Promise<Room> {
   const { data: roomData } = await supabase
     .from('rooms')
-    .insert([{ id, name, user_id: userId }])
+    .insert([
+      {
+        id,
+        name,
+        description,
+        user_id: userId,
+        tags: [],
+      },
+    ])
     .select()
     .single();
 

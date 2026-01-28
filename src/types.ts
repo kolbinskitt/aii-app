@@ -7,7 +7,15 @@ export type Room = {
   id: string;
   name: string;
   created_at: number;
+  meta: object;
+  user_id: string;
   auto_follow_up_enabled: boolean;
+  visibility: 'private' | 'public' | 'unlisted';
+  access_control: 'open' | 'require_login' | 'invite_only';
+  read_only: boolean;
+  qr_enabled: boolean;
+  description: string;
+  tags: string[];
 };
 
 export type Aiik = {

@@ -6,7 +6,7 @@ import useGlobalAiiki from '@/db/aiiki';
 import { Aiik } from '@/types';
 import useUser from '@/hooks/useUser';
 import { useAccessToken } from '@/hooks/useAccessToken';
-import { Popup, Button, Input, Checkbox } from './ui';
+import { Popup, Button, Input, Checkbox, Textarea } from './ui';
 import { useTranslation } from 'react-i18next';
 
 type Props = {
@@ -16,6 +16,7 @@ type Props = {
 export default function CreateRoomModal({ onClose }: Props) {
   const { t } = useTranslation();
   const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [aiiki, setAiiki] = useState<Aiik[]>([]);
   const [selectedAiiki, setSelectedAiiki] = useState<Set<string>>(new Set());
   const globalAiiki = useGlobalAiiki();
@@ -52,7 +53,14 @@ export default function CreateRoomModal({ onClose }: Props) {
       setSaving(true);
       const id = crypto.randomUUID();
       const aiikiIds = Array.from(selectedAiiki);
-      await createRoom(accessToken!, id, name, aiikiIds, user.user.id);
+      await createRoom(
+        accessToken!,
+        id,
+        name,
+        description,
+        aiikiIds,
+        user.user.id,
+      );
       navigate(`/room/${id}`);
       setOpened(false);
     }
@@ -82,8 +90,14 @@ export default function CreateRoomModal({ onClose }: Props) {
     >
       <Input
         value={name}
-        onChange={v => setName(v)}
+        onChange={setName}
         placeholder={t('campfires.starting_new_campfire.placeholder')}
+      />
+      <Textarea
+        value={description}
+        onChange={setDescription}
+        placeholder="Opis ogniska..."
+        wrapperClassName="my-2"
       />
       <div>
         <h3 className="text-sm text-gray-600 mb-2">

@@ -11,6 +11,7 @@ type TextareaProps = {
   onChange: (_val: string) => void;
   placeholder?: string;
   className?: string;
+  wrapperClassName?: string;
   rows?: number;
   label?: string;
 };
@@ -20,11 +21,12 @@ function Textarea({
   onChange,
   placeholder,
   className,
+  wrapperClassName,
   rows = 4,
   label,
 }: TextareaProps) {
   return (
-    <div className="space-y-1">
+    <div className={cn('space-y-1', wrapperClassName)}>
       {label && <Label>{label}</Label>}
       <TextArea
         value={value}

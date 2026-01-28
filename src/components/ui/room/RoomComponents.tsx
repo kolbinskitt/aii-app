@@ -86,7 +86,7 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
     <Tile className="space-y-1 p-2 sticky top-0">
       <div className="flex items-center justify-between">
         <h2
-          className="text-2xl font-echo text-gray-800 leading-snug font-semibold truncate"
+          className="text-2xl font-echo text-gray-800 leading-snug font-semibold truncate mb-0"
           style={{
             maxWidth: 'calc(100vw - 500px)',
           }}
@@ -109,11 +109,6 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
           {t('chat.see_field')}
         </Link>
       </div>
-      {room.messages.length === 0 && (
-        <div className="text-sm text-muted-foreground">
-          {t('chat.no_stories')}
-        </div>
-      )}
     </Tile>
   );
 }
