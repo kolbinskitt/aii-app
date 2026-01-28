@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import { getAllRooms } from '@/helpers/getAllRooms';
 import { Room } from '../types';
 import { Link } from 'react-router-dom';
@@ -10,6 +11,8 @@ import useUser from '@/hooks/useUser';
 
 export default function Rooms() {
   const { t } = useTranslation();
+  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const user = useUser();
   const [open, setOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -52,10 +55,22 @@ export default function Rooms() {
             <Link
               to={`/room/${room.id}`}
               title={room.name || '🌀'}
-              className="truncate whitespace-nowrap block"
+              className="font-system mb-2 block"
               style={{ width: 285 }}
             >
-              {room.name || '🌀'}
+              <div
+                className={`truncate whitespace-nowrap block ${location.pathname.startsWith('/room/') && id === room.id ? 'font-semibold' : ''}`}
+              >
+                {room.name || '🌀'}
+              </div>
+              {room.description !== '' && (
+                <div
+                  className="text-gray-500 line-clamp-2 text-sm"
+                  title={room.description}
+                >
+                  {room.description}
+                </div>
+              )}
             </Link>
           </li>
         ))}
@@ -66,9 +81,7 @@ export default function Rooms() {
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="px-6 py-3 border border-neutral-700 
-        transition w-full rounded-2xl
-        bg-green-600 hover:bg-green-700 text-white"
+        className="w-full mb-3"
         kind="submit"
       >
         {t(
@@ -77,12 +90,6 @@ export default function Rooms() {
             : 'campfires.start_new_campfire',
         )}
       </Button>
-      <h3
-        className="text-gray-500 tracking-wider mt-4"
-        style={{ marginTop: 16 }}
-      >
-        {t('campfires.your_campfires')}{' '}
-      </h3>
       {roomsList}
       {open && <CreateRoomModal onClose={() => setOpen(false)} />}
     </>

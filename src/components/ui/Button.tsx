@@ -35,7 +35,7 @@ export default function Button({
   const typeClasses: Record<ButtonKind, string> = {
     default: 'bg-white text-black border border-black hover:bg-gray-100',
     submit:
-      'bg-green-600 text-white hover:bg-green-500 border border-green-600',
+      'bg-green-600 text-white hover:bg-green-700 border border-green-600',
     danger: 'bg-red-600 text-white hover:bg-red-700 border border-red-600',
     primary:
       'bg-blue-600 hover:bg-blue-800 text-white shadow hover:brightness-110 border border-blue-600',
