@@ -99,7 +99,7 @@ export default function CreateRoomModal({ onClose }: Props) {
                 checked={selectedAiiki.has(aiik.id)}
                 onChange={() => toggleAiik(aiik.id)}
               />
-              <img src={aiik.avatar_url} width={130} className="rounded-md" />
+              <img src={aiik.avatar_url} width={30} className="rounded-md" />
               <div>
                 <div className="font-semibold">{aiik.name}</div>
                 <div className="text-xs text-gray-500">{aiik.description}</div>

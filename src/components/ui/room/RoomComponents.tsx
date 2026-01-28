@@ -192,7 +192,7 @@ export function MessageArea({
             aiikAvatar={getAiikById(msg.aiik_id)?.avatar_url}
             aiikName={getAiikById(msg.aiik_id)?.name}
           >
-            <div dangerouslySetInnerHTML={{ __html: msg.content }} />{' '}
+            <span dangerouslySetInnerHTML={{ __html: msg.content }} />{' '}
             <CopyToClipboard text={msg.content} />
           </Message>
         ))}
