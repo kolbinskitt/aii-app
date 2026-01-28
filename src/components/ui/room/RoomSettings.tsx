@@ -1,5 +1,13 @@
 import { FC, useState } from 'react';
-import { Button, Input, Select, Switch, Textarea, Tile } from '@/components/ui';
+import {
+  Button,
+  Input,
+  MultiSelect,
+  Select,
+  Switch,
+  Textarea,
+  Tile,
+} from '@/components/ui';
 import { RoomWithMessages, RoomVisibility, RoomAccessControl } from '@/types';
 import { supabase } from '@/lib/supabase';
 import { message } from 'antd';
@@ -32,7 +40,7 @@ export const RoomSettings: FC<Props> = ({ room, onSave }) => {
   );
   const [readOnly, setReadOnly] = useState(room.read_only ?? false);
   const [qrEnabled, setQrEnabled] = useState(room.qr_enabled ?? true);
-  // const [tags, setTags] = useState<string[]>(room.tags ?? []);
+  const [tags, setTags] = useState<string[]>(room.tags ?? []);
 
   const handleSave = async () => {
     const { error } = await supabase
@@ -45,6 +53,7 @@ export const RoomSettings: FC<Props> = ({ room, onSave }) => {
           access_control: accessControl,
           read_only: readOnly,
           qr_enabled: qrEnabled,
+          tags,
         },
       ])
       .eq('id', room.id);
@@ -96,6 +105,13 @@ export const RoomSettings: FC<Props> = ({ room, onSave }) => {
           label="QR kod aktywny"
           checked={qrEnabled}
           onChange={setQrEnabled}
+        />
+        <MultiSelect
+          label="Tagi pokoju"
+          mode="tags"
+          value={tags}
+          onChange={setTags}
+          placeholder="Dodaj tagi (np. echo, dream, ritual)"
         />
         <div className="flex justify-between">
           <div />
