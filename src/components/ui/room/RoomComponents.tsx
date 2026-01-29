@@ -116,11 +116,9 @@ function TopTile({ room }: { room: RoomWithMessages | null }) {
 export function Message({
   children,
   role,
-  aiikName,
   aiikAvatar,
 }: PropsWithChildren<{
   role: Role;
-  aiikName?: string;
   aiikAvatar?: string;
 }>) {
   const marginH = -12;
@@ -156,7 +154,6 @@ export function Message({
           }}
         />
       )}
-      {role === 'aiik' && `${aiikName}: `}
       {children}
     </div>
   );
@@ -185,9 +182,12 @@ export function MessageArea({
             key={msg.id}
             role={!msg.aiik_id ? 'user' : 'aiik'}
             aiikAvatar={getAiikById(msg.aiik_id)?.avatar_url}
-            aiikName={getAiikById(msg.aiik_id)?.name}
           >
-            <span dangerouslySetInnerHTML={{ __html: msg.content }} />{' '}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: `${msg.aiik_id ? `${getAiikById(msg.aiik_id)?.name}: ` : ''}${msg.content}`,
+              }}
+            />{' '}
             <CopyToClipboard text={msg.content} />
           </Message>
         ))}
@@ -283,13 +283,8 @@ export function AskForAutoFollowUp({
     showEagerToFollowUp && (
       <div className="flex flex-col">
         {aiikiResponses.map(({ aiik, response }) => (
-          <Message
-            key={aiik.id}
-            role="aiik"
-            aiikAvatar={aiik.avatar_url}
-            aiikName={aiik.name}
-          >
-            {response.eager_to_follow_up.reason}
+          <Message key={aiik.id} role="aiik" aiikAvatar={aiik.avatar_url}>
+            {aiik.name}: {response.eager_to_follow_up.reason}
           </Message>
         ))}
         <div className="flex space-x-2">

@@ -39,6 +39,12 @@ export type RoomAiikiRelatizon = {
   created_at: number;
 };
 
+export type UserPublic = {
+  id: string;
+  display_name: string | null;
+  profile_pic_url: string | null;
+};
+
 export type RoomWithMessages = Room & {
   room_aiiki: {
     aiiki_with_conzon: Aiik;
@@ -49,6 +55,7 @@ export type RoomWithMessages = Room & {
     aiik_id: string;
     content: string;
   }[];
+  message_authors?: UserPublic[];
 };
 
 export type UserRole = 'user' | 'admin';
