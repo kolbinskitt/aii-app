@@ -15,7 +15,7 @@ import Aiiki from './components/Aiiki';
 function LeftSidebar({ children }: PropsWithChildren) {
   return (
     <Sidebar
-      className="bg-gradient-to-t from-white/40 via-white/60 to-white/80"
+      className="bg-gray-300"
       styles={{
         marginLeft: 20,
         width: 300,
