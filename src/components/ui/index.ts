@@ -21,6 +21,7 @@ import { Card, CardContent } from './Card';
 import { Table } from './Table';
 import { Tabs } from './Tabs';
 import { TypingDots } from './TypingDots';
+import { AutoComplete } from './AutoComplete';
 
 export {
   Button,
@@ -47,4 +48,5 @@ export {
   Table,
   Tabs,
   TypingDots,
+  AutoComplete,
 };

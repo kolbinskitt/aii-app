@@ -5,7 +5,7 @@ import { Room } from '../types';
 import { Link } from 'react-router-dom';
 import CreateRoomModal from '../components/CreateRoomModal';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../components/ui';
+import { Button, AutoComplete } from '../components/ui';
 import { supabase } from '@/lib/supabase';
 import useUser from '@/hooks/useUser';
 
@@ -65,7 +65,7 @@ export default function Rooms() {
               </div>
               {room.description !== '' && (
                 <div
-                  className="text-gray-500 line-clamp-2 text-sm"
+                  className="text-gray-500 line-clamp-2 text-xs"
                   title={room.description}
                 >
                   {room.description}
@@ -81,7 +81,7 @@ export default function Rooms() {
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="w-full mb-3"
+        className="w-full mb-2"
         kind="submit"
       >
         {t(
@@ -90,6 +90,12 @@ export default function Rooms() {
             : 'campfires.start_new_campfire',
         )}
       </Button>
+      <AutoComplete
+        options={[{ value: 'aaa2' }, { value: 'echo-cafe' }]}
+        placeholder="Wyszukaj ogniska..."
+        onSelect={value => console.log('Selected:', value)}
+        wrapperClassName="mb-3"
+      />
       {roomsList}
       {open && <CreateRoomModal onClose={() => setOpen(false)} />}
     </>
