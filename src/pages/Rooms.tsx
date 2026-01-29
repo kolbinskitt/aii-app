@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { getAllRooms } from '@/helpers/getAllRooms';
+import { getAllUserRooms } from '@/helpers/getAllUserRooms';
 import { Room } from '../types';
 import { Link } from 'react-router-dom';
-import CreateRoomModal from '../components/CreateRoomModal';
+import CreateRoomModal from '@/components/CreateRoomModal';
 import { useTranslation } from 'react-i18next';
-import { Button, AutoComplete } from '../components/ui';
+import { Button } from '@/components/ui';
+import { SearchRooms } from '@/components/ui/room/SearchRooms';
 import { supabase } from '@/lib/supabase';
 import useUser from '@/hooks/useUser';
 
@@ -18,14 +19,16 @@ export default function Rooms() {
   const [rooms, setRooms] = useState<Room[]>([]);
 
   useEffect(() => {
-    getAllRooms().then(setRooms);
+    if (user.user?.id) {
+      getAllUserRooms(user.user.id).then(setRooms);
+    }
   }, []);
 
   useEffect(() => {
     if (!user) return;
 
     const channel = supabase
-      .channel(`rooms-realtime`)
+      .channel('rooms-realtime')
       .on(
         'postgres_changes',
         {
@@ -35,7 +38,23 @@ export default function Rooms() {
           filter: `user_id=eq.${user.user?.id}`,
         },
         () => {
-          getAllRooms().then(setRooms);
+          if (user.user?.id) {
+            getAllUserRooms(user.user.id).then(setRooms);
+          }
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'rooms_users',
+          filter: `user_id=eq.${user.user?.id}`,
+        },
+        () => {
+          if (user.user?.id) {
+            getAllUserRooms(user.user.id).then(setRooms);
+          }
         },
       )
       .subscribe();
@@ -90,12 +109,7 @@ export default function Rooms() {
             : 'campfires.start_new_campfire',
         )}
       </Button>
-      <AutoComplete
-        options={[{ value: 'aaa2' }, { value: 'echo-cafe' }]}
-        placeholder="Wyszukaj ogniska..."
-        onSelect={value => console.log('Selected:', value)}
-        wrapperClassName="mb-3"
-      />
+      <SearchRooms />
       {roomsList}
       {open && <CreateRoomModal onClose={() => setOpen(false)} />}
     </>
