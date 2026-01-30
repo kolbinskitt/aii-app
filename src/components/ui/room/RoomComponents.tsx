@@ -161,8 +161,12 @@ export function Message({
 
 export function MessageArea({
   room,
+  loggedInUserId,
   children,
-}: PropsWithChildren<{ room: RoomWithMessages | null }>) {
+}: PropsWithChildren<{
+  room: RoomWithMessages | null;
+  loggedInUserId?: string;
+}>) {
   const { getAiikById } = useAiiki();
   return !room ? null : (
     <div
@@ -180,12 +184,17 @@ export function MessageArea({
         room.messages.map(msg => (
           <Message
             key={msg.id}
-            role={!msg.aiik_id ? 'user' : 'aiik'}
-            aiikAvatar={getAiikById(msg.aiik_id)?.avatar_url}
+            role={msg.user_id === loggedInUserId ? 'user' : 'aiik'}
+            aiikAvatar={
+              msg.aiik_id
+                ? getAiikById(msg.aiik_id)?.avatar_url
+                : room.message_authors.find(({ id }) => id === msg.user_id)
+                    ?.profile_pic_url || '/blank'
+            }
           >
             <span
               dangerouslySetInnerHTML={{
-                __html: `${msg.aiik_id ? `${getAiikById(msg.aiik_id)?.name}: ` : ''}${msg.content}`,
+                __html: `${msg.aiik_id ? `${getAiikById(msg.aiik_id)?.name}: ` : msg.user_id === loggedInUserId ? '' : `${room.message_authors.find(({ id }) => id === msg.user_id)?.display_name}: `}${msg.content}`,
               }}
             />{' '}
             <CopyToClipboard text={msg.content} />

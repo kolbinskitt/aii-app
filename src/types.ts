@@ -52,10 +52,11 @@ export type RoomWithMessages = Room & {
   }[];
   messages: {
     id: string;
+    user_id: string;
     aiik_id: string;
     content: string;
   }[];
-  message_authors?: UserPublic[];
+  message_authors: UserPublic[];
 };
 
 export type UserRole = 'user' | 'admin';

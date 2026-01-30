@@ -125,6 +125,7 @@ export default function Room() {
           id: '',
           content: userMsg,
           aiik_id: '',
+          user_id: userId,
         },
       ],
     });
@@ -189,7 +190,7 @@ export default function Room() {
 
   return (
     <div className="relative w-full">
-      <MessageArea room={room}>
+      <MessageArea room={room} loggedInUserId={user.user?.id}>
         {aiikiResponses && (
           <AskForAutoFollowUp
             aiikiResponses={aiikiResponses}
