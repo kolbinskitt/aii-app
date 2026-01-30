@@ -184,7 +184,9 @@ export function MessageArea({
         room.messages.map(msg => (
           <Message
             key={msg.id}
-            role={msg.user_id === loggedInUserId ? 'user' : 'aiik'}
+            role={
+              msg.user_id === loggedInUserId && !msg.aiik_id ? 'user' : 'aiik'
+            }
             aiikAvatar={
               msg.aiik_id
                 ? getAiikById(msg.aiik_id)?.avatar_url

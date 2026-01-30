@@ -1,6 +1,6 @@
 {
   "name": "aii-app",
-  "version": "0.0.127",
+  "version": "0.0.128",
   "type": "module",
   "scripts": {
     "dev": "npm-run-all --parallel dev:*",
