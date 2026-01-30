@@ -92,6 +92,12 @@ export function UserMenu() {
               </button>
             )}
             <button
+              onClick={() => navigate('/profile')}
+              className="block w-full text-left text-black hover:bg-gray-100 px-4 py-2"
+            >
+              Profil
+            </button>
+            <button
               onClick={handleLogout}
               className="block w-full text-left text-black hover:bg-gray-100 px-4 py-2"
             >

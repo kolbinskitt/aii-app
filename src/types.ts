@@ -271,10 +271,6 @@ export type RechartsCustomTooltipProps = {
 };
 
 export type OnboardingStage = 'form' | 'processing';
-export type ProcessingStep =
-  | 'save-profile'
-  | 'generate-aiiki'
-  | 'generate-avatars';
 export type IconName = keyof typeof PhosphorIcons;
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 

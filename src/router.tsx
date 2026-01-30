@@ -11,6 +11,7 @@ import ErrorPage from './pages/ErrorPage';
 import { Sidebar } from './components/ui';
 import Credits from './components/Credits';
 import Aiiki from './components/Aiiki';
+import Profile from './pages/Profile';
 
 function LeftSidebar({ children }: PropsWithChildren) {
   return (
@@ -103,6 +104,17 @@ export const router = createHashRouter([
                   <Rooms />
                 </LeftSidebar>
                 <AdminPanel />
+              </Grid>
+            ),
+          },
+          {
+            path: 'profile',
+            element: (
+              <Grid>
+                <LeftSidebar>
+                  <Rooms />
+                </LeftSidebar>
+                <Profile />
               </Grid>
             ),
           },

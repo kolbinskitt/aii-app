@@ -260,7 +260,7 @@ export function AskForAutoFollowUp({
       const { error } = await supabase
         .from('users')
         .update({ eager_to_follow_up_shown: true })
-        .eq('id', user.user.id);
+        .eq('auth_id', user.user.auth_id);
 
       if (error) {
         console.error(
