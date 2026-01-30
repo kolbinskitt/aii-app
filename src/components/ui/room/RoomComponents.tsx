@@ -196,7 +196,7 @@ export function MessageArea({
           >
             <span
               dangerouslySetInnerHTML={{
-                __html: `${msg.aiik_id ? `${getAiikById(msg.aiik_id)?.name}: ` : msg.user_id === loggedInUserId ? '' : `${room.message_authors.find(({ id }) => id === msg.user_id)?.display_name}: `}${msg.content}`,
+                __html: `${msg.aiik_id ? `Aiik ${getAiikById(msg.aiik_id)?.name}: ` : msg.user_id === loggedInUserId ? '' : `${room.message_authors.find(({ id }) => id === msg.user_id)?.display_name}: `}${msg.content}`,
               }}
             />{' '}
             <CopyToClipboard text={msg.content} />
