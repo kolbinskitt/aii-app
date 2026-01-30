@@ -6,6 +6,7 @@ export function transformUserAiikMessages(
   messages: FractalNode[],
   aiikNameMap: Map<string, string>,
   aiikId: string,
+  userNameMap: Map<string, string>,
 ): string {
   const sorted = [...messages].sort(sortByCreatedAt);
 
@@ -17,10 +18,14 @@ export function transformUserAiikMessages(
     // USER MESSAGE → nowa fala
     if (msg.user_id && !msg.aiik_id) {
       currentTurn = {
-        user:
-          typeof msg.content === 'string'
-            ? msg.content
-            : JSON.stringify(msg.content),
+        user: {
+          id: msg.user_id,
+          name: userNameMap.get(msg.user_id) ?? '',
+          message:
+            typeof msg.content === 'string'
+              ? msg.content
+              : JSON.stringify(msg.content),
+        },
         aiiki: [],
       };
       turns.push(currentTurn);
@@ -51,11 +56,11 @@ export function transformUserAiikMessages(
       const aiikLines = turn.aiiki
         .map(
           ({ name, message, id, said, said_reason }) =>
-            `Aiik ${name} ${said || id === aiikId ? 'powiedział' : `pomyślał, ale nie powiedział (powód, dla którego nie powiedział: "${escapeDoubleQuote(said_reason)}")`}: ${message}`,
+            `Aiik ${name} (id tego Aiika: ${id}) ${said || id === aiikId ? 'powiedział' : `pomyślał, ale nie powiedział (powód, dla którego nie powiedział: "${escapeDoubleQuote(said_reason)}")`}: ${message}`,
         )
         .join('\n');
 
-      return `Użytkownik: ${turn.user}${aiikLines ? `\n${aiikLines}` : ''}`;
+      return `Użytkownik ${turn.user.name} (id tego użytkownika: ${turn.user.id}): ${turn.user.message}${aiikLines ? `\n${aiikLines}` : ''}`;
     })
     .join('\n\n');
 }

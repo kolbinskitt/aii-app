@@ -6,6 +6,7 @@ export function transformRelatedMessages(
   relatesTo: WeightedValue[],
   aiikNameMap: Map<string, string>,
   aiikId: string,
+  userNameMap: Map<string, string>,
 ) {
   if (messages.length === 0) return '';
 
@@ -21,6 +22,7 @@ export function transformRelatedMessages(
         relatedMsgs,
         aiikNameMap,
         aiikId,
+        userNameMap,
       );
 
       return transformedUserAiikMessages === ''

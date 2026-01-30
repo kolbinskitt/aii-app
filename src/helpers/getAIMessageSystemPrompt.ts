@@ -422,11 +422,11 @@ ${
     : messages
         .map(
           m =>
-            `Użytkownik:\n${m.user}\n${m.aiiki
+            `Użytkownik ${m.user.name} (id tego użytkownika: ${m.user.id}):\n${m.user.message}\n${m.aiiki
               .filter(({ id, said }) => said || id === aiikId)
               .map(
-                ({ name, message, said, said_reason }) =>
-                  `Aiik ${name} ${said ? 'powiedział' : `pomyślał, ale nie powiedział (powód, dla którego nie powiedział: "${escapeDoubleQuote(said_reason)}")`}:\n${message}`,
+                ({ name, message, said, said_reason, id }) =>
+                  `Aiik ${name} (id tego Aiika: ${id}) ${said ? 'powiedział' : `pomyślał, ale nie powiedział (powód, dla którego nie powiedział: "${escapeDoubleQuote(said_reason)}")`}:\n${message}`,
               )
               .join('')}`,
         )

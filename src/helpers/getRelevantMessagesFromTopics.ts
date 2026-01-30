@@ -68,6 +68,20 @@ export async function getRelevantMessagesFromTopics(
       aiikNameMap.set(a.id, a.name);
     });
 
+    // Fetch user display names
+    const { data: userNames, error: userNamesError } = await supabase
+      .from('public_users')
+      .select('id, display_name');
+
+    if (userNamesError) {
+      console.error('Failed to fetch user names:', userNamesError);
+    }
+
+    const userNameMap = new Map<string, string>();
+    (userNames ?? []).forEach((a: any) => {
+      userNameMap.set(a.id, a.display_name);
+    });
+
     // Get related messages from fractal_node
     const { data: messages, error: msgError } = await supabase
       .from('fractal_node')
@@ -83,7 +97,13 @@ export async function getRelevantMessagesFromTopics(
       return '';
     }
 
-    return transformRelatedMessages(messages, relatesTo, aiikNameMap, aiikId);
+    return transformRelatedMessages(
+      messages,
+      relatesTo,
+      aiikNameMap,
+      aiikId,
+      userNameMap,
+    );
   } catch (err) {
     console.error('getRelevantMessagesFromTopics error:', err);
     return '';
