@@ -5,9 +5,11 @@ import { RoomWithMessages } from '../types';
 import { Icon, Tile } from '../components/ui';
 import { RoomField } from '@/components/ui/room/RoomField';
 import { RoomSettings } from '@/components/ui/room/RoomSettings';
+import useUser from '@/hooks/useUser';
 
 export default function RoomFieldView() {
   const { id } = useParams<{ id: string }>();
+  const { user } = useUser();
   const [room, setRoom] = useState<RoomWithMessages | null>(null);
 
   const loadRoom = () => {
@@ -32,7 +34,9 @@ export default function RoomFieldView() {
           <strong className="font-semibold">{room.name}</strong>
         </h1>
       </Tile>
-      <RoomSettings room={room} onSave={loadRoom} />
+      {room.user_id === user?.id && (
+        <RoomSettings room={room} onSave={loadRoom} />
+      )}
       <RoomField room={room} />
     </div>
   );
